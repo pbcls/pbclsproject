@@ -1,11 +1,10 @@
 package com.zucc.pbcls.pojo;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.context.annotation.Bean;
+import lombok.ToString;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
@@ -15,16 +14,21 @@ import javax.persistence.*;
 @NoArgsConstructor
 
 @Entity
-@Table(name = "user")
-@JsonIgnoreProperties({"handler","hibernateLazyInitializer"})
+@Table(name = "userdetail")
+@JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
 @Component
-public class User {
+@ToString
+public class PCenter_UserDetail {
+
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "uid")
     private String uid;
 
-    private String name;
-    private String pwd;
-    private String role;
+    private int sex;
+    private String hobby;
+    private String signature;
+    private String qq;
+    private String wechat;
+    private String email;
+    private String portrait;
 }

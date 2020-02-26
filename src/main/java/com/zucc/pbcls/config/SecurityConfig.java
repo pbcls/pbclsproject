@@ -27,8 +27,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                                 .formLogin()
                                 .loginPage("/tologin")
                                 .loginProcessingUrl("/dologin")
-                                .failureUrl("/login?error=true")
-                                .defaultSuccessUrl("/index");
+                                .failureUrl("/tologin?error=true")
+                                .defaultSuccessUrl("/index")
+                                .and()
+                                .logout().logoutSuccessUrl("/");
+
         http.csrf().disable();
     }
 

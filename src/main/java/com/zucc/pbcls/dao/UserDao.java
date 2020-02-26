@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 
-public interface UserDao extends JpaRepository<User,Integer> {
+public interface UserDao extends JpaRepository<User,String> {
     User findByUid(String uid);
 
 }

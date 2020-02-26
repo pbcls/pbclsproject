@@ -1,6 +1,8 @@
 package com.zucc.pbcls.service;
 
+import com.zucc.pbcls.dao.PCenter_UserDetailDao;
 import com.zucc.pbcls.dao.UserDao;
+import com.zucc.pbcls.pojo.PCenter_UserDetail;
 import com.zucc.pbcls.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,6 +14,12 @@ public class UserService {
 
     @Autowired
     UserDao userDao;
+
+    @Autowired
+    PCenter_UserDetail pCenter_userDetail;
+
+    @Autowired
+    PCenter_UserDetailDao pCenter_userDetailDao;
 
     public User login(String uid, String pwd){
         User user = userDao.findByUid(uid);
@@ -27,11 +35,13 @@ public class UserService {
 
         if(userDao.findByUid(user.getUid())!=null)
             return false;
-
         user.setName(user.getUid());
         user.setRole("USER");
         user.setPwd(new BCryptPasswordEncoder().encode(user.getPwd()));
         userDao.save(user);
+
+        pCenter_userDetail.setUid(user.getUid());
+        pCenter_userDetailDao.save(pCenter_userDetail);
         return true;
     }
 

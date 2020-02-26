@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 
 @Controller
-public class loginController {
+public class LoginController {
     @Autowired
     UserService userService;
 

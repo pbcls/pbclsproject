@@ -7,9 +7,15 @@
 </head>
 <body>
 登录成功页面
-<div sec:authorize="isAuthenticated()">登录成功啦!</div>
+<div sec:authorize="isAuthenticated()">
+    <span sec:authentication="principal.username"></span>
+    登录成功啦!
+</div>
 <div sec:authorize="!isAuthenticated()">登陆失败了!</div>
 <div sec:authorize="hasRole('ADMIN')">你有admin权限</div>
 <div sec:authorize="hasRole('USER')">你有user权限</div>
+
+<a href="/showUserDetial" sec:authorize="isAuthenticated()" th:text="显示个人信息"></a>
+<a href="/logout" sec:authorize="isAuthenticated()" th:text="注销"></a>
 </body>
 </html>
