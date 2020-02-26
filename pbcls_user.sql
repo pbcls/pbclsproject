@@ -1,0 +1,3 @@
+INSERT INTO pbcls.user (uid, name, pwd, role) VALUES ('yzf', 'yzf', '$2a$10$REuMEbc1KG7OrS33CyrFgO5tSqL0WzZmxyMTP2imCD11HwjwCOj9m', 'ADMIN');
+INSERT INTO pbcls.user (uid, name, pwd, role) VALUES ('yzl', 'yzl', '$2a$10$0zW8l5ojBrcOBJZSlItTV.2ZIKrRHjSPpUjaNj9YwI2h0jvfkE4em', 'USER');
+INSERT INTO pbcls.user (uid, name, pwd, role) VALUES ('zk', 'zk', '$2a$10$vhNiMKiauRtEk8Ubo1dN7.ilRZflUfIpnsY6v.fvE6wjN.R4T090.', 'USER');

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+登录成功页面
+<div sec:authorize="isAuthenticated()">恭喜你个逼，登录成功啦!</div>
+<div sec:authorize="!isAuthenticated()">登陆失败了!</div>
+<div sec:authorize="hasRole('ADMIN')">你有admin权限</div>
+<div sec:authorize="hasRole('USER')">你有user权限</div>
+</body>
+</html>
