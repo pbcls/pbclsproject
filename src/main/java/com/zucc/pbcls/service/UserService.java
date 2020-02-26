@@ -23,14 +23,16 @@ public class UserService {
 
     }
 
-    public void register(User user){
+    public boolean register(User user){
+
+        if(userDao.findByUid(user.getUid())!=null)
+            return false;
 
         user.setName(user.getUid());
         user.setRole("USER");
         user.setPwd(new BCryptPasswordEncoder().encode(user.getPwd()));
         userDao.save(user);
-
-        return;
+        return true;
     }
 
 }

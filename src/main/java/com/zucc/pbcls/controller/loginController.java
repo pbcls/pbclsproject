@@ -5,27 +5,36 @@ import com.zucc.pbcls.pojo.User;
 import com.zucc.pbcls.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
-@CrossOrigin(value = "http://localhost:8080")
 @Controller
 public class loginController {
     @Autowired
-    UserService UserService;
+    UserService userService;
 
 
     @RequestMapping("/")
-    public String toindex(){
-        return "redirect:login";
+    public String index(){
+        return "redirect:tologin";
     }
 
-    @RequestMapping("/login")
-    public String authenticationLogin() throws IOException {
+    @RequestMapping("/tologin")
+    public String tologin(){
+        return "login";
+    }
+    @RequestMapping("/toregister")
+    public String toregister(){
+        return "register";
+    }
+
+    @RequestMapping("/register")
+    @ResponseBody
+    public String register(@RequestBody User user){
+
+        System.out.println(user);
+        userService.register(user);
         return "login";
     }
 
@@ -40,24 +49,6 @@ public class loginController {
     }
 
 
-//    @RequestMapping("/save")
-//    @ResponseBody
-//    public String save( ){
-//        UserService.save();
-//        return "saved";
-//
-//    }
-
-//    @RequestMapping("/index/{u}-{p}")
-//    @ResponseBody
-//    public String login(@PathVariable(value = "u") String uid, @PathVariable(value = "p") String pwd ){
-//        User User = UserService.login(uid,pwd);
-//        if(User == null)
-//            return "账号或密码错误";
-//        else
-//            return "登录成功";
-//
-//    }
 
     @RequestMapping("/admin")
     public String admin()  {
