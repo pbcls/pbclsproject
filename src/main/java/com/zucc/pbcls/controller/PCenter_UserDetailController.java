@@ -8,7 +8,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class PCenter_UserDetailController {
@@ -33,5 +35,13 @@ public class PCenter_UserDetailController {
     public int updateUserDetial(@RequestBody PCenter_UserDetail pcud){
         pCenter_userDetailService.updateUserDetial(pcud);
         return 1;
+    }
+
+    @RequestMapping("/uploadPortrait")
+    @ResponseBody
+    public String uploadPortrait(@RequestParam(value = "userImg", required = false) MultipartFile file){
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String uid = userDetails.getUsername();
+        return pCenter_userDetailService.uploadPortrait(file,uid);
     }
 }

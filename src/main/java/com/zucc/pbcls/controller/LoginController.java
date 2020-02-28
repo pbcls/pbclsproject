@@ -31,11 +31,10 @@ public class LoginController {
 
     @RequestMapping("/register")
     @ResponseBody
-    public String register(@RequestBody User user){
+    public boolean register(@RequestBody User user){
 
         System.out.println(user);
-        userService.register(user);
-        return "login";
+        return userService.register(user);
     }
 
     @RequestMapping("/index")
