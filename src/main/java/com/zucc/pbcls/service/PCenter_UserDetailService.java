@@ -40,7 +40,7 @@ public class PCenter_UserDetailService {
             return "1";
         }
         //springboot默认在项目当前路径下 即为classpath: 直接调用以下路径即可
-        String filePath =  "src/main/resources/static/img/portrait";
+        String filePath =  "src/main/resources/static/img/portrait/";
         String fileName = file.getOriginalFilename();
         fileName = FileTool.renameToUUID(fileName);
         try {
