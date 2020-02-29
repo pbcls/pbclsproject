@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <meta charset="utf-8"/>
     <title>注册界面</title>
@@ -26,9 +27,14 @@
             //jQuery写法
             var user = $('#user').val();
             var password = $('#password').val();
+            var password2 = $("#password2").val();
 
             var str = document.getElementById('user').value;
             var strr = document.getElementById("password").value;
+            if(password != password2){
+                alert("两次输入密码不一致！");
+                return false;
+            }
             if(str == "" || strr == ""){
                 alert("您的用户名或密码输入为空。");
                 return false;
@@ -69,7 +75,7 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-12" style="background-color: #96B87D; height: 40px">
-                <h5 style="margin-top: 7px; color: white; font-family: 'arial black';">案例学习系统</h5>
+                <h5 style="margin-top: 7px; color: white; font-family: 'arial black';">案 例 学 习 系 统</h5>
             </div>
         </div>
         <div style="text-align: center">
@@ -85,6 +91,10 @@
             <div class="form-group">
                 <label for="password" style="display:inline;">密码：</label>
                 <input type="password" class="form-control" id="password" style="display:inline;width:200px;" autocomplete="off"/>
+            </div>
+            <div class="form-group">
+                <label for="password" style="display:inline;">确认：</label>
+                <input type="password" class="form-control" id="password2" style="display:inline;width:200px;" autocomplete="off"/>
             </div>
         </form>
         <div style="text-align: center;">
