@@ -21,6 +21,11 @@ public class PCenter_UserDetailController {
     @Autowired
     PCenter_UserDetail pCenter_userDetail;
 
+    @RequestMapping("/toPCenter")
+    public String PCenter_UserDetail(){
+        return "PCenter";
+    }
+
     @RequestMapping("/showUserDetial")
     @ResponseBody
     public PCenter_UserDetail showUserDetail(){
