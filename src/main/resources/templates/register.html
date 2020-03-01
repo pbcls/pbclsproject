@@ -46,6 +46,10 @@
                 return false;
             }
 
+            window.onload = function(){
+
+            }
+
             //
             $.ajax({
                 type: "post",  //post put get 等等
@@ -58,6 +62,10 @@
                     "pwd": password
                 }),
                 success: function (data, textStatus) {
+                    if(data == false){
+                        alert("用户名已存在。");
+                        return false;
+                    }
                     alert("注册成功！");
                     window.location.href="tologin";
                 },

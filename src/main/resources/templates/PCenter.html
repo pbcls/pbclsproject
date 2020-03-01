@@ -15,12 +15,55 @@
 
     <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
     <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <script>
+        window.onload=function() {
+            //jQuery写法
+            $.ajax({
+                type: "post",  //post put get 等等
+                url: "/showUserDetial",
+                contentType: "application/json;charset=UTF-8",
+                //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
+                // 表示对象
+                // data: JSON.stringify({  //json前面的东西要和后端实体类对应
+                //     "uid": user,
+                //     "pwd": password
+                // }),
+                success: function (data, textStatus) {
+                    $("#headimg").attr("src",data.portrait);
+                    if(data.sex == 1){
+                        $("#sex").html("女");
+                    }else if(data.sex == 2){
+                        $("#sex").html("男");
+                    }else{
+                        $("#sex").html("不详");
+                    }
+                    $("#hobbit").html(data.hobby);
+                    $("#signature").html(data.signature);
+                    $("#qq").html(data.qq);
+                    $("#wechat").html(data.wechat);
+                    $("#email").html(data.email);
+                    // alert(JSON.stringify(data.uid));
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {  //连接至ashx文件失败时，执行函数
+
+                }
+            });
+        }
+    </script>
 </head>
 <body>
 <div class="container">
     <div class="row">
-        <div style="background-color: #96B87D; height: 40px; width: 100%;">
-            <h5 style="margin-left: 15px;margin-top: 7px; color: white; font-family: 'arial black'; font-weight: bold;">案 例 学 习 系 统</h5>
+        <div style="background-color: #96B87D; height: 40px; width: 100%;display: flex;">
+            <div>
+                <h5 style="margin-left: 15px;margin-top: 7px; color: white; font-family: 'arial black'; font-weight: bold;">案 例 学 习 系 统</h5>
+            </div>
+            <div sec:authorize="isAuthenticated()">
+                <h5 style="margin-left: 700px; margin-top: 7px; color: white;">欢迎您 <span sec:authentication="name"></span></h5>
+            </div>
+            <div>
+                <button type="button" class="btn btn-danger" style="margin-left: 35px; margin-top:3px; height: 34px;">注销</button>
+            </div>
         </div>
     </div>
     <header class="header-area">
@@ -55,7 +98,7 @@
         <div class="row" style="margin-top: 40px;">
             <div id="left" class="col-md-4" style="height: 530px; border-right: solid; border-color: #0B3E5B;text-align: center;">
                 <div class="logo">
-                    <img src="/img/head.jpg" style="width: 50%;border-radius: 80px;">
+                    <img src="/img/portrait/default.jpg" style="width: 50%;border-radius: 80px;" id="headimg">
                     <!--<a href="index2.html"><img src="images/logo/logo2.jpg" alt=""> </a>-->
                 </div>
                 <div style="margin-top: 20px;">
@@ -87,23 +130,23 @@
                             <table border="1" frame="void" rules="none" cellpadding="10px" style="font-weight: bold;">
                                 <tr>
                                     <th>性别：</th>
-                                    <th></th>
+                                    <th id="sex"></th>
                                 </tr>
                                 <tr>
                                     <td>注册时间：</td>
-                                    <td></td>
+                                    <td id="time"></td>
                                 </tr>
                                 <tr>
                                     <td>登陆次数：</td>
-                                    <td></td>
+                                    <td id="times"></td>
                                 </tr>
                                 <tr>
                                     <td>兴趣爱好：</td>
-                                    <td></td>
+                                    <td id="hobbit"></td>
                                 </tr>
                                 <tr>
                                     <td>个人签名：</td>
-                                    <td></td>
+                                    <td id="signature"></td>
                                 </tr>
                             </table>
                         </div>
@@ -112,19 +155,19 @@
                             <table border="1" frame="void" rules="none" cellpadding="10px" style="font-weight: bold;">
                                 <tr>
                                     <th>QQ：</th>
-                                    <th></th>
+                                    <th id="qq"></th>
                                 </tr>
                                 <tr>
                                     <td>WeChat：</td>
-                                    <td></td>
+                                    <td id="wechat"></td>
                                 </tr>
                                 <tr>
                                     <td>E-mail：</td>
-                                    <td></td>
+                                    <td th:id="email"></td>
                                 </tr>
                                 <tr>
                                     <td>Home-page：</td>
-                                    <td></td>
+                                    <td id="homepage"></td>
                                 </tr>
                             </table>
                         </div>

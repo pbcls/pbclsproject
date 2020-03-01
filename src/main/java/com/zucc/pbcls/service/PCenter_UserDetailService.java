@@ -15,7 +15,7 @@ public class PCenter_UserDetailService {
 
     public PCenter_UserDetail showUserDetail(String uid){
         PCenter_UserDetail pcud = pCenter_userDetailDao.findByUid(uid);
-        if(pcud.getPortrait() == null)
+        if(pcud.getPortrait() == null || pcud.getPortrait().equals(""))
             pcud.setPortrait("/img/portrait/default.jpg");
         return pcud;
     }
