@@ -4,9 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
 </head>
 <script>
-
+    window.onload=function() {
+            $.ajax({
+                type: "post",
+                url: "/needuid",
+                dataType: 'text',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                data: {"uid":true},
+                success: function (r) {
+                    alert("请求成功"+r);
+                },
+                error:function(result) {
+                    alert(result);
+                }
+            });
+    }
 </script>
 <body>
 登录成功页面

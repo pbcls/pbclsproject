@@ -36,24 +36,29 @@ public class LoginController {
         return loginService.register(myUser);
     }
 
+
+
+
+
+
+
     @RequestMapping("/index")
     public String test(){
-
-        UserInfo userInfotest = (UserInfo) SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
-        System.out.println(userInfotest.getMyUserPortrait());
-
-
+//        UserInfo userInfotest = (UserInfo) SecurityContextHolder.getContext()
+//                .getAuthentication()
+//                .getPrincipal();
         return "index";
+    }
+    @RequestMapping("/needuid")
+    @ResponseBody
+    public void getjson(@RequestParam(value = "uid") boolean j){
+        System.out.println(j);
     }
 
     @RequestMapping("/fail")
     public String fail( ){
         return "fail";
     }
-
-
 
     @RequestMapping("/admin")
     public String admin()  {
@@ -68,8 +73,5 @@ public class LoginController {
     public String guest()  {
         return "/guest";
     }
-
-
-
 
 }
