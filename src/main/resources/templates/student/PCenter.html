@@ -39,6 +39,7 @@
                         $("#sex").html("不详");
                     }
                     $("#time").html(data.registerTime)
+                    $("#loginnum").html(data.loginNum);
                     $("#hobby").html(data.hobby);
                     $("#signature").html(data.signature);
                     $("#qq").html(data.qq);
@@ -51,6 +52,7 @@
                 }
             });
         }
+
 
     </script>
 </head>
@@ -65,7 +67,7 @@
                 <h5 style="margin-left: 700px; margin-top: 7px; color: white;">欢迎您 <span sec:authentication="principal.myUserName"></span></h5>
             </div>
             <div>
-                <button type="button" class="btn btn-danger" style="margin-left: 35px; margin-top:3px; height: 34px;" onclick="">注销</button>
+                <a type="button" class="btn" style="margin-left: 35px; margin-top:3px; height: 34px; background-color: darkgray;color: dimgray" href="/logout" >注销</a>
             </div>
         </div>
     </div>
@@ -142,7 +144,7 @@
                                 </tr>
                                 <tr>
                                     <td>登陆次数：</td>
-                                    <td id="times"></td>
+                                    <td id="loginnum"></td>
                                 </tr>
                                 <tr>
                                     <td>兴趣爱好：</td>

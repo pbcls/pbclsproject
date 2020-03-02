@@ -1,5 +1,6 @@
 package com.zucc.pbcls.security;
 
+import com.zucc.pbcls.dao.UserInfoDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -14,6 +15,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     com.zucc.pbcls.security.MyUserDetailService myUserDetailService;
+
+    @Autowired
+    UserInfoDao userInfoDao;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -42,7 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 //        已弃用！该方法为使用自定义LoginAuthenticationProvider类继承DaoAuthenticationProvider,改写抛出异常时的提醒
-//        auth.authenticationProvider(new LoginAuthenticationProvider(myUserService));
+        auth.authenticationProvider(new LoginAuthenticationProvider(myUserDetailService, userInfoDao));
         auth.userDetailsService(myUserDetailService).passwordEncoder(passwordEncoder());
 
     }

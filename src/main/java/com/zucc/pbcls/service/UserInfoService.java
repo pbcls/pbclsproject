@@ -1,6 +1,6 @@
 package com.zucc.pbcls.service;
 
-import com.zucc.pbcls.dao.MyUserDao;
+import com.zucc.pbcls.dao.UserInfoDao;
 import com.zucc.pbcls.pojo.MyUser;
 import com.zucc.pbcls.utils.FileTool;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,16 +9,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 @Service
-public class MyUserService {
+public class UserInfoService {
     @Autowired
-    MyUserDao myUserDao;
+    UserInfoDao userInfoDao;
 
     public MyUser showUserDetail(String uid){
-        return myUserDao.findByUid(uid);
+        return userInfoDao.findByUid(uid);
     }
 
     public void updateUserDetial(MyUser pCenter_userDetail){
-        myUserDao.save(pCenter_userDetail);
+        userInfoDao.save(pCenter_userDetail);
     }
 
     /**
@@ -27,7 +27,7 @@ public class MyUserService {
      *2 success
      */
     public String uploadPortrait(MultipartFile file, String uid){
-        MyUser myUser = myUserDao.findByUid(uid);
+        MyUser myUser = userInfoDao.findByUid(uid);
         if (file == null){
             System.out.println("文件为空!");
             return "0";
@@ -40,6 +40,7 @@ public class MyUserService {
         String filePath =  "src/main/resources/static/img/portrait/";
         String fileName = file.getOriginalFilename();
         fileName = FileTool.renameToUUID(fileName);
+        System.out.println(fileName);
         try {
             FileTool.uploadFiles(file.getBytes(),filePath, fileName);
         } catch (Exception e) {
@@ -47,7 +48,7 @@ public class MyUserService {
         }
         String url = "/img/portrait/"+fileName;
         myUser.setPortrait(url);
-        myUserDao.save(myUser);
+        userInfoDao.save(myUser);
         return url;
     }
 }

@@ -31,7 +31,6 @@ public class MyUser {
     private String uid;
     private String name;
     private String pwd;
-
     private int sex;
 
     @Column(name = "registertime")
@@ -48,6 +47,8 @@ public class MyUser {
 
     @Column(name = "accountnonlocked",columnDefinition="tinyint(1) default 1")
     private boolean accountNonLocked = true;
-
     private String portrait;
+
+    @Column(name = "loginnum",columnDefinition="int(11) default 0")
+    private int loginNum;
 }
