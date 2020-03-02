@@ -1,19 +1,18 @@
 package com.zucc.pbcls.controller;
 
 
-import com.zucc.pbcls.pojo.User;
-import com.zucc.pbcls.service.UserService;
+import com.zucc.pbcls.pojo.MyUser;
+import com.zucc.pbcls.security.UserInfo;
+import com.zucc.pbcls.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 
 @Controller
 public class LoginController {
     @Autowired
-    UserService userService;
-
+    LoginService loginService;
 
     @RequestMapping("/")
     public String index(){
@@ -31,14 +30,21 @@ public class LoginController {
 
     @RequestMapping("/register")
     @ResponseBody
-    public boolean register(@RequestBody User user){
+    public boolean register(@RequestBody MyUser myUser){
 
-        System.out.println(user);
-        return userService.register(user);
+        System.out.println(myUser);
+        return loginService.register(myUser);
     }
 
     @RequestMapping("/index")
-    public String test( ){
+    public String test(){
+
+        UserInfo userInfotest = (UserInfo) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+        System.out.println(userInfotest.getMyUserPortrait());
+
+
         return "index";
     }
 

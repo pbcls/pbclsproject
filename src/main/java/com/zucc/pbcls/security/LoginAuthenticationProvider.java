@@ -1,4 +1,4 @@
-package com.zucc.pbcls.config;
+package com.zucc.pbcls.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;

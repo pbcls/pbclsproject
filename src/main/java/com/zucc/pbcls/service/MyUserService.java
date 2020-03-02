@@ -1,7 +1,7 @@
 package com.zucc.pbcls.service;
 
-import com.zucc.pbcls.dao.PCenter_UserDetailDao;
-import com.zucc.pbcls.pojo.PCenter_UserDetail;
+import com.zucc.pbcls.dao.MyUserDao;
+import com.zucc.pbcls.pojo.MyUser;
 import com.zucc.pbcls.utils.FileTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,19 +9,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 @Service
-public class PCenter_UserDetailService {
+public class MyUserService {
     @Autowired
-    PCenter_UserDetailDao pCenter_userDetailDao;
+    MyUserDao myUserDao;
 
-    public PCenter_UserDetail showUserDetail(String uid){
-        PCenter_UserDetail pcud = pCenter_userDetailDao.findByUid(uid);
-        if(pcud.getPortrait() == null || pcud.getPortrait().equals(""))
-            pcud.setPortrait("/img/portrait/default.jpg");
-        return pcud;
+    public MyUser showUserDetail(String uid){
+        return myUserDao.findByUid(uid);
     }
 
-    public void updateUserDetial(PCenter_UserDetail pCenter_userDetail){
-        pCenter_userDetailDao.save(pCenter_userDetail);
+    public void updateUserDetial(MyUser pCenter_userDetail){
+        myUserDao.save(pCenter_userDetail);
     }
 
     /**
@@ -30,12 +27,12 @@ public class PCenter_UserDetailService {
      *2 success
      */
     public String uploadPortrait(MultipartFile file, String uid){
-        PCenter_UserDetail pcud = pCenter_userDetailDao.findByUid(uid);
+        MyUser myUser = myUserDao.findByUid(uid);
         if (file == null){
             System.out.println("文件为空!");
             return "0";
         }
-        if (pcud == null) {
+        if (myUser == null) {
             System.out.println("用户不存在!");
             return "1";
         }
@@ -49,8 +46,8 @@ public class PCenter_UserDetailService {
             e.printStackTrace();
         }
         String url = "/img/portrait/"+fileName;
-        pcud.setPortrait(url);
-        pCenter_userDetailDao.save(pcud);
+        myUser.setPortrait(url);
+        myUserDao.save(myUser);
         return url;
     }
 }

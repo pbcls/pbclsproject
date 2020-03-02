@@ -1,7 +1,8 @@
 package com.zucc.pbcls.controller;
 
-import com.zucc.pbcls.pojo.PCenter_UserDetail;
-import com.zucc.pbcls.service.PCenter_UserDetailService;
+import com.zucc.pbcls.pojo.MyUser;
+import com.zucc.pbcls.security.UserInfo;
+import com.zucc.pbcls.service.MyUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,13 +15,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping("/student")
-public class PCenter_UserDetailController {
+public class MyUserController {
 
     @Autowired
-    PCenter_UserDetailService pCenter_userDetailService;
+    MyUserService myUserService;
 
-    @Autowired
-    PCenter_UserDetail pCenter_userDetail;
 
     @RequestMapping("/toPCenter")
     public String PCenter_UserDetail(){
@@ -29,17 +28,16 @@ public class PCenter_UserDetailController {
 
     @RequestMapping("/showUserDetial")
     @ResponseBody
-    public PCenter_UserDetail showUserDetail(){
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String uid = userDetails.getUsername();
-        pCenter_userDetail = pCenter_userDetailService.showUserDetail(uid);
-        return pCenter_userDetail;
+    public MyUser showUserDetail(){
+        UserInfo userInfotest = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String uid = userInfotest.getUsername();
+        return myUserService.showUserDetail(uid);
     }
 
     @RequestMapping("/updateUserDetial")
     @ResponseBody
-    public int updateUserDetial(@RequestBody PCenter_UserDetail pcud){
-        pCenter_userDetailService.updateUserDetial(pcud);
+    public int updateUserDetial(@RequestBody MyUser myUser){
+        myUserService.updateUserDetial(myUser);
         return 1;
     }
 
@@ -48,6 +46,6 @@ public class PCenter_UserDetailController {
     public String uploadPortrait(@RequestParam(value = "userImg", required = false) MultipartFile file){
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String uid = userDetails.getUsername();
-        return pCenter_userDetailService.uploadPortrait(file,uid);
+        return myUserService.uploadPortrait(file,uid);
     }
 }

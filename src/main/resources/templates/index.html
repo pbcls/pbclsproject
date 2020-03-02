@@ -5,12 +5,16 @@
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
+<script>
+
+</script>
 <body>
 登录成功页面
 <div sec:authorize="isAuthenticated()">
-    <span sec:authentication="principal.username"></span>
+    <span sec:authentication="principal.myUserPortrait"></span>
     登录成功啦!
 </div>
+<div th:text="${session.SPRING_SECURITY_CONTEXT.authentication.principal.myUserPortrait}"></div>
 <div sec:authorize="!isAuthenticated()">登陆失败了!</div>
 <div sec:authorize="hasRole('ADMIN')">你有admin权限</div>
 <div sec:authorize="hasRole('USER')">你有user权限</div>
