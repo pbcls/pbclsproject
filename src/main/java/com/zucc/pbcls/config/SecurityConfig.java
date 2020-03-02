@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -19,10 +20,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/").permitAll()
-//                                .antMatchers()
+        http.authorizeRequests().antMatchers("/","/tologin").permitAll()
                                 .antMatchers("/admin/**").hasRole("ADMIN")
-                                .antMatchers("/user/**").hasRole("USER")
+                                .antMatchers("/teacher/**").hasAnyRole("ADMIN","TEACHER")
+                                .antMatchers("/student/**").hasAnyRole("ADMIN","TEACHER","STUDENT")
                                 .and()
                                 .formLogin()
                                 .loginPage("/tologin")
@@ -41,23 +42,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-//
-//    @Autowired
-//    public void configureAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-//        authenticationManagerBuilder
-//                .authenticationProvider(daoAuthenticationProvider());
-//    }
-//    @Bean
-//    public AuthenticationProvider daoAuthenticationProvider() {
-//        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-//        daoAuthenticationProvider.setUserDetailsService(myUserService);
-//        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
-//        daoAuthenticationProvider.setHideUserNotFoundExceptions(false);
-//        return daoAuthenticationProvider;
-//    }
-
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        已弃用！该方法为使用自定义LoginAuthenticationProvider类继承DaoAuthenticationProvider,改写抛出异常时的提醒
+//        auth.authenticationProvider(new LoginAuthenticationProvider(myUserService));
         auth.userDetailsService(myUserService).passwordEncoder(passwordEncoder());
 
     }

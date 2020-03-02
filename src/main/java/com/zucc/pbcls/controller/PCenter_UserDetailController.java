@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
+@RequestMapping("/student")
 public class PCenter_UserDetailController {
 
     @Autowired
@@ -23,7 +24,7 @@ public class PCenter_UserDetailController {
 
     @RequestMapping("/toPCenter")
     public String PCenter_UserDetail(){
-        return "PCenter";
+        return "student/PCenter";
     }
 
     @RequestMapping("/showUserDetial")

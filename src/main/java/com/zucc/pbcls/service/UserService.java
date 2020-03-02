@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+
 @Service
 public class UserService {
 
@@ -36,8 +39,9 @@ public class UserService {
         if(userDao.findByUid(user.getUid())!=null)
             return false;
         user.setName(user.getUid());
-        user.setRole("USER");
+        user.setRole("STUDENT");
         user.setPwd(new BCryptPasswordEncoder().encode(user.getPwd()));
+        user.setAccountNonLocked(true);
         userDao.save(user);
 
         pCenter_userDetail.setUid(user.getUid());

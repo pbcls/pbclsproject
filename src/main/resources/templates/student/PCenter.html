@@ -37,7 +37,7 @@
                     }else{
                         $("#sex").html("不详");
                     }
-                    $("#hobbit").html(data.hobby);
+                    $("#hobby").html(data.hobby);
                     $("#signature").html(data.signature);
                     $("#qq").html(data.qq);
                     $("#wechat").html(data.wechat);
@@ -49,6 +49,7 @@
                 }
             });
         }
+
     </script>
 </head>
 <body>
@@ -62,7 +63,7 @@
                 <h5 style="margin-left: 700px; margin-top: 7px; color: white;">欢迎您 <span sec:authentication="name"></span></h5>
             </div>
             <div>
-                <button type="button" class="btn btn-danger" style="margin-left: 35px; margin-top:3px; height: 34px;">注销</button>
+                <button type="button" class="btn btn-danger" style="margin-left: 35px; margin-top:3px; height: 34px;" onclick="">注销</button>
             </div>
         </div>
     </div>
@@ -80,10 +81,10 @@
                     <div class="menu-area f-right" style="margin-top: 10px;">
                         <nav>
                             <ul style="color: #96B87D;">
-                                <li style="display: inline"><a href="index.html" style="color: #0B3E5B;font-size: 21px; font-weight: bold;">主页</a></li>
+                                <li style="display: inline"><a href="../index.html" style="color: #0B3E5B;font-size: 21px; font-weight: bold;">主页</a></li>
                                 <li style="display: inline"><a href="" style="margin-left: 8px; color: #0B3E5B;font-size: 21px; font-weight: bold;">项目</a></li>
                                 <li style="display: inline"><a href="" style="margin-left: 8px; color: #0B3E5B;font-size: 21px; font-weight: bold;">案例</a></li>
-                                <li style="display: inline"><a href="PCenter.html" style="margin-left: 8px; color: #0B3E5B;font-size: 21px; font-weight: bold;">个人空间</a></li>
+                                <li style="display: inline"><a href="/toPCenter" style="margin-left: 8px; color: #0B3E5B;font-size: 21px; font-weight: bold;">个人空间</a></li>
                                 <!--<li><a href="page.html">PAGE</a></li>
                                 <li><a href="contact.html">CONTACT</a></li>-->
                             </ul>
@@ -142,7 +143,7 @@
                                 </tr>
                                 <tr>
                                     <td>兴趣爱好：</td>
-                                    <td id="hobbit"></td>
+                                    <td id="hobby"></td>
                                 </tr>
                                 <tr>
                                     <td>个人签名：</td>
