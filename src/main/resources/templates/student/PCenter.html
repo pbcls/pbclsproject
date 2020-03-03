@@ -15,22 +15,25 @@
 
     <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
     <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
-    <script>
-        window.onload=function() {
+    <script th:inline="javascript">
+
+        window.onload=function () {
+            var uid = [[${uid}]];
             //jQuery写法
             $.ajax({
                 type: "post",  //post put get 等等
                 url: "/student/showUserDetial",
-                contentType: "application/json;charset=UTF-8",
+                dataType: 'json',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
                 //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
                 // 表示对象
-                // data: JSON.stringify({  //json前面的东西要和后端实体类对应
-                //     "uid": user,
-                //     "pwd": password
-                // }),
+                data: {  //json前面的东西要和后端实体类对应
+                    "uid": uid
+                },
                 success: function (data, textStatus) {
-                    // $("#headimg").attr("src",data.portrait);
-
+                    $("#headimg").attr("src",data.portrait);
+                    $("#name").html(data.name);
                     if(data.sex == 1){
                         $("#sex").html("男");
                     }else if(data.sex == 2){
@@ -48,12 +51,10 @@
                     // alert(JSON.stringify(data.uid));
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {  //连接至ashx文件失败时，执行函数
-
+                    alert("error");
                 }
             });
         }
-
-
     </script>
 </head>
 <body>
@@ -103,12 +104,12 @@
         <div class="row" style="margin-top: 40px;">
             <div id="left" class="col-md-4" style="height: 530px; border-right: solid; border-color: #0B3E5B;text-align: center;">
                 <div class="logo">
-                    <img th:src="${session.SPRING_SECURITY_CONTEXT.authentication.principal.myUserPortrait}" style="width: 50%;border-radius: 80px;" id="headimg">
+                    <img src="" style="width: 50%;border-radius: 80px;" id="headimg">
 
                     <!--<a href="index2.html"><img src="images/logo/logo2.jpg" alt=""> </a>-->
                 </div>
                 <div style="margin-top: 20px;">
-                    用户名：<h7 style="color: #0B3E5B; font-weight: bold;" th:text="${session.SPRING_SECURITY_CONTEXT.authentication.principal.myUserName}"></h7>
+                    用户名：<h7 id="name" style="color: #0B3E5B; font-weight: bold;" text=""></h7>
                 </div>
                 <div style="margin-top: 70px;">
                     <ul class="nav nav-pills flex-column" role="tablist">

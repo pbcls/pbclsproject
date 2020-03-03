@@ -6,10 +6,8 @@ import com.zucc.pbcls.service.UserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
@@ -20,16 +18,19 @@ public class UserInfoController {
     UserInfoService userInfoService;
 
 
-    @RequestMapping("/toPCenter")
-    public String PCenter_UserDetail(){
+    @RequestMapping("/toPCenter/{uid}")
+    public String PCenter_UserDetail(@PathVariable(value = "uid") String uid, Model model){
+        model.addAttribute("uid",uid);
         return "student/PCenter";
     }
 
     @RequestMapping("/showUserDetial")
     @ResponseBody
-    public MyUser showUserDetail(){
-        UserInfo userInfotest = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String uid = userInfotest.getUsername();
+    public MyUser showUserDetail(@RequestParam(value = "uid") String uid){
+//        UserInfo userInfotest = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        String uid = userInfotest.getUsername();
+        System.out.println(uid);
+        System.out.println(userInfoService.showUserDetail(uid));
         return userInfoService.showUserDetail(uid);
     }
 

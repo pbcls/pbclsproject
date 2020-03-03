@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,12 +22,16 @@ public class PbclsApplicationTests {
 
 	@Test
 	public void contextLoads() {
-		Pageable pageable = PageRequest.of(1, 10, Sort.Direction.ASC, "uid");
-		String findstr="f";
-		for (MyUser user:admin_userService.findUsers(false,false,true,findstr,
-				true,true,"ADMIN,TEACHER,STUDENT")){
-			System.out.println(user);
-		}
+		Pageable pageable = PageRequest.of(1, 1, Sort.Direction.ASC, "registerTime");
+		String findstr="l";
+		Page<MyUser> page = admin_userService.findUsers(true,true,true,findstr,
+				true,true,"ADMIN,TEACHER,STUDENT",pageable);
+		System.out.println(page.getTotalElements());
+		System.out.println(page.getTotalPages());
+//		for (MyUser user:admin_userService.findUsers(false,false,true,findstr,
+//				true,true,"ADMIN,TEACHER,STUDENT")){
+//			System.out.println(user);
+//		}
 
 	}
 

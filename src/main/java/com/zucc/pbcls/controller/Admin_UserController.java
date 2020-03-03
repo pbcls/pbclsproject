@@ -4,6 +4,10 @@ import com.zucc.pbcls.pojo.MyUser;
 import com.zucc.pbcls.security.UserInfo;
 import com.zucc.pbcls.service.Admin_UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,24 +30,18 @@ public class Admin_UserController {
 
     @RequestMapping("/findUsers")
     @ResponseBody
-    public List<MyUser> findUsers(@RequestParam("findstr") String findstr){
-//        return admin_userService.findUsers(findstr);
-        return null;
+    public Page<MyUser> findUsers(@RequestParam(value = "needid") boolean needuid, @RequestParam(value = "needname") boolean needname,
+                                  @RequestParam(value = "needmail") boolean needmail, @RequestParam(value = "findstr") String findstr,
+                                  @RequestParam(value = "notAccountNonLocked") boolean notAccountNonLocked, @RequestParam(value = "isAccountNonLocked") boolean isAccountNonLocked,
+                                  @RequestParam(value = "role") String role, @RequestParam(value = "pagenum") int  pagenum,
+                                  @RequestParam(value = "pagesize") int pagesize){
+
+        Pageable pageable = PageRequest.of(pagenum, pagesize, Sort.Direction.ASC, "registerTime");
+        Page<MyUser> page = admin_userService.findUsers(needuid,needname,needmail,findstr,
+                notAccountNonLocked,isAccountNonLocked,role,pageable);
+        return page;
     }
 
-
-    @RequestMapping("/findAllUsers")
-    @ResponseBody
-    public List<MyUser> findAllUsers(){
-        return admin_userService.findAllUsers();
-    }
-
-
-    @RequestMapping("/findAllLockedUsers")
-    @ResponseBody
-    public List<MyUser> findAllLockedUsers(){
-        return admin_userService.findAllLockedUsers();
-    }
 
     @RequestMapping("/deleteUser")
     @ResponseBody
