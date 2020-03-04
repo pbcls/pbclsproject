@@ -36,9 +36,8 @@ public class UserInfoController {
 
     @RequestMapping("/updateUserDetial")
     @ResponseBody
-    public int updateUserDetial(@RequestBody MyUser myUser){
-        userInfoService.updateUserDetial(myUser);
-        return 1;
+    public boolean updateUserDetial(@RequestBody MyUser user){
+        return userInfoService.updateUserDetial(user);
     }
 
     @RequestMapping("/uploadPortrait")
@@ -48,4 +47,17 @@ public class UserInfoController {
         String uid = userInfo.getUsername();
         return userInfoService.uploadPortrait(file,uid);
     }
+
+    /**
+     * false 输入密码和原密码不匹配
+     * true  修改成功
+     */
+    @RequestMapping("/changePwd")
+    @ResponseBody
+    public boolean changePwd(@RequestParam(value = "pwd") String pwd,@RequestParam(value = "newpwd") String newpwd){
+        UserInfo userInfo = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String uid = userInfo.getUsername();
+        return userInfoService.changePwd(uid,pwd,newpwd);
+    }
+
 }

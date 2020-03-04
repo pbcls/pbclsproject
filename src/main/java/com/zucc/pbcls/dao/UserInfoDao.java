@@ -12,5 +12,6 @@ import java.util.List;
 
 public interface UserInfoDao extends JpaRepository<MyUser,String>,JpaSpecificationExecutor<MyUser> {
     MyUser findByUid(String uid);
+    MyUser findByUidAndAccountNonLocked(String uid,boolean AccountNonLocked);
     List<MyUser> findAll();
 }

@@ -5,8 +5,9 @@ import com.zucc.pbcls.dao.UserInfoDao;
 import com.zucc.pbcls.pojo.MsgBoard;
 import com.zucc.pbcls.pojo.MyUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -23,6 +24,8 @@ public class MsgBoardService {
     //GetMsg我得到的留言
     public List<MsgBoard> showGetMsg(String uid){
         MyUser user = userInfoDao.findByUid(uid);
+//        用Pageable来提取前n条信息,n为size
+//        Pageable pager =PageRequest.of(1,10);
         return msgBoardDao.findAllByToUser(user);
     }
 

@@ -42,7 +42,6 @@ public class Admin_UserController {
         return page;
     }
 
-
     @RequestMapping("/deleteUser")
     @ResponseBody
     public boolean deleteUser(@RequestParam("uid") String uid){
@@ -67,10 +66,10 @@ public class Admin_UserController {
         return admin_userService.changeRole(uid,Role);
     }
 
-
-
-
-
-
+    @RequestMapping("/resetPwd")
+    @ResponseBody
+    public boolean resetPwd(@RequestParam("uid") String uid){
+        return admin_userService.resetPwd(uid);
+    }
 
 }

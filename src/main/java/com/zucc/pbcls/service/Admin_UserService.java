@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -79,7 +80,7 @@ public class Admin_UserService {
     Page<MyUser> pageList = userInfoDao.findAll(new Specification<MyUser>(){
         @Override
         public Predicate toPredicate(Root<MyUser> root,CriteriaQuery<?>query,CriteriaBuilder cb) {
-            //listOrAccountNonLocked
+            //listAccountNonLocked
             List<Predicate> listOrAccountNonLocked = new ArrayList<Predicate>();
 
             if (notAccountNonLocked&&!isAccountNonLocked){
@@ -90,8 +91,10 @@ public class Admin_UserService {
                 listOrAccountNonLocked.add(cb.equal(root.get("accountNonLocked"),3));
             }
             Predicate[] arrayAccountNonLocked = new Predicate[listOrAccountNonLocked.size()];
+            //这里的cb.and说明该小段用and连接
             Predicate AccountNonLocked = cb.and(listOrAccountNonLocked.toArray(arrayAccountNonLocked));
 
+            //listOrInfo
             List<Predicate> listOrInfo = new ArrayList<Predicate>();
             if (needuid) {
                 listOrInfo.add(cb.like(root.get("uid"), "%" + findstr + "%"));
@@ -103,9 +106,10 @@ public class Admin_UserService {
                 listOrInfo.add(cb.like(root.get("email"), "%" + findstr + "%"));
             }
             Predicate[] arrayInfo = new Predicate[listOrInfo.size()];
+            //这里的cb.or说明该小段用or连接
             Predicate Info = cb.or(listOrInfo.toArray(arrayInfo));
 
-            //Or连接的查询
+            //listOrRole
             List<Predicate> listOrRole = new ArrayList<Predicate>();
             if (!"".equals(role)) {
                 String arr[] = role.split(",");
@@ -115,7 +119,10 @@ public class Admin_UserService {
                     }
                 }
                 Predicate[] arrayRole = new Predicate[listOrRole.size()];
+                //这里的cb.or说明该小段用or连接
                 Predicate Role = cb.or(listOrRole.toArray(arrayRole));
+
+                //这里的where会把里面的用字段用and连接  变成的形式为（and）and（or）and（or）
                 return query.where(AccountNonLocked,Info,Role).getRestriction();
             } else {
                 return null;
@@ -147,7 +154,7 @@ public class Admin_UserService {
     }
 
     public boolean unlockUser(String uid){
-        MyUser user = userInfoDao.findByUid(uid);
+        MyUser user = userInfoDao.findByUidAndAccountNonLocked(uid,false);
         if (user != null) {
             user.setAccountNonLocked(true);
             userInfoDao.save(user);
@@ -165,6 +172,16 @@ public class Admin_UserService {
             return true;
         }
         else
+            return false;
+    }
+
+    public boolean resetPwd(String uid){
+        MyUser user = userInfoDao.findByUid(uid);
+        if (user != null){
+            user.setPwd(new BCryptPasswordEncoder().encode(user.getUid()));
+            userInfoDao.save(user);
+            return true;
+        }else
             return false;
     }
 

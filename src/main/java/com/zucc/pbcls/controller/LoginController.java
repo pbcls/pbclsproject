@@ -41,7 +41,6 @@ public class LoginController {
 
 
 
-
     @RequestMapping("/index")
     public String test(){
 //        UserInfo userInfotest = (UserInfo) SecurityContextHolder.getContext()

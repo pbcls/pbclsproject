@@ -4,6 +4,7 @@ import com.zucc.pbcls.dao.UserInfoDao;
 import com.zucc.pbcls.pojo.MyUser;
 import com.zucc.pbcls.utils.FileTool;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,8 +18,24 @@ public class UserInfoService {
         return userInfoDao.findByUid(uid);
     }
 
-    public void updateUserDetial(MyUser pCenter_userDetail){
-        userInfoDao.save(pCenter_userDetail);
+    public boolean updateUserDetial(MyUser user){
+        if (userInfoDao.findByUid(user.getUid())!=null) {
+            userInfoDao.save(user);
+            return true;
+        }
+        else
+            return false;
+    }
+
+    public boolean changePwd(String uid ,String pwd,String newpwd){
+        BCryptPasswordEncoder bc = new BCryptPasswordEncoder();
+        MyUser user = userInfoDao.findByUid(uid);
+        if (bc.matches(pwd,user.getPwd())){
+            user.setPwd(bc.encode(newpwd));
+            userInfoDao.save(user);
+            return true;
+        }else
+            return false;
     }
 
     /**
