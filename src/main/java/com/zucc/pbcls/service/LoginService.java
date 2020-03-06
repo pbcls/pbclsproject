@@ -32,7 +32,6 @@ public class LoginService {
         myUser.setRole("STUDENT");
         myUser.setAccountNonLocked(true);
         myUser.setPortrait("/img/portrait/default.jpg");
-
         userInfoDao.save(myUser);
         return true;
     }

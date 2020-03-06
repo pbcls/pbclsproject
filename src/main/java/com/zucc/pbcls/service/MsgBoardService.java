@@ -5,8 +5,6 @@ import com.zucc.pbcls.dao.UserInfoDao;
 import com.zucc.pbcls.pojo.MsgBoard;
 import com.zucc.pbcls.pojo.MyUser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
