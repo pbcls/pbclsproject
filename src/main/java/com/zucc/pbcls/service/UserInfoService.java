@@ -55,11 +55,12 @@ public class UserInfoService {
         }
         //springboot默认在项目当前路径下 即为classpath: 直接调用以下路径即可
         String filePath =  "src/main/resources/static/img/portrait/";
+        String oldfileName = userInfoDao.findByUid(uid).getPortrait();
         String fileName = file.getOriginalFilename();
         fileName = FileTool.renameToUUID(fileName);
         System.out.println(fileName);
         try {
-            FileTool.uploadFiles(file.getBytes(),filePath, fileName);
+            FileTool.uploadFiles(file.getBytes(),filePath, fileName,oldfileName);
         } catch (Exception e) {
             e.printStackTrace();
         }

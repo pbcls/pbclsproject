@@ -6,11 +6,16 @@ import java.util.UUID;
 
 public class FileTool {
 
-    public static void uploadFiles(byte[] file, String filePath, String fileName) throws Exception {
+    public static void uploadFiles(byte[] file, String filePath, String fileName,String oldfileName) throws Exception {
         File targetFile = new File(filePath);
-        if (!targetFile.exists()) {
-            targetFile.mkdirs();
-        }
+        File oldFile = new File("src/main/resources/static"+oldfileName);
+
+        if (!oldfileName.equals("/img/portrait/default.jpg"))
+            oldFile.delete();
+
+//        if (!targetFile.exists()) {
+//            targetFile.mkdirs();
+//        }
         FileOutputStream out = new FileOutputStream(filePath + fileName);
         out.write(file);
         out.flush();

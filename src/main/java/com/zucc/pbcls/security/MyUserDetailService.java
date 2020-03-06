@@ -21,7 +21,6 @@ public class MyUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String uid) throws AuthenticationException {
 
         //从数据库根据用户名获取用户信息
-        System.out.println(uid);
         MyUser myUserByUid = userInfoDao.findByUid(uid);
         //创建一个新的UserDetails对象,使用自己定义的实现类,以便实现扩展的session
         if (myUserByUid == null)
