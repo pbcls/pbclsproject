@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.UUID;
 
-public class FileTool {
+public class PortraitFileTool {
 
     public static void uploadFiles(byte[] file, String filePath, String fileName,String oldfileName) throws Exception {
         File targetFile = new File(filePath);

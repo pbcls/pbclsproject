@@ -50,7 +50,7 @@ public class Admin_SystemController {
         sheet.setSheetName("用户信息");
         writer.write(excelUserList, sheet);
         //通知浏览器以附件的形式下载处理，设置返回头要注意文件名有中文
-        response.setHeader("Content-disposition", "attachment;filename=" + new String( fileName.getBytes("gb2312"), "ISO8859-1" ) + ".xlsx");
+        response.setHeader("Content-disposition", "attachment;filename=" + new String( fileName.getBytes("utf8"), "ISO8859-1" ) + ".xlsx");
         writer.finish();
         response.setContentType("multipart/form-data");
         response.setCharacterEncoding("utf-8");

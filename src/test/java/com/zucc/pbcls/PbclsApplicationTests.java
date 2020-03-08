@@ -1,8 +1,15 @@
 package com.zucc.pbcls;
 
 
+import com.zucc.pbcls.pojo.Case.CaseInfo;
+import com.zucc.pbcls.pojo.Case.Case_Role;
+import com.zucc.pbcls.pojo.Case.Case_Task;
+import com.zucc.pbcls.pojo.Case.Case_Task_pk;
 import com.zucc.pbcls.pojo.MyUser;
 import com.zucc.pbcls.service.Admin_UserService;
+import com.zucc.pbcls.service.Case.CaseService;
+import com.zucc.pbcls.service.Case.Case_RoleService;
+import com.zucc.pbcls.service.Case.Case_TaskService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +26,15 @@ public class PbclsApplicationTests {
 
 	@Autowired
 	Admin_UserService admin_userService;
+	@Autowired
+	Case_TaskService case_taskService;
+	@Autowired
+	Case_RoleService case_roleService;
+	@Autowired
+	CaseService caseService;
 
 	@Test
-	public void contextLoads() {
+	public void testfinduser() {
 		Pageable pageable = PageRequest.of(1, 1, Sort.Direction.ASC, "registerTime");
 		String findstr="l";
 		Page<MyUser> page = admin_userService.findUsers(true,true,true,findstr,
@@ -35,4 +48,35 @@ public class PbclsApplicationTests {
 
 	}
 
+	@Test
+	public void testfindByCaseTaskpk_Caseid(){
+		for (Case_Task case_task:case_taskService.findByCaseTaskpk_Caseid(1)){
+			System.out.println(case_task);
+		}
+	}
+
+	@Test
+	public void testfindAllByCaseTaskpk(){
+		System.out.println(case_taskService.findAllByCaseTaskpk(new Case_Task_pk(1,2)));
+	}
+
+	@Test
+	public void testfindAllCases(){
+		for (CaseInfo c:caseService.findAllCases()){
+			System.out.println(c);
+		}
+	}
+
+	@Test
+	public void testfindAllByCaseid(){
+			System.out.println(caseService.findAllByCaseid(2));
+	}
+
+
+	@Test
+	public void testfindAllRoleByCaseid(){
+		for (Case_Role cr:case_roleService.findAllRoleByCaseid(2)){
+			System.out.println(cr);
+		}
+	}
 }

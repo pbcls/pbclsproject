@@ -2,7 +2,7 @@ package com.zucc.pbcls.service;
 
 import com.zucc.pbcls.dao.UserInfoDao;
 import com.zucc.pbcls.pojo.MyUser;
-import com.zucc.pbcls.utils.FileTool;
+import com.zucc.pbcls.utils.PortraitFileTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -57,10 +57,10 @@ public class UserInfoService {
         String filePath =  "src/main/resources/static/img/portrait/";
         String oldfileName = userInfoDao.findByUid(uid).getPortrait();
         String fileName = file.getOriginalFilename();
-        fileName = FileTool.renameToUUID(fileName);
+        fileName = PortraitFileTool.renameToUUID(fileName);
         System.out.println(fileName);
         try {
-            FileTool.uploadFiles(file.getBytes(),filePath, fileName,oldfileName);
+            PortraitFileTool.uploadFiles(file.getBytes(),filePath, fileName,oldfileName);
         } catch (Exception e) {
             e.printStackTrace();
         }
