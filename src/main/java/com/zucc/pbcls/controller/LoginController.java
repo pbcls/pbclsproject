@@ -2,10 +2,8 @@ package com.zucc.pbcls.controller;
 
 
 import com.zucc.pbcls.pojo.MyUser;
-import com.zucc.pbcls.security.UserInfo;
 import com.zucc.pbcls.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,7 +59,7 @@ public class LoginController {
 
     @RequestMapping("/admin")
     public String admin()  {
-        return "admin/admin";
+        return "admin_user";
     }
     @RequestMapping("/user")
     public String user()  {
