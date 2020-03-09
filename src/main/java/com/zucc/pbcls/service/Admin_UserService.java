@@ -81,18 +81,18 @@ public class Admin_UserService {
         @Override
         public Predicate toPredicate(Root<MyUser> root,CriteriaQuery<?>query,CriteriaBuilder cb) {
             //listAccountNonLocked
-            List<Predicate> listOrAccountNonLocked = new ArrayList<Predicate>();
+            List<Predicate> listAndAccountNonLocked = new ArrayList<Predicate>();
 
             if (notAccountNonLocked&&!isAccountNonLocked){
-                listOrAccountNonLocked.add(cb.equal(root.get("accountNonLocked"),true));
+                listAndAccountNonLocked.add(cb.equal(root.get("accountNonLocked"),true));
             }else if (!notAccountNonLocked&&isAccountNonLocked){
-                listOrAccountNonLocked.add(cb.equal(root.get("accountNonLocked"),false));
+                listAndAccountNonLocked.add(cb.equal(root.get("accountNonLocked"),false));
             }else if (!notAccountNonLocked&&!isAccountNonLocked){
-                listOrAccountNonLocked.add(cb.equal(root.get("accountNonLocked"),3));
+                listAndAccountNonLocked.add(cb.equal(root.get("accountNonLocked"),3));
             }
-            Predicate[] arrayAccountNonLocked = new Predicate[listOrAccountNonLocked.size()];
+            Predicate[] arrayAccountNonLocked = new Predicate[listAndAccountNonLocked.size()];
             //这里的cb.and说明该小段用and连接
-            Predicate AccountNonLocked = cb.and(listOrAccountNonLocked.toArray(arrayAccountNonLocked));
+            Predicate AccountNonLocked = cb.and(listAndAccountNonLocked.toArray(arrayAccountNonLocked));
 
             //listOrInfo
             List<Predicate> listOrInfo = new ArrayList<Predicate>();

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 @Controller
-@RequestMapping("/admin")
+//@RequestMapping("/admin")
 public class Admin_UserController {
 
     @Autowired
@@ -35,8 +35,8 @@ public class Admin_UserController {
                                   @RequestParam(value = "notAccountNonLocked") boolean notAccountNonLocked, @RequestParam(value = "isAccountNonLocked") boolean isAccountNonLocked,
                                   @RequestParam(value = "role") String role, @RequestParam(value = "pagenum") int  pagenum,
                                   @RequestParam(value = "pagesize") int pagesize){
-
-        Pageable pageable = PageRequest.of(pagenum, pagesize, Sort.Direction.ASC, "registerTime");
+        //注意,后台的pagenum是从0开始的,前端显示是从1开始的
+        Pageable pageable = PageRequest.of(pagenum-1, pagesize, Sort.Direction.ASC, "registerTime");
         Page<MyUser> page = admin_userService.findUsers(needuid,needname,needmail,findstr,
                 notAccountNonLocked,isAccountNonLocked,role,pageable);
         return page;
