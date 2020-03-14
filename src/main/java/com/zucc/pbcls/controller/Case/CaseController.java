@@ -21,6 +21,15 @@ public class CaseController {
     @Autowired
     Case_RoleService case_roleService;
 
+    @RequestMapping("/todocumentation")
+    public String todoc(){
+        return "student/documentation";
+    }
+
+    @RequestMapping("/todocumentationtest")
+    public String todoctest(){
+        return "student/documentation_test";
+    }
 
     @RequestMapping("/showcaselist")
     @ResponseBody

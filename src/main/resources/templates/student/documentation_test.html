@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>详细信息</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.1.0/css/bootstrap.min.css">
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- popper.min.js 用于弹窗、提示、下拉菜单 -->
+    <script src="https://cdn.bootcss.com/popper.js/1.12.5/umd/popper.min.js"></script>
+
+    <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
+    <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <script th:inline="javascript">
+        window.onload=function(){
+            var cid=GetRequest();
+            // $(document).ready(function(){
+            //     cid=GetRequest();
+            //     // console.log(cid);
+            // });
+            $.ajax({
+                type: "post",
+                url: "/showcaseinfo",
+                dataType: 'text',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                data:{
+                    "caseid":Number(cid)
+                },
+                success: function (data) {
+                    var dataobj = JSON.parse(data);
+                    // alert(dataobj);
+                    // alert(dataobj.case);
+                    console.log(dataobj);
+                    console.log(dataobj.case);
+                    console.log(dataobj.case.caseid);
+                    console.log(dataobj.case.casename);
+                    console.log(dataobj.case.description);
+                    $("#caseid").html(dataobj.case.caseid);
+                    $("#casename").html(dataobj.case.casename);
+                    $("#description").html(dataobj.case.description);
+
+                },
+                error:function(result) {
+                    alert(result);
+                }
+            });
+            function GetRequest() {
+
+                var url = location.search; //获取url中"?"符后的字串
+                // var theRequest = new Object();
+                if (url.indexOf("?") != -1) {
+                    var str = url.substr(1); //substr()方法返回从参数值开始到结束的字符串；
+                    // console.log(str);
+                    // var strs = str.split("&");
+                    // for (var i = 0; i < strs.length; i++) {
+                    //     theRequest[strs[i].split("=")[0]] = (strs[i].split("=")[1]);
+                    // }
+                    // console.log(theRequest.currentSrc); //此时的theRequest就是我们需要的参数；
+                    // $('#videoId').attr('src', theRequest.currentSrc);
+                    return str;
+                }
+                return null;
+            }
+        }
+
+    </script>
+</head>
+<body>
+<div class="tab-content">
+    <div id="menu1" class="container tab-pane active"><br>
+        <div>
+            <h4 style="text-align: center;color: #0B3E5B; font-weight: bold;">基本信息</h4>
+            <table border="1" frame="void" rules="none" cellpadding="10px" style="font-weight: bold;">
+                <tr>
+                    <th>性别：</th>
+                    <th id="sex"></th>
+                </tr>
+                <tr>
+                    <td>注册时间：</td>
+                    <td id="time"></td>
+                </tr>
+                <tr>
+                    <td>登陆次数：</td>
+                    <td id="loginnum"></td>
+                </tr>
+                <tr>
+                    <td>兴趣爱好：</td>
+                    <td id="hobby"></td>
+                </tr>
+                <tr>
+                    <td>个人签名：</td>
+                    <td id="signature"></td>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <h4 style="text-align: center;color: #0B3E5B; font-weight: bold;">联系方式</h4>
+            <table border="1" frame="void" rules="none" cellpadding="10px" style="font-weight: bold;">
+                <tr>
+                    <th>QQ：</th>
+                    <th id="qq"></th>
+                </tr>
+                <tr>
+                    <td>WeChat：</td>
+                    <td id="wechat"></td>
+                </tr>
+                <tr>
+                    <td>E-mail：</td>
+                    <td th:id="email"></td>
+                </tr>
+                <tr>
+                    <td>Home-page：</td>
+                    <td id="homepage"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div id="menu2" class="container tab-pane fade"><br>
+        <h3>个人动态</h3>
+        <p>zhegeyeshi</p>
+    </div>
+</div>
+</body>
+</html>

@@ -32,7 +32,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                                 .failureUrl("/tologin?error=true")
                                 .defaultSuccessUrl("/index")
                                 .and()
-                                .logout().logoutSuccessUrl("/");
+                                .logout().logoutSuccessUrl("/")
+                                .and().headers().frameOptions().sameOrigin();
 
         http.csrf().disable();
     }

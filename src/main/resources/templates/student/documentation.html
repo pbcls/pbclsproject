@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8">
+    <title>案例首页</title>
+    <!-- 新 Bootstrap4 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.1.0/css/bootstrap.min.css">
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- popper.min.js 用于弹窗、提示、下拉菜单 -->
+    <script src="https://cdn.bootcss.com/popper.js/1.12.5/umd/popper.min.js"></script>
+
+    <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
+    <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <script th:inline="javascript">
+        window.onload=function() {
+                $.ajax({
+                    type: "post",
+                    url: "/showcaselist",
+                    dataType: 'json',
+                    contentType: "application/x-www-form-urlencoded",
+                    traditional: true,
+                    success: function (result) {
+                        console.log(result);
+                        // console.log(result[0].casename);
+                        var showMenu = $("#menu");  //获取ul（父节点）的位置
+                        showSideMenu(result, showMenu)
+                    }
+                });
+        }
+        function showSideMenu(menuList, parent) {
+            for (var menu in menuList) {
+                //如果有子节点，则遍历该子节点
+                var name = menuList[menu].casename;
+                // if (typeof (menuList[menu].children) != 'undefined') {
+                //     //创建一个子节点li
+                //     // console.log(menuList[menu].entity.alias);
+                //     var li = $('<li class="dropdown"></li>');
+                //     //将li的文本设置好，并马上添加一个空白的ul子节点，并且将这个li添加到父亲节点中
+                //     $(li).append("<a href='documentation_test.html'  class='dropdown-toggle' data-toggle='dropdown'> <span class='menu-text'>" + name + "</span><b class='arrow icon-angle-down'></b></a>").appendTo(parent);
+                //     $(li).append("<ul class='dropdown-menu'></ul>");
+                //     //将空白的ul作为下一个递归遍历的父亲节点传入
+                //     showSideMenu(menuList[menu].children, $(li).children().last());
+                // }
+                // //如果该节点没有子节点，则直接将该节点li以及文本创建好直接添加到父亲节点中
+                // else {
+                //     console.log(menuList[menu].entity.url);
+                //     var url = menuList[menu].entity.url;
+                //     $("<li></li>").append("<a href='documentation_test.html' οnclick=getUrl('" + url + "','" + name + "')> <span class='menu-text'>" + name + "</span></a>").appendTo(parent);
+                // }
+                var cid = menuList[menu].caseid;
+                $("<li></li>").append("<a href='#' onclick='getUrl(" + cid + ")' class='turn'> <span class='menu-text'>" + name + "</span></a>").appendTo(parent);
+                // console.log(menuList[2]);
+                // console.log(menuList[3]);
+                // console.log(menu+1);
+                if(menuList[menu+1] == 'undefined') break;
+            }
+        }
+        function getUrl(cid) {
+            // console.log(parseParam(cid));
+            var main = document.getElementById('main');
+            main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='todocumentationtest?"+cid+"'></iframe>";
+        }
+        var parseParam=function(paramObj, key){
+            var paramStr="";
+            if(paramObj instanceof String||paramObj instanceof Number||paramObj instanceof Boolean){
+                paramStr+="&"+key+"="+encodeURIComponent(paramObj);
+            }else{
+                $.each(paramObj,function(i){
+                    var k=key==null?i:key+(paramObj instanceof Array?"["+i+"]":"."+i);
+                    paramStr+='&'+parseParam(this, k);
+                });
+            }
+            return paramStr.substr(1);
+        };
+        var urlEncode = function (paramObj, key, encode) {
+            if(paramObj==null) return '';
+            var paramStr = '';
+            var t = typeof (paramObj);
+            if (t == 'string' || t == 'number' || t == 'boolean') {
+                paramStr += '&' + key + '=' + ((encode==null||encode) ? encodeURIComponent(paramObj) : paramObj);
+            } else {
+                for (var i in paramObj) {
+                    var k = key == null ? i : key + (paramObj instanceof Array ? '[' + i + ']' : '.' + i);
+                    paramStr += urlEncode(paramObj[i], k, encode);
+                }
+            }
+            return paramStr;
+        };
+    </script>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div style="background-color: #96B87D; height: 40px; width: 100%;display: flex;">
+            <div>
+                <h5 style="margin-left: 15px;margin-top: 7px; color: white; font-family: 'arial black'; font-weight: bold;">案 例 学 习 系 统</h5>
+            </div>
+            <div sec:authorize="isAuthenticated()">
+                <h5 style="margin-left: 700px; margin-top: 7px; color: white;">欢迎您 <span sec:authentication="principal.myUserName"></span></h5>
+            </div>
+            <div>
+                <a type="button" class="btn" style="margin-left: 35px; margin-top:3px; height: 34px; background-color: darkgray;color: dimgray" href="/logout" >注销</a>
+            </div>
+        </div>
+    </div>
+    <header class="header-area">
+        <div class="header-bottom stick-h2">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 col-sm-12 col-xs-12">
+                        <div class="logo" style="margin-left: 30px;">
+                            <img src="/img/logo.jpg" style="width: 60px;">
+                            <!--<a href="index2.html"><img src="images/logo/logo2.jpg" alt=""> </a>-->
+                        </div>
+                    </div>
+                    <div class="col-md-4 hidden-sm hidden-xs">
+                        <div class="menu-area f-right" style="margin-top: 10px;">
+                            <nav>
+                                <ul style="color: #96B87D;">
+                                    <li style="display: inline"><a href="../index.html" style="color: #0B3E5B;font-size: 21px; font-weight: bold;">主页</a></li>
+                                    <li style="display: inline"><a href="" style="margin-left: 8px; color: #0B3E5B;font-size: 21px; font-weight: bold;">项目</a></li>
+                                    <li style="display: inline"><a href="" style="margin-left: 8px; color: #0B3E5B;font-size: 21px; font-weight: bold;">案例</a></li>
+                                    <li style="display: inline"><a href="/toPCenter" style="margin-left: 8px; color: #0B3E5B;font-size: 21px; font-weight: bold;">个人空间</a></li>
+                                    <!--<li><a href="page.html">PAGE</a></li>
+                                    <li><a href="contact.html">CONTACT</a></li>-->
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="container" style="border-top: double; border-width: 5px; border-color: #96B87D; width: 100%;">
+        <div class="row" style="margin-top: 40px;">
+            <div id="left" class="col-md-4" style="height: 530px; border-right: solid; border-color: #0B3E5B;text-align: center;">
+                <nav class="navbar navbar-default" role="navigation">
+                    <div class="sidebar" id="sidebar">
+                        <ul id='menu' class='nav navbar-nav'></ul>
+                    </div>
+                </nav>
+            </div>
+            <div id="middle" class="col-md-8">
+                <div class="main-content">
+                    <div class="page-content " id="main" style="height: 1000px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
