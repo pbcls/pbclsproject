@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface Case_TaskToRoleDao extends JpaRepository<Case_TaskToRole,Integer> {
     Case_TaskToRole findAllByCaseidAndTaskid(int caseid,int taskid);
+    List<Case_TaskToRole> findAllByCaseid(int caseid);
 }

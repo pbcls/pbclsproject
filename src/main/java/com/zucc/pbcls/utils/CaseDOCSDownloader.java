@@ -12,7 +12,7 @@ public class CaseDOCSDownloader {
 
 
     public List<String> getCaseFileList(CaseInfo caseInfo) {
-        String path = "src/main/resources/static" + caseInfo.getFoldername() + "/DOCS";
+        String path = "src/main/resources/static/case" + caseInfo.getFoldername() + "/DOCS";
         List<String> files = new ArrayList<String>();
         File file = new File(path);
         File[] tempList = file.listFiles();
@@ -32,7 +32,7 @@ public class CaseDOCSDownloader {
 
 
     public String DownloadCaseFile(String filename,CaseInfo caseInfo,HttpServletResponse response) {
-        String downloadFilePath = "src/main/resources/static"+caseInfo.getFoldername()+"/DOCS/"+filename;//被下载的文件在服务器中的路径,
+        String downloadFilePath = "src/main/resources/static/case"+caseInfo.getFoldername()+"/DOCS/"+filename;//被下载的文件在服务器中的路径,
         String fileName = filename;//被下载文件的名称
 
         File file = new File(downloadFilePath);

@@ -10,6 +10,7 @@ import com.zucc.pbcls.service.Admin_UserService;
 import com.zucc.pbcls.service.Case.CaseService;
 import com.zucc.pbcls.service.Case.Case_RoleService;
 import com.zucc.pbcls.service.Case.Case_TaskService;
+import com.zucc.pbcls.service.Project.ProjectService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,8 @@ public class PbclsApplicationTests {
 	Case_RoleService case_roleService;
 	@Autowired
 	CaseService caseService;
+	@Autowired
+	ProjectService projectService;
 
 	@Test
 	public void testfinduser() {
@@ -78,5 +81,10 @@ public class PbclsApplicationTests {
 		for (Case_Role cr:case_roleService.findAllRoleByCaseid(2)){
 			System.out.println(cr);
 		}
+	}
+
+	@Test
+	public void createProjectByCase(){
+		projectService.createProjectByCase(1,"testproject1");
 	}
 }

@@ -9,4 +9,5 @@ import java.util.List;
 public interface Case_TaskToTaskDao extends JpaRepository<Case_TaskToTask,Integer> {
     List<Case_TaskToTask> findAllByCaseidAndPredecessorid(int caseid,int predecessorid);
     List<Case_TaskToTask> findAllByCaseidAndSuccessorid(int caseid,int successorid);
+    List<Case_TaskToTask> findAllByCaseid(int caseid);
 }
