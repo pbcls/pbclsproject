@@ -1,22 +1,31 @@
 package com.zucc.pbcls.service.Project;
 
 import com.zucc.pbcls.dao.Case.*;
+import com.zucc.pbcls.dao.LogDao;
 import com.zucc.pbcls.dao.Project.*;
+import com.zucc.pbcls.dao.UserInfoDao;
 import com.zucc.pbcls.pojo.Case.*;
+import com.zucc.pbcls.pojo.Log;
 import com.zucc.pbcls.pojo.Project.*;
 import com.zucc.pbcls.utils.ProjectUploader;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
 public class ProjectService {
 
     @Autowired
-    Case_RoleDao case_roleDao;
+    UserInfoDao userInfoDao;
     @Autowired
     CaseDao caseDao;
+    @Autowired
+    Case_RoleDao case_roleDao;
     @Autowired
     Case_TaskDao case_taskDao;
     @Autowired
@@ -35,9 +44,13 @@ public class ProjectService {
     Project_TaskToTaskDao project_taskToTaskDao;
     @Autowired
     Project_TaskToRoleDao project_taskToRoleDao;
+    @Autowired
+    Project_RoleToUserDao project_roleToUserDao;
+    @Autowired
+    LogDao logDao;
 
 
-    public void createProjectByCase(int caseid,String projectname){
+    public void createProjectByCase(String uid,int caseid,String projectname){
         CaseInfo caseInfo = caseDao.findAllByCaseid(caseid);
         Project project = new Project();
 
@@ -135,24 +148,147 @@ public class ProjectService {
                 e.printStackTrace();
             }
         }
+
+        //将创建者设置为该项目PM
+        Project_RoleToUser project_roleToUser = new Project_RoleToUser();
+        project_roleToUser.setProjectid(project.getProjectid());
+        project_roleToUser.setRoleid(project_roleDao.findAllByProjectidAndRolename(project.getProjectid(),"项目经理").getRoleid());
+        project_roleToUser.setUid(uid);
+        project_roleToUserDao.save(project_roleToUser);
     }
-
-
-    public void startProject(int projectid){
-        Project project = projectDao.findAllByProjectid(projectid);
-
-
-    }
-
 
 
     public List<Project> findAllProjects(){
-        return projectDao.findAll();
+        List<Project> projects = projectDao.findAll();
+        for (Project project:projects){
+            project.setCasename(caseDao.findAllByCaseid(project.getCaseid()).getCasename());
+        }
+        return projects;
     }
 
     public Project findByProjectid(int projectid){
         return projectDao.findAllByProjectid(projectid);
     }
 
+    public JSONArray findAllByUid(String uid){
+        List<Project_RoleToUser> project_roleToUsers =  project_roleToUserDao.findAllByUid(uid);
+        JSONArray json_projects = new JSONArray();
+        for (int i = 0;i <project_roleToUsers.size();i++ ){
+            project_roleToUsers.get(i).setRolename(project_roleDao.findAllByRoleid(project_roleToUsers.get(i).getRoleid()).getRolename());
+            JSONObject json_project_roleToUser = new JSONObject(project_roleToUsers.get(i));
+            JSONObject json_project = new JSONObject(projectDao.findAllByProjectid(project_roleToUsers.get(i).getProjectid()));
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("project",json_project);
+            jsonObject.put("role",json_project_roleToUser);
+            json_projects.put(i,jsonObject);
+        }
+        return json_projects;
+    }
 
+    public boolean isEnteredProject(String uid,int projectid){
+        Project_RoleToUser project_roleToUser = project_roleToUserDao.findAllByUidAndProjectid(uid, projectid);
+        if (project_roleToUser != null)
+            return true;
+        else
+            return false;
+    }
+
+    /**
+     * false maxplayer满了
+     */
+    public List<Log> showProjectLog(String uid){
+        List<Log> logs = logDao.findAllByTouid(uid);
+        for (Log log:logs){
+            if (log.getCaseid()!=0)
+                log.setCasename(caseDao.findAllByCaseid(log.getCaseid()).getCasename());
+            if (log.getProjectid()!=0)
+                log.setProjectname(projectDao.findAllByProjectid(log.getProjectid()).getProjectname());
+            if (log.getTaskid()!=0)
+                log.setTaskname(project_taskDao.findByProjectTaskpk(new Project_Task_pk(log.getProjectid(),log.getTaskid())).getTaskname());
+            if (log.getRoleid()!=0)
+                log.setRolename(project_roleDao.findAllByRoleid(log.getRoleid()).getRolename());
+            if (!("").equals(log.getUid())&&log.getUid()!=null)
+                log.setUsername(userInfoDao.findByUid(log.getUid()).getName());
+            if (!("").equals(log.getTouid())&&log.getTouid()!=null)
+                log.setTousername(userInfoDao.findByUid(log.getTouid()).getName());
+        }
+        return logs;
+    }
+
+    public boolean applyProject(String uid,int projectid,int roleid){
+        int player = project_roleToUserDao.countByProjectid(projectid);
+        if (player < projectDao.findAllByProjectid(projectid).getMaxplayer()){
+            Log log = new Log();
+            log.setProjectid(projectid);
+            log.setRoleid(roleid);
+            log.setUid(uid);
+            log.setTouid(project_roleToUserDao.findPM(projectid));
+            log.setType(1);
+            log.setNeedpass(true);
+            log.setPassstatus(0);
+            logDao.save(log);
+            return true;
+        }else
+            return false;//超过最大人数
+    }
+
+    /**
+     * false maxplayer满了
+     */
+    public boolean judgeApply(int logid,int projectid,int roleid, String memberid,boolean pass){
+        int player = project_roleToUserDao.countByProjectid(projectid);
+        Log oldlog = logDao.findByLogid(logid);
+        Log log = new Log();
+        log.setType(2);
+        log.setNeedpass(false);
+        log.setTouid(memberid);
+        log.setProjectid(projectid);
+        log.setRoleid(roleid);
+        if (pass){
+            if (player >= projectDao.findAllByProjectid(projectid).getMaxplayer())
+                return false;
+            Project_RoleToUser project_roleToUser = new Project_RoleToUser();
+            project_roleToUser.setProjectid(projectid);
+            project_roleToUser.setRoleid(roleid);
+            project_roleToUser.setUid(memberid);
+            project_roleToUserDao.save(project_roleToUser);
+            log.setPassstatus(1);
+            oldlog.setPassstatus(1);
+        }else {
+            log.setPassstatus(2);
+            oldlog.setPassstatus(2);
+        }
+        logDao.save(oldlog);
+        logDao.save(log);
+        return true;
+    }
+
+    /**
+     * false 至少有一个角色没有被使用
+     */
+    public boolean startProject(int projectid){
+        List<Project_Role> project_roles = project_roleDao.isAllRoleUsed(projectid);
+        if (project_roles.isEmpty())
+            return false;
+        Project project = projectDao.findAllByProjectid(projectid);
+        CaseInfo caseInfo = caseDao.findAllByCaseid(project.getCaseid());
+        caseInfo.setStartedinstances(caseInfo.getStartedinstances()+1);
+        caseDao.save(caseInfo);
+        project.setStatus(2);
+        project.setStarttime(new Date());
+        projectDao.save(project);
+
+        List<Project_Task> project_tasks = project_taskDao.findByProjectTaskpk_Projectid(projectid);
+        /**
+         * 在这里对任务进行初始化,设置最早开始时间最晚开始时间最早结束时间最晚结束时间
+         */
+
+
+
+
+        /**
+         * 在这里开启第一批任务
+         */
+        return true;
+    }
 }

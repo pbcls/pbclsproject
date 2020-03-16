@@ -32,6 +32,6 @@ public class Project_RoleToUser {
     @Transient
     private String rolename;
 
-    private int uid;
+    private String uid;
 
 }

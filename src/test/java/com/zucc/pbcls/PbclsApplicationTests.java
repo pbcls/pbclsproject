@@ -1,11 +1,16 @@
 package com.zucc.pbcls;
 
 
+import com.zucc.pbcls.dao.Project.Project_RoleDao;
+import com.zucc.pbcls.dao.Project.Project_RoleToUserDao;
 import com.zucc.pbcls.pojo.Case.CaseInfo;
 import com.zucc.pbcls.pojo.Case.Case_Role;
 import com.zucc.pbcls.pojo.Case.Case_Task;
 import com.zucc.pbcls.pojo.Case.Case_Task_pk;
 import com.zucc.pbcls.pojo.MyUser;
+import com.zucc.pbcls.pojo.Project.Project;
+import com.zucc.pbcls.pojo.Project.Project_Role;
+import com.zucc.pbcls.pojo.Project.Project_RoleToUser;
 import com.zucc.pbcls.service.Admin_UserService;
 import com.zucc.pbcls.service.Case.CaseService;
 import com.zucc.pbcls.service.Case.Case_RoleService;
@@ -35,6 +40,11 @@ public class PbclsApplicationTests {
 	CaseService caseService;
 	@Autowired
 	ProjectService projectService;
+	@Autowired
+	Project_RoleToUserDao project_roleToUserDao;
+	@Autowired
+	Project_RoleDao project_roleDao;
+
 
 	@Test
 	public void testfinduser() {
@@ -85,6 +95,35 @@ public class PbclsApplicationTests {
 
 	@Test
 	public void createProjectByCase(){
-		projectService.createProjectByCase(1,"testproject1");
+		projectService.createProjectByCase("yzl",1,"testproject1");
 	}
+
+	@Test
+	public void findAllProjects(){
+		for (Project project:projectService.findAllProjects()){
+			System.out.println(project);
+		}
+	}
+
+	@Test
+	public void findAllByUid(){
+		System.out.println(projectService.findAllByUid("yzl"));
+	}
+
+
+	@Test
+	public void findPM(){
+		System.out.println(project_roleToUserDao.findPM(1));
+	}
+
+	@Test
+	public void isAllRoleUsed(){
+		System.out.println(project_roleDao.isAllRoleUsed(1));
+	}
+
+	@Test
+	public void startProject(){
+		System.out.println(projectService.startProject(1));
+	}
+
 }
