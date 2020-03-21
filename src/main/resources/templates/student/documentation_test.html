@@ -17,7 +17,14 @@
     <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
     <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
     <script th:inline="javascript">
+
         window.onload=function(){
+            $("#btn_add").click(function () {
+                // alert("111111");
+                $("#myModalLabel").text("创建项目");
+                $('#myModal').modal();
+            });
+
             var cid=GetRequest();
             // $(document).ready(function(){
             //     cid=GetRequest();
@@ -36,15 +43,13 @@
                     var dataobj = JSON.parse(data);
                     // alert(dataobj);
                     // alert(dataobj.case);
-                    console.log(dataobj);
-                    console.log(dataobj.case);
-                    console.log(dataobj.case.caseid);
-                    console.log(dataobj.case.casename);
-                    console.log(dataobj.case.description);
-                    $("#caseid").html(dataobj.case.caseid);
-                    $("#casename").html(dataobj.case.casename);
+                    $("#pname").html(dataobj.case.casename);
                     $("#description").html(dataobj.case.description);
-
+                    $("#finishedinstances").html(dataobj.case.finishedinstances);
+                    $("#instances").html(dataobj.case.instances);
+                    $("#maxplayer").html(dataobj.case.maxplayer);
+                    $("#status").html(dataobj.case.status);
+                    $("#time").html(dataobj.case.uploadtime);
                 },
                 error:function(result) {
                     alert(result);
@@ -69,6 +74,46 @@
             }
         }
 
+        function create(){
+            var cid=GetRequest();
+            function GetRequest() {
+
+                var url = location.search; //获取url中"?"符后的字串
+                // var theRequest = new Object();
+                if (url.indexOf("?") != -1) {
+                    var str = url.substr(1); //substr()方法返回从参数值开始到结束的字符串；
+                    // console.log(str);
+                    // var strs = str.split("&");
+                    // for (var i = 0; i < strs.length; i++) {
+                    //     theRequest[strs[i].split("=")[0]] = (strs[i].split("=")[1]);
+                    // }
+                    // console.log(theRequest.currentSrc); //此时的theRequest就是我们需要的参数；
+                    // $('#videoId').attr('src', theRequest.currentSrc);
+                    return str;
+                }
+                return null;
+            }
+            var name = $('#name').val();
+            // var str = document.getElementById('name').value;
+            $.ajax({
+                type: "post",  //post put get 等等
+                url: "/createprojectbycase",
+                dataType: 'text',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                data:{
+                    "caseid":Number(cid),
+                    "projectname":name
+                },
+                success: function (data, textStatus) {
+                    alert("创建成功！");
+                    // window.location.href="tologin";
+                },
+                error: function () {
+                    alert("sile");
+                }
+            });
+        }
     </script>
 </head>
 <body>
@@ -78,47 +123,59 @@
             <h4 style="text-align: center;color: #0B3E5B; font-weight: bold;">基本信息</h4>
             <table border="1" frame="void" rules="none" cellpadding="10px" style="font-weight: bold;">
                 <tr>
-                    <th>性别：</th>
-                    <th id="sex"></th>
+                    <th>案例名称：</th>
+                    <th id="pname"></th>
                 </tr>
                 <tr>
-                    <td>注册时间：</td>
+                    <td>案例描述：</td>
+                    <td id="description"></td>
+                </tr>
+                <tr>
+                    <td>已完成项目数：</td>
+                    <td id="finishedinstances"></td>
+                </tr>
+                <tr>
+                    <td>正在进行的项目数量：</td>
+                    <td id="instances"></td>
+                </tr>
+                <tr>
+                    <td>最大人数限制：</td>
+                    <td id="maxplayer"></td>
+                </tr>
+                <tr>
+                    <th>状态：</th>
+                    <th id="status"></th>
+                </tr>
+                <tr>
+                    <td>创立时间：</td>
                     <td id="time"></td>
                 </tr>
-                <tr>
-                    <td>登陆次数：</td>
-                    <td id="loginnum"></td>
-                </tr>
-                <tr>
-                    <td>兴趣爱好：</td>
-                    <td id="hobby"></td>
-                </tr>
-                <tr>
-                    <td>个人签名：</td>
-                    <td id="signature"></td>
-                </tr>
             </table>
-        </div>
-        <div>
-            <h4 style="text-align: center;color: #0B3E5B; font-weight: bold;">联系方式</h4>
-            <table border="1" frame="void" rules="none" cellpadding="10px" style="font-weight: bold;">
-                <tr>
-                    <th>QQ：</th>
-                    <th id="qq"></th>
-                </tr>
-                <tr>
-                    <td>WeChat：</td>
-                    <td id="wechat"></td>
-                </tr>
-                <tr>
-                    <td>E-mail：</td>
-                    <td th:id="email"></td>
-                </tr>
-                <tr>
-                    <td>Home-page：</td>
-                    <td id="homepage"></td>
-                </tr>
-            </table>
+            <button type="button" class="btn btn-primary" id="btn_add">创建项目</button>
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">创建项目</h4>
+<!--                            <button type="button" class="btn btn-primary">创建项目</button>-->
+                        </div>
+                        <div class="modal-body">
+                            <form style="text-align: center;">
+                                <div class="form-group" style="padding-top: 45px;">
+                                    <label for="name" stype="display:inline;">项目名称：</label>
+                                    <input type="text" class="form-control" id="name" style="display:inline;width:200px;" autocomplete="off"/>
+                                </div>
+                            </form>
+                            </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-outline-primary" data-dismiss="modal" onclick="create()"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>确定创建</button>
+                            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>取消</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div id="menu2" class="container tab-pane fade"><br>

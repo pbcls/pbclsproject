@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <meta charset="UTF-8">
-    <title>案例首页</title>
+    <title>项目首页</title>
     <!-- 新 Bootstrap4 核心 CSS 文件 -->
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.1.0/css/bootstrap.min.css">
 
@@ -17,24 +17,24 @@
     <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
     <script th:inline="javascript">
         window.onload=function() {
-                $.ajax({
-                    type: "post",
-                    url: "/showcaselist",
-                    dataType: 'json',
-                    contentType: "application/x-www-form-urlencoded",
-                    traditional: true,
-                    success: function (result) {
-                        console.log(result);
-                        // console.log(result[0].casename);
-                        var showMenu = $("#menu");  //获取ul（父节点）的位置
-                        showSideMenu(result, showMenu)
-                    }
-                });
+            $.ajax({
+                type: "post",
+                url: "/findallprojects",
+                dataType: 'json',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                success: function (result) {
+                    console.log(result);
+                    // console.log(result[0].casename);
+                    var showMenu = $("#menu");  //获取ul（父节点）的位置
+                    showSideMenu(result, showMenu)
+                }
+            });
         }
         function showSideMenu(menuList, parent) {
             for (var menu in menuList) {
                 //如果有子节点，则遍历该子节点
-                var name = menuList[menu].casename;
+                var name = menuList[menu].projectname;
                 // if (typeof (menuList[menu].children) != 'undefined') {
                 //     //创建一个子节点li
                 //     // console.log(menuList[menu].entity.alias);
@@ -51,7 +51,7 @@
                 //     var url = menuList[menu].entity.url;
                 //     $("<li></li>").append("<a href='documentation_test.html' οnclick=getUrl('" + url + "','" + name + "')> <span class='menu-text'>" + name + "</span></a>").appendTo(parent);
                 // }
-                var cid = menuList[menu].caseid;
+                var cid = menuList[menu].projectid;
                 $("<li></li>").append("<a href='#' onclick='getUrl(" + cid + ")' class='turn'> <span class='menu-text'>" + name + "</span></a>").appendTo(parent);
                 // console.log(menuList[2]);
                 // console.log(menuList[3]);
@@ -144,9 +144,15 @@
                     </div>
                 </nav>
             </div>
-            <div id="middle" class="col-md-8">
+            <div id="middle" class="col-md-4" style="border-right: solid; border-color: #0B3E5B;">
                 <div class="main-content">
-                    <div class="page-content " id="main" style="height: 500px;">
+                    <div class="page-content " id="main" style="height: 1000px;">
+                    </div>
+                </div>
+            </div>
+            <div id="right" class="col-md-4">
+                <div class="main-content">
+                    <div class="page-content " id="message" style="height: 1000px;">
                     </div>
                 </div>
             </div>

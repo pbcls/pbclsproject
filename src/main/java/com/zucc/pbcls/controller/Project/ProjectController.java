@@ -18,6 +18,11 @@ public class ProjectController {
     @Autowired
     ProjectService projectService;
 
+    @RequestMapping("/toproject")
+    public String todoc(){
+        return "student/project";
+    }
+
     @RequestMapping("/findallprojects")
     @ResponseBody
     public List<Project> findAllProjects(){

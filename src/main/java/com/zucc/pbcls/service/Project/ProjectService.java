@@ -131,6 +131,19 @@ public class ProjectService {
         /**
          * 在这里根据任务关系列表和任务列表计算并对任务表中的是否为关键任务赋值
          */
+        for (Project_Task project_task : project_tasks) {
+            Project_Task_pk pk = project_task.getProjectTaskpk();
+            //取出后继任务
+            project_taskToTaskDao.findAllByProjectidAndPredecessorid(pk.getProjectid(),pk.getTaskid());
+            //取出前驱任务
+            project_taskToTaskDao.findAllByProjectidAndSuccessorid(pk.getProjectid(),pk.getTaskid());
+            //任务时间
+            int time = project_task.getDuration();
+            project_task.setIscritical(true);
+            project_taskDao.save(project_task);
+        }
+
+
 
 
 
@@ -282,6 +295,8 @@ public class ProjectService {
         /**
          * 在这里对任务进行初始化,设置最早开始时间最晚开始时间最早结束时间最晚结束时间
          */
+
+
 
 
 

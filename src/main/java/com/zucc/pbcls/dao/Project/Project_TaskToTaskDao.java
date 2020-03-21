@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface Project_TaskToTaskDao extends JpaRepository<Project_TaskToTask,Integer> {
     List<Project_TaskToTask> findAllByProjectid(int projectid);
+    List<Project_TaskToTask> findAllByProjectidAndPredecessorid(int projectid, int predecessorid);
+    List<Project_TaskToTask> findAllByProjectidAndSuccessorid(int projectid, int successorid);
 }
