@@ -7,11 +7,13 @@ import com.zucc.pbcls.pojo.Case.Case_Task_pk;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.aop.target.LazyInitTargetSource;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -32,17 +34,13 @@ public class Project_Task {
     private boolean iscritical;
     private int duration;
 
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss",timezone = "GMT+8")
-    private Date earlystart;
+    private int earlystart;
 
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss",timezone = "GMT+8")
-    private Date earlyfinish;
+    private int earlyfinish;
 
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss",timezone = "GMT+8")
-    private Date latestart;
+    private int latestart;
 
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss",timezone = "GMT+8")
-    private Date latefinish;
+    private int latefinish;
 
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss",timezone = "GMT+8")
     private Date starttime;
@@ -57,12 +55,22 @@ public class Project_Task {
     private boolean needcheck;
 
     @Column(name = "status",columnDefinition = "int default 0")
-    private boolean status;
+    private int status;
 
     @Column(name = "canstart",columnDefinition = "tinyint default 0")
     private boolean canstart;
 
     @Column(name = "canfinish",columnDefinition = "tinyint default 0")
     private boolean canfinish;
+
+
+
+    //AOE的操作需要的信息
+    @Transient
+    private int indegree; // 入度
+    @Transient
+    private Project_TaskToTask firstarc; //邻接表的第一条边
+    @Transient
+    private List<Project_TaskToTask> vertices;//邻接表
 
 }

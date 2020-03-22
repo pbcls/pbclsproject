@@ -34,4 +34,12 @@ public class Project_TaskToTask {
 
     @Transient
     private String taskname;
+
+
+    //AOE的操作需要的信息
+    @Transient
+    Project_Task adjvex;
+    @Transient
+    Project_TaskToTask nextarc;
+
 }

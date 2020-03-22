@@ -6,7 +6,7 @@ package com.zucc.pbcls.controller.Case;
 //import ch03.LinkStack;
 //import cho6.ALGraph;
 //import cho6.VNode;
-//import cho6.ArcNode;
+//import cho6.xArcNodex;
 //
 //public class CriticalPathMethod {
 //    private int[] ve; // 顶点（事件）的最早发生时间,默认全为0
@@ -35,7 +35,7 @@ package com.zucc.pbcls.controller.Case;
 //            int j = (Integer) s.pop();// 零入度栈出栈
 //            t.push(j);
 //            count++;
-//            for (ArcNode node = ((VNode) al.getVex(j)).firstArc; node != null; node = node.nextArc) {
+//            for (xArcNodex node = ((VNode) al.getVex(j)).firstArc; node != null; node = node.nextArc) {
 //                int k = node.adjVex;// j,k即表示顶点j到顶点k
 //                int value = node.value;// value表示<j,k>的距离，即权值
 //                if (--inDegree[k] == 0) {
@@ -66,7 +66,7 @@ package com.zucc.pbcls.controller.Case;
 //        }
 //        while (!t.isEmpty()) {
 //            int j = (Integer) t.pop();// 逆序拓扑栈出栈
-//            for (ArcNode node = ((VNode) al.getVex(j)).firstArc; node != null; node = node.nextArc) {
+//            for (xArcNodex node = ((VNode) al.getVex(j)).firstArc; node != null; node = node.nextArc) {
 //                int k = node.adjVex;// j,k即表示顶点j到顶点k
 //                int value = node.value;// value表示<j,k>的距离，即权值
 //                if (vl[k] - value < vl[j]) {
@@ -83,7 +83,7 @@ package com.zucc.pbcls.controller.Case;
 //            throw new Exception("所构建的AOE网不存在拓扑序列，故不存在关键路径！");
 //        ArrayList a = new ArrayList();
 //        for(int j=0;j<al.getVNum();j++) {
-//            for(ArcNode node = ((VNode) al.getVex(j)).firstArc; node != null; node = node.nextArc) {
+//            for(xArcNodex node = ((VNode) al.getVex(j)).firstArc; node != null; node = node.nextArc) {
 //                int k = node.adjVex;
 //                int value = node.value;
 //                int e = ve[j];//边（活动）的最早开始时间

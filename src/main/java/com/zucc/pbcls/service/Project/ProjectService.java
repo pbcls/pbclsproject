@@ -4,6 +4,9 @@ import com.zucc.pbcls.dao.Case.*;
 import com.zucc.pbcls.dao.LogDao;
 import com.zucc.pbcls.dao.Project.*;
 import com.zucc.pbcls.dao.UserInfoDao;
+import com.zucc.pbcls.pojo.AOE.ALGraph;
+import com.zucc.pbcls.pojo.AOE.ArcNode;
+import com.zucc.pbcls.pojo.AOE.VNode;
 import com.zucc.pbcls.pojo.Case.*;
 import com.zucc.pbcls.pojo.Log;
 import com.zucc.pbcls.pojo.Project.*;
@@ -131,17 +134,10 @@ public class ProjectService {
         /**
          * 在这里根据任务关系列表和任务列表计算并对任务表中的是否为关键任务赋值
          */
-        for (Project_Task project_task : project_tasks) {
-            Project_Task_pk pk = project_task.getProjectTaskpk();
-            //取出后继任务
-            project_taskToTaskDao.findAllByProjectidAndPredecessorid(pk.getProjectid(),pk.getTaskid());
-            //取出前驱任务
-            project_taskToTaskDao.findAllByProjectidAndSuccessorid(pk.getProjectid(),pk.getTaskid());
-            //任务时间
-            int time = project_task.getDuration();
-            project_task.setIscritical(true);
-            project_taskDao.save(project_task);
-        }
+        ALGraph G = new ALGraph();
+        System.out.println("以下是查找图的关键路径的程序。");
+        G=CreateALGraph(G,project.getProjectid());
+        CriticalPath(G);
 
 
 
@@ -298,12 +294,138 @@ public class ProjectService {
 
 
 
-
-
-
         /**
          * 在这里开启第一批任务
          */
+        List<Project_Task> project_tasksfirst = project_taskDao.findAllFirstTasks(projectid);
+        for (Project_Task project_task:project_tasksfirst){
+            project_task.setStarttime(new Date());
+            project_task.setNeedcheck(false);
+            project_task.setNeedsubmit(true);
+            project_task.setStatus(1);
+            project_taskDao.save(project_task);
+        }
         return true;
     }
+
+    public void initAOE(List<Project_Task> project_tasks){
+
+
+    }
+
+    //查找符合的数据在数组中的下标
+    public int LocateVer(ALGraph G, Project_Task_pk project_task_pk){
+        int i;
+        for(i=0;i<G.getVernum();i++)
+            if(project_task_pk.equals(G.getVertices().get(i).getProject_task_pk())) return i;
+
+        System.out.println("Can't find!\n");
+        return 0;
+    }
+
+    //常见图的邻接矩阵
+    public ALGraph CreateALGraph(ALGraph G,int projectid){
+        ArcNode arcNode;
+        System.out.println("输入顶点数和弧数: ");
+
+        List<Project_Task> project_tasks = project_taskDao.findByProjectTaskpk_Projectid(projectid);
+        G.setVernum(project_tasks.size());
+
+        int arcnum = project_taskToTaskDao.countarcnum(projectid);
+        G.setArcnum(arcnum);
+        List<Project_TaskToTask> project_taskToTasks = project_taskToTaskDao.findAllMidByProjectid(projectid);
+
+        System.out.println("请输入顶点!");
+        for(int i=0;i<G.getVernum();i++){
+            System.out.println("请输入第"+i+"个顶点: ");
+            VNode vNode = new VNode();
+            vNode.setProject_task_pk(project_tasks.get(i).getProjectTaskpk());
+            vNode.setFirstarc(null);
+            vNode.setIndegree(0);
+            G.getVertices().add(vNode);
+        }
+        for(int k=0;k<G.getArcnum();k++){
+            int pkPindex,pkSindex;
+            System.out.println("请输入弧的顶点和相应权值(v1, v2, w):");
+            if (project_taskToTasks.get(k).getPredecessorid()!=0 && project_taskToTasks.get(k).getSuccessorid()!=0) {
+                Project_Task_pk project_taskpkP = new Project_Task_pk(projectid,project_taskToTasks.get(k).getPredecessorid());
+                Project_Task_pk project_taskpkS = new Project_Task_pk(projectid,project_taskToTasks.get(k).getSuccessorid());
+                pkPindex = LocateVer(G, project_taskpkP);
+                pkSindex = LocateVer(G, project_taskpkS);
+                arcNode = new ArcNode(pkSindex,G.getVertices().get(pkPindex).getFirstarc(),project_taskDao.findByProjectTaskpk(project_taskpkP).getDuration());
+                G.getVertices().get(pkPindex).setFirstarc(arcNode);
+                G.getVertices().get(pkSindex).setIndegree(G.getVertices().get(pkSindex).getIndegree()+1);//vi->vj, vj入度加1
+            }
+        }
+        return G;
+    }
+
+    public void CriticalPath(ALGraph G){
+        int k,e,l;
+        List<Integer> Ve,Vl;
+        ArcNode arcNode;
+        //以下是求时间最早发生时间
+        Ve=new ArrayList<Integer>(G.getVernum());
+        Vl=new ArrayList<Integer>(G.getVernum());
+//        Vl=new int[G.vernum];
+        for(int i=0;i<G.getVernum();i++)              //前推
+            Ve.add(i,0);
+        for(int i=0;i<G.getVernum();i++){
+            ArcNode arcNode1=G.getVertices().get(i).getFirstarc();
+            while(arcNode1!=null){
+                k=arcNode1.getAdjvex();
+                if((Ve.get(i)+arcNode1.getDuration())>Ve.get(k))
+                    Ve.set(k,Ve.get(i)+arcNode1.getDuration());
+                arcNode1=arcNode1.getNextarc();
+            }
+        }
+        //以下是求最迟发生时间
+        for(int i=0;i<G.getVernum();i++)
+            Vl.add(i,Ve.get(G.getVernum()-1));
+//            Vl.set(i,Ve.get(G.getVernum()-1));
+        for(int i=G.getVernum()-2;i>=0;i--){     //后推
+            arcNode=G.getVertices().get(i).getFirstarc();
+            while(arcNode!=null){
+                k = arcNode.getAdjvex();
+                if((Vl.get(k)-arcNode.getDuration())<Vl.get(i))
+                    Vl.set(i,Vl.get(k)-arcNode.getDuration());
+                arcNode = arcNode.getNextarc();
+            }
+        }
+
+        for(int i=0;i<G.getVernum();i++){
+            arcNode=G.getVertices().get(i).getFirstarc();
+            while(arcNode!=null){
+                k=arcNode.getAdjvex();
+                e=Ve.get(i);    //最早开始时间为时间vi的最早发生时间
+                l=Vl.get(k)-arcNode.getDuration();             //最迟开始时间
+                Project_Task_pk Ppk = G.getVertices().get(i).getProject_task_pk();
+                Project_Task_pk Spk = G.getVertices().get(k).getProject_task_pk();
+                char tag; //关键活动
+                Project_Task project_task =project_taskDao.findByProjectTaskpk(Ppk);
+                if (e==l){
+                    project_task.setIscritical(true);
+                    project_task.setEarlystart(e);
+                    project_task.setLatestart(l);
+                    tag = '*';
+                }else{
+                    if (!project_task.isIscritical()){
+                        tag = ' ';
+                        project_task.setEarlystart(e);
+                        project_task.setLatestart(l);
+                    }else
+                        tag = '*';
+
+                }
+
+                project_taskDao.save(project_task);
+                //输出测试查看
+                System.out.print(Ppk.getProjectid()+"-"+Ppk.getTaskid()+","+Spk.getProjectid()+"-"+Spk.getTaskid()+",");
+                System.out.println(e+","+l+","+tag);
+                arcNode=arcNode.getNextarc();
+            }
+        }
+    }
+
+
 }

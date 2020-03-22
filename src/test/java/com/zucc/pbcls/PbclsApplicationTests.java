@@ -3,14 +3,15 @@ package com.zucc.pbcls;
 
 import com.zucc.pbcls.dao.Project.Project_RoleDao;
 import com.zucc.pbcls.dao.Project.Project_RoleToUserDao;
+import com.zucc.pbcls.dao.Project.Project_TaskDao;
+import com.zucc.pbcls.dao.Project.Project_TaskToTaskDao;
+import com.zucc.pbcls.pojo.AOE.ALGraph;
 import com.zucc.pbcls.pojo.Case.CaseInfo;
 import com.zucc.pbcls.pojo.Case.Case_Role;
 import com.zucc.pbcls.pojo.Case.Case_Task;
 import com.zucc.pbcls.pojo.Case.Case_Task_pk;
 import com.zucc.pbcls.pojo.MyUser;
-import com.zucc.pbcls.pojo.Project.Project;
-import com.zucc.pbcls.pojo.Project.Project_Role;
-import com.zucc.pbcls.pojo.Project.Project_RoleToUser;
+import com.zucc.pbcls.pojo.Project.*;
 import com.zucc.pbcls.service.Admin_UserService;
 import com.zucc.pbcls.service.Case.CaseService;
 import com.zucc.pbcls.service.Case.Case_RoleService;
@@ -25,6 +26,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -44,6 +47,10 @@ public class PbclsApplicationTests {
 	Project_RoleToUserDao project_roleToUserDao;
 	@Autowired
 	Project_RoleDao project_roleDao;
+	@Autowired
+	Project_TaskToTaskDao project_taskToTaskDao;
+	@Autowired
+	Project_TaskDao project_taskDao;
 
 
 	@Test
@@ -95,7 +102,7 @@ public class PbclsApplicationTests {
 
 	@Test
 	public void createProjectByCase(){
-		projectService.createProjectByCase("yzl",1,"testproject1");
+		projectService.createProjectByCase("yzl",2,"testproject2");
 	}
 
 	@Test
@@ -124,6 +131,38 @@ public class PbclsApplicationTests {
 	@Test
 	public void startProject(){
 		System.out.println(projectService.startProject(1));
+	}
+
+	@Test
+	public void eq(){
+		Project_Task_pk project_task_pk1 = new Project_Task_pk(1,2);
+		Project_Task_pk project_task_pk2 = new Project_Task_pk(1,2);
+		if (project_task_pk1==project_task_pk2)
+			System.out.println("1");
+		else
+			System.out.println("2");
+	}
+	@Test
+	public void arcnum(){
+		System.out.println(project_taskToTaskDao.countarcnum(1));
+	}
+
+	@Test
+	public void AOE(){
+		ALGraph G = new ALGraph();
+		System.out.println("以下是查找图的关键路径的程序。");
+		G=projectService.CreateALGraph(G,1);
+		projectService.CriticalPath(G);
+	}
+
+	@Test
+	public void findfirstandlasttask(){
+		for (Project_Task project_task:project_taskDao.findAllFirstTasks(1)){
+			System.out.println(project_task);
+		}
+		System.out.println("last");
+		System.out.println(project_taskDao.findLastTask(1));
+
 	}
 
 }
