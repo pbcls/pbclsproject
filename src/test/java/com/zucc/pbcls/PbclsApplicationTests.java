@@ -102,7 +102,7 @@ public class PbclsApplicationTests {
 
 	@Test
 	public void createProjectByCase(){
-		projectService.createProjectByCase("yzl",2,"testproject2");
+		projectService.createProjectByCase("yzl",1,"testDOCSproject1");
 	}
 
 	@Test

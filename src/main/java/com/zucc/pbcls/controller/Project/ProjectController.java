@@ -1,22 +1,32 @@
 package com.zucc.pbcls.controller.Project;
 
+import com.zucc.pbcls.pojo.Case.CaseInfo;
 import com.zucc.pbcls.pojo.Log;
 import com.zucc.pbcls.pojo.Project.Project;
 import com.zucc.pbcls.security.UserInfo;
 import com.zucc.pbcls.service.Project.ProjectService;
+import com.zucc.pbcls.utils.CaseDOCSDownloader;
+import com.zucc.pbcls.utils.ProjectFileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Controller
 public class ProjectController {
     @Autowired
     ProjectService projectService;
+
+    @RequestMapping("/tochatroom")
+    public String tochatroom(){
+        return "chat.html";
+    }
 
     @RequestMapping("/toproject")
     public String todoc(){
@@ -97,6 +107,40 @@ public class ProjectController {
     public boolean startProject(@RequestParam(value = "projectid") int projectid){
         return projectService.startProject(projectid);
     }
+
+    //以下是关于任务文档的显示
+    @RequestMapping("/getprojectdocslist")
+    @ResponseBody
+    public List<String> getCaseFileList(@RequestParam(value = "projectid") int projectid) {
+        Project project = projectService.findByProjectid(projectid);
+        ProjectFileUtil projectFileUtil = new ProjectFileUtil();
+        System.out.println(projectFileUtil.getProjectFileList(project));
+        return projectFileUtil.getProjectFileList(project);
+    }
+
+
+    @RequestMapping("/downloadprojectdocsfile")
+    @ResponseBody
+    public void DownloadCaseFile(@RequestParam(value = "docfile") String docfile,@RequestParam(value = "projectid") int projectid,HttpServletResponse response) {
+        Project project = projectService.findByProjectid(projectid);
+        ProjectFileUtil projectFileUtil = new ProjectFileUtil();
+        projectFileUtil.DownloadProjectFile(docfile,project,response);
+    }
+
+
+
+    @RequestMapping("/uploadprojectdocfile")
+    @ResponseBody
+    public void uploadProjectDocFile(@RequestParam(value = "projectid") int projectid,@RequestParam(value = "docfile") MultipartFile docfile) {
+        Project project = projectService.findByProjectid(projectid);
+        ProjectFileUtil projectFileUtil = new ProjectFileUtil();
+        try {
+            projectFileUtil.uploadFiles(docfile.getBytes(),project.getFoldername()+"/DOCS/",docfile.getOriginalFilename());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 
