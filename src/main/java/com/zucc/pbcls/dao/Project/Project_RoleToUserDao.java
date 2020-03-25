@@ -1,5 +1,6 @@
 package com.zucc.pbcls.dao.Project;
 
+import com.zucc.pbcls.pojo.Project.Project_Role;
 import com.zucc.pbcls.pojo.Project.Project_RoleToUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,4 +18,9 @@ public interface Project_RoleToUserDao extends JpaRepository<Project_RoleToUser,
 
     @Query(nativeQuery = true,value = "SELECT prtu.uid from project_roletouser prtu,project_role pr where prtu.projectid = (:projectid) and pr.projectid=prtu.projectid and pr.rolename LIKE '项目经理'")
     String findPM(@Param("projectid") int projectid);
+
+    @Query(nativeQuery = true,value = "SELECT * from project_roletouser,project_role where project_roletouser.roleid=project_role.roleid " +
+            "AND project_role.projectid=project_roletouser.projectid AND rolename LIKE '教师'AND project_role.projectid=(:projectid);")
+    Project_RoleToUser findTeacher(@Param("projectid") int projectid);
+
 }

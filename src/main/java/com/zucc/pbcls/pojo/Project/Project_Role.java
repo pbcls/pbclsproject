@@ -21,12 +21,13 @@ import javax.persistence.*;
 @Component
 public class Project_Role {
 
+    @Id
+    @Column(name = "prid")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int prid;
 
     private int projectid;
 
-    @Id
-    @Column(name = "roleid")
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int roleid;
 
     private String rolename;

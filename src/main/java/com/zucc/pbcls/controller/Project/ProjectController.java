@@ -1,12 +1,19 @@
 package com.zucc.pbcls.controller.Project;
 
+import com.zucc.pbcls.dao.Case.CaseDao;
+import com.zucc.pbcls.dao.UserInfoDao;
 import com.zucc.pbcls.pojo.Case.CaseInfo;
 import com.zucc.pbcls.pojo.Log;
 import com.zucc.pbcls.pojo.Project.Project;
+import com.zucc.pbcls.pojo.Project.Project_Role;
+import com.zucc.pbcls.pojo.Project.Project_RoleToUser;
 import com.zucc.pbcls.security.UserInfo;
 import com.zucc.pbcls.service.Project.ProjectService;
-import com.zucc.pbcls.utils.CaseDOCSDownloader;
+import com.zucc.pbcls.service.Project.Project_RoleService;
+import com.zucc.pbcls.service.Project.Project_RoleToUserService;
 import com.zucc.pbcls.utils.ProjectFileUtil;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -22,6 +29,14 @@ import java.util.List;
 public class ProjectController {
     @Autowired
     ProjectService projectService;
+    @Autowired
+    CaseDao caseDao;
+    @Autowired
+    Project_RoleService project_roleService;
+    @Autowired
+    UserInfoDao userInfoDao;
+    @Autowired
+    Project_RoleToUserService project_roleToUserService;
 
     @RequestMapping("/tochatroom")
     public String tochatroom(){
@@ -29,21 +44,42 @@ public class ProjectController {
     }
 
     @RequestMapping("/toproject")
-    public String todoc(){
+    public String toproject(){
         return "student/project";
     }
 
     @RequestMapping("/findallprojects")
     @ResponseBody
-    public List<Project> findAllProjects(){
+    //这里返回caseinfo的原因是前端项目分类显示,每个案例下面都有一个对应的项目的List
+    public List<CaseInfo> findAllProjects(){
         return projectService.findAllProjects();
     }
 
     //需要增加自定义JSON内容
-    @RequestMapping("/findbyprojectid")
+    @RequestMapping("/showprojectinfo")
     @ResponseBody
-    public Project findAllProjects(@RequestParam(value = "projectid") int projectid){
-        return projectService.findByProjectid(projectid);
+    public String showProjectInfo(@RequestParam(value = "projectid") int projectid){
+        Project project = projectService.findByProjectid(projectid);
+        CaseInfo caseInfo = caseDao.findAllByCaseid(project.getCaseid());
+        List<Project_Role> project_roles = project_roleService.findAllRolesByProjectid(projectid);
+        List<Project_RoleToUser> project_roleToUsers = project_roleToUserService.findAllByProjectid(projectid);
+        for (Project_RoleToUser project_roleToUser:project_roleToUsers){
+            project_roleToUser.setRolename(project_roleService.findAllByProjectidAndRoleid(projectid,project_roleToUser.getRoleid()).getRolename());
+            project_roleToUser.setUser(userInfoDao.findByUid(project_roleToUser.getUid()));
+        }
+        //把获得的数据封装成自定义JSON
+        JSONObject json_caseinfo = new JSONObject(caseInfo);
+        JSONObject json_project = new JSONObject(project);
+        JSONArray json_project_roles = new JSONArray(project_roles);
+        JSONArray json_project_roleToUsers = new JSONArray(project_roleToUsers);
+        //封装在一个JSON对象中
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("case",json_caseinfo);
+        jsonObject.put("project",json_project);
+        jsonObject.put("roles",json_project_roles);
+        jsonObject.put("role_to_user",json_project_roleToUsers);
+
+        return jsonObject.toString();
     }
 
 
@@ -89,11 +125,13 @@ public class ProjectController {
     }
 
     /**
-     * false maxplayer满了
+     * 0 成功申请 申请进列表
+     * 1 项目已经开始 无法申请
+     * 2 项目成员已满 无法申请
      */
     @RequestMapping("/applyproject")
     @ResponseBody
-    public boolean applyProject(@RequestParam(value = "projectid") int projectid, @RequestParam(value = "roleid") int roleid){
+    public int applyProject(@RequestParam(value = "projectid") int projectid, @RequestParam(value = "roleid") int roleid){
         UserInfo user = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return projectService.applyProject(user.getUsername(),projectid,roleid);
     }

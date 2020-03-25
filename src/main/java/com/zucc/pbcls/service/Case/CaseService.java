@@ -17,7 +17,7 @@ public class CaseService {
 
 
     public List<CaseInfo> findAllCases(){
-        return caseDao.findAll();
+        return caseDao.findAllByStatus(true);
     }
 
     public CaseInfo findAllByCaseid(int caseid){

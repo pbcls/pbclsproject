@@ -8,7 +8,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CaseDOCSDownloader {
+public class CaseFileUtil {
 
 
     public List<String> getCaseFileList(CaseInfo caseInfo) {
@@ -73,6 +73,36 @@ public class CaseDOCSDownloader {
             }
         }
         return "下载失败";
+    }
+
+
+    public void delCaseFile(File casefile) {
+        if (!casefile.isDirectory()) {
+            casefile.delete();
+        } else {
+            File[] files = casefile.listFiles();
+
+            // 空文件夹
+            if (files.length == 0) {
+                casefile.delete();
+                System.out.println("删除" + casefile.getAbsolutePath());
+                return;
+            }
+
+            // 删除子文件夹和子文件
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    delCaseFile(file);//递归删除
+                } else {
+                    file.delete();
+                    System.out.println("删除" + file.getAbsolutePath());
+                }
+            }
+
+            // 删除文件夹本身
+            casefile.delete();
+            System.out.println("删除" + casefile.getAbsolutePath());
+        }
     }
 }
 

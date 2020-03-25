@@ -1,10 +1,7 @@
 package com.zucc.pbcls;
 
 
-import com.zucc.pbcls.dao.Project.Project_RoleDao;
-import com.zucc.pbcls.dao.Project.Project_RoleToUserDao;
-import com.zucc.pbcls.dao.Project.Project_TaskDao;
-import com.zucc.pbcls.dao.Project.Project_TaskToTaskDao;
+import com.zucc.pbcls.dao.Project.*;
 import com.zucc.pbcls.pojo.AOE.ALGraph;
 import com.zucc.pbcls.pojo.Case.CaseInfo;
 import com.zucc.pbcls.pojo.Case.Case_Role;
@@ -17,6 +14,8 @@ import com.zucc.pbcls.service.Case.CaseService;
 import com.zucc.pbcls.service.Case.Case_RoleService;
 import com.zucc.pbcls.service.Case.Case_TaskService;
 import com.zucc.pbcls.service.Project.ProjectService;
+import com.zucc.pbcls.service.ProjectTaskScheduleService;
+import com.zucc.pbcls.utils.ProjectFileUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +26,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.File;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -51,6 +51,8 @@ public class PbclsApplicationTests {
 	Project_TaskToTaskDao project_taskToTaskDao;
 	@Autowired
 	Project_TaskDao project_taskDao;
+	@Autowired
+	ProjectDao projectDao;
 
 
 	@Test
@@ -107,8 +109,8 @@ public class PbclsApplicationTests {
 
 	@Test
 	public void findAllProjects(){
-		for (Project project:projectService.findAllProjects()){
-			System.out.println(project);
+		for (CaseInfo caseInfo:projectService.findAllProjects()){
+			System.out.println(caseInfo);
 		}
 	}
 
@@ -163,6 +165,17 @@ public class PbclsApplicationTests {
 		System.out.println("last");
 		System.out.println(project_taskDao.findLastTask(1));
 
+	}
+
+	@Test
+	public void findTeacher(){
+		System.out.println(project_roleToUserDao.findTeacher(2));
+	}
+
+	@Test
+	public void delprojectfile(){
+		File file_project = new File("src/main/resources/static/case"+projectDao.findAllByProjectid(1).getFoldername());
+		new ProjectFileUtil().delProjectFile(file_project);
 	}
 
 }

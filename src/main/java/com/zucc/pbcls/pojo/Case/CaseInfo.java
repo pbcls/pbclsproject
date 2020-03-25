@@ -3,6 +3,7 @@ package com.zucc.pbcls.pojo.Case;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.zucc.pbcls.pojo.Project.Project;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -42,5 +44,9 @@ public class CaseInfo {
     private int finishedinstances;
     private int maxplayer;
     private String foldername;
+
+
+    @Transient
+    List<Project> projects;
 
 }

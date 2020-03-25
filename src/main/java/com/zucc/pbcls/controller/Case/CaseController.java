@@ -2,7 +2,7 @@ package com.zucc.pbcls.controller.Case;
 
 import com.zucc.pbcls.pojo.Case.*;
 import com.zucc.pbcls.service.Case.*;
-import com.zucc.pbcls.utils.CaseDOCSDownloader;
+import com.zucc.pbcls.utils.CaseFileUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,9 +58,9 @@ public class CaseController {
     @ResponseBody
     public List<String> getCaseFileList(@RequestParam(value = "caseid") int caseid) {
         CaseInfo caseInfo = caseService.findAllByCaseid(caseid);
-        CaseDOCSDownloader caseDOCSDownloader = new CaseDOCSDownloader();
-        System.out.println(caseDOCSDownloader.getCaseFileList(caseInfo));
-        return caseDOCSDownloader.getCaseFileList(caseInfo);
+        CaseFileUtil caseFileUtil = new CaseFileUtil();
+        System.out.println(caseFileUtil.getCaseFileList(caseInfo));
+        return caseFileUtil.getCaseFileList(caseInfo);
 
     }
 
@@ -69,7 +69,7 @@ public class CaseController {
     @ResponseBody
     public void DownloadCaseFile(@RequestParam(value = "filename") String filename,@RequestParam(value = "caseid") int caseid,HttpServletResponse response) {
         CaseInfo caseInfo = caseService.findAllByCaseid(caseid);
-        CaseDOCSDownloader caseDOCSDownloader = new CaseDOCSDownloader();
-        caseDOCSDownloader.DownloadCaseFile(filename,caseInfo,response);
+        CaseFileUtil caseFileUtil = new CaseFileUtil();
+        caseFileUtil.DownloadCaseFile(filename,caseInfo,response);
     }
 }

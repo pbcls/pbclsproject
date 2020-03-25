@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +28,7 @@ public class Case_Role {
     private int roleid;
 
     @JoinColumn(name = "caseid",foreignKey = @ForeignKey(name = "case_role_case_caseid_fk"))
+    @NotFound(action= NotFoundAction.IGNORE)
     private int caseid;
 
     private String role;

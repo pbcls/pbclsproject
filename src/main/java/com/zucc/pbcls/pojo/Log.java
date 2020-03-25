@@ -61,4 +61,6 @@ public class Log {
 
     @Column(name = "passstatus",columnDefinition = "int default 0")
     private int passstatus;
+
+    private String logmsg;
 }

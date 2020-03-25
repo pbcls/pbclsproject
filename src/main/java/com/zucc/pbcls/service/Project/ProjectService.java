@@ -10,6 +10,7 @@ import com.zucc.pbcls.pojo.AOE.VNode;
 import com.zucc.pbcls.pojo.Case.*;
 import com.zucc.pbcls.pojo.Log;
 import com.zucc.pbcls.pojo.Project.*;
+import com.zucc.pbcls.service.ProjectTaskScheduleService;
 import com.zucc.pbcls.utils.ProjectFileUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -119,7 +121,7 @@ public class ProjectService {
             Project_TaskToRole project_taskToRole = new Project_TaskToRole();
             project_taskToRole.setProjectid(project.getProjectid());
             project_taskToRole.setTaskid(case_taskToRole.getTaskid());
-            project_taskToRole.setProject_role(new Project_Role(project.getProjectid(), case_taskToRole.getCase_role().getRoleid(), case_taskToRole.getCase_role().getRolename()));
+            project_taskToRole.setProject_role(project_roleDao.findAllByProjectidAndRoleid(project.getProjectid(),case_taskToRole.getCase_role().getRoleid()));
             project_taskToRoleDao.save(project_taskToRole);
         }
 
@@ -172,12 +174,11 @@ public class ProjectService {
     }
 
 
-    public List<Project> findAllProjects() {
-        List<Project> projects = projectDao.findAll();
-        for (Project project : projects) {
-            project.setCasename(caseDao.findAllByCaseid(project.getCaseid()).getCasename());
-        }
-        return projects;
+    public List<CaseInfo> findAllProjects() {
+        List<CaseInfo> caseInfos = caseDao.findAll();
+        for (CaseInfo caseInfo : caseInfos)
+            caseInfo.setProjects(projectDao.findAllByCaseid(caseInfo.getCaseid()));
+        return caseInfos;
     }
 
     public Project findByProjectid(int projectid) {
@@ -188,7 +189,8 @@ public class ProjectService {
         List<Project_RoleToUser> project_roleToUsers = project_roleToUserDao.findAllByUid(uid);
         JSONArray json_projects = new JSONArray();
         for (int i = 0; i < project_roleToUsers.size(); i++) {
-            project_roleToUsers.get(i).setRolename(project_roleDao.findAllByRoleid(project_roleToUsers.get(i).getRoleid()).getRolename());
+            project_roleToUsers.get(i).setRolename(project_roleDao.findAllByProjectidAndRoleid(project_roleToUsers.get(i).getProjectid()
+                    , project_roleToUsers.get(i).getRoleid()).getRolename());
             JSONObject json_project_roleToUser = new JSONObject(project_roleToUsers.get(i));
             JSONObject json_project = new JSONObject(projectDao.findAllByProjectid(project_roleToUsers.get(i).getProjectid()));
             JSONObject jsonObject = new JSONObject();
@@ -220,7 +222,7 @@ public class ProjectService {
             if (log.getTaskid() != 0)
                 log.setTaskname(project_taskDao.findByProjectTaskpk(new Project_Task_pk(log.getProjectid(), log.getTaskid())).getTaskname());
             if (log.getRoleid() != 0)
-                log.setRolename(project_roleDao.findAllByRoleid(log.getRoleid()).getRolename());
+                log.setRolename(project_roleDao.findAllByProjectidAndRoleid(log.getProjectid(),log.getRoleid()).getRolename());
             if (!("").equals(log.getUid()) && log.getUid() != null)
                 log.setUsername(userInfoDao.findByUid(log.getUid()).getName());
             if (!("").equals(log.getTouid()) && log.getTouid() != null)
@@ -229,21 +231,40 @@ public class ProjectService {
         return logs;
     }
 
-    public boolean applyProject(String uid, int projectid, int roleid) {
+    /**
+     * 0 成功申请 申请进列表
+     * 1 项目已经开始 无法申请
+     * 2 项目成员已满 无法申请
+     */
+    public int applyProject(String uid, int projectid, int roleid) {
+        //获取项目信息
+        Project project = projectDao.findAllByProjectid(projectid);
+        if (2==project.getStatus())
+            return 1;
+        //获取项目中存在的人数
         int player = project_roleToUserDao.countByProjectid(projectid);
-        if (player < projectDao.findAllByProjectid(projectid).getMaxplayer()) {
-            Log log = new Log();
-            log.setProjectid(projectid);
-            log.setRoleid(roleid);
-            log.setUid(uid);
-            log.setTouid(project_roleToUserDao.findPM(projectid));
-            log.setType(1);
-            log.setNeedpass(true);
-            log.setPassstatus(0);
-            logDao.save(log);
-            return true;
-        } else
-            return false;//超过最大人数
+        //获取申请的角色
+        Project_Role project_role = project_roleDao.findAllByProjectidAndRoleid(projectid,roleid);
+
+        if ("教师".equals(project_role.getRolename())) {
+            Project_RoleToUser teacher = project_roleToUserDao.findTeacher(projectid);
+            if (teacher!=null)
+                return 2;//超过最大人数:这个项目已经有老师了
+        }else {
+            if (player >= projectDao.findAllByProjectid(projectid).getMaxplayer())
+                return 2;//超过最大人数
+        }
+        //为教师已经有教师了和不为教师(为学生)超过最大人数情况已经判断完了 剩下的就是可以直接申请
+        Log log = new Log();
+        log.setProjectid(projectid);
+        log.setRoleid(roleid);
+        log.setUid(uid);
+        log.setTouid(project_roleToUserDao.findPM(projectid));
+        log.setType(1);
+        log.setNeedpass(true);
+        log.setPassstatus(0);
+        logDao.save(log);
+        return 0;
     }
 
     /**
@@ -292,30 +313,18 @@ public class ProjectService {
         project.setStarttime(new Date());
         projectDao.save(project);
 
-        List<Project_Task> project_tasks = project_taskDao.findByProjectTaskpk_Projectid(projectid);
-        /**
-         * 在这里对任务进行初始化,设置最早开始时间最晚开始时间最早结束时间最晚结束时间
-         */
-
 
         /**
          * 在这里开启第一批任务
          */
-        List<Project_Task> project_tasksfirst = project_taskDao.findAllFirstTasks(projectid);
-        for (Project_Task project_task : project_tasksfirst) {
-            project_task.setStarttime(new Date());
-            project_task.setNeedcheck(false);
-            project_task.setNeedsubmit(true);
-            project_task.setStatus(1);
-            project_taskDao.save(project_task);
+        try {
+            new ProjectTaskScheduleService().StartTaskByProjectid(projectid);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
         return true;
     }
 
-    public void initAOE(List<Project_Task> project_tasks) {
-
-
-    }
 
 
     //AOE图赋值相关操作
@@ -445,6 +454,5 @@ public class ProjectService {
             e.printStackTrace();
         }
     }
-
 
 }

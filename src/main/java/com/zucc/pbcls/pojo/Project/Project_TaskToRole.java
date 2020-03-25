@@ -6,6 +6,8 @@ import com.zucc.pbcls.pojo.Case.Case_Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.stereotype.Component;
 
@@ -31,6 +33,7 @@ public class Project_TaskToRole {
 
     @ManyToOne()
     @JoinColumn(name = "roleid",foreignKey = @ForeignKey(name = "none",value = ConstraintMode.NO_CONSTRAINT))
+    @NotFound(action= NotFoundAction.IGNORE)
     private Project_Role project_role;
 
 }

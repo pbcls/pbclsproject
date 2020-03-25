@@ -2,6 +2,7 @@ package com.zucc.pbcls.pojo.Project;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.zucc.pbcls.pojo.MyUser;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,4 +35,6 @@ public class Project_RoleToUser {
 
     private String uid;
 
+    @Transient
+    private MyUser user;
 }

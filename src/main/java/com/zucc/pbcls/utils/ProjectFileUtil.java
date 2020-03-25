@@ -124,6 +124,32 @@ public class ProjectFileUtil {
         out.close();
     }
 
+    public void delProjectFile(File project) {
+        if (!project.isDirectory()) {
+            project.delete();
+        } else {
+            File[] files = project.listFiles();
 
+            // 空文件夹
+            if (files.length == 0) {
+                project.delete();
+                System.out.println("删除" + project.getAbsolutePath());
+                return;
+            }
 
+            // 删除子文件夹和子文件
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    delProjectFile(file);//递归删除
+                } else {
+                    file.delete();
+                    System.out.println("删除" + file.getAbsolutePath());
+                }
+            }
+
+            // 删除文件夹本身
+            project.delete();
+            System.out.println("删除" + project.getAbsolutePath());
+        }
+    }
 }

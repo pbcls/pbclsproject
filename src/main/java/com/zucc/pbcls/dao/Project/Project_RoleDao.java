@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface Project_RoleDao extends JpaRepository<Project_Role,Integer>{
-    Project_Role findAllByRoleid(int roleid);
+    Project_Role findAllByProjectidAndRoleid(int projectid,int roleid);
     Project_Role findAllByProjectidAndRolename(int projectid,String rolename);
 
     @Query(nativeQuery = true,value = "select * from project_role where not exists(" +
@@ -18,4 +18,6 @@ public interface Project_RoleDao extends JpaRepository<Project_Role,Integer>{
             "        )" +
             "    )")
     List<Project_Role> isAllRoleUsed(@Param("projectid") int projectid);
+
+    List<Project_Role> findAllByProjectid(int projectid);
 }

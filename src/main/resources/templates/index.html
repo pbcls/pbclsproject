@@ -33,6 +33,54 @@
     //         });
     // }
 
+    // //查询项目详细信息
+    // window.onload=function() {
+    //         $.ajax({
+    //             type: "post",
+    //             url: "/showprojectinfo",
+    //             dataType: 'text',
+    //             contentType: "application/x-www-form-urlencoded",
+    //             traditional: true,
+    //             data:{
+    //                 "projectid":1
+    //             },
+    //             success: function (data) {
+    //                 var dataobj = JSON.parse(data);
+    //                 console.log(dataobj);
+    //                 console.log(dataobj.case);
+    //                 // $("#caseid").html(dataobj.case.caseid);
+    //                 // $("#casename").html(dataobj.case.casename);
+    //                 // $("#description").html(dataobj.case.description);
+    //
+    //             },
+    //             error:function(result) {
+    //                 alert(result);
+    //             }
+    //         });
+    // }
+
+    //查询所有项目
+    window.onload=function() {
+            $.ajax({
+                type: "post",
+                url: "/findallprojects",
+                dataType: 'text',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                success: function (data) {
+                    var dataobj = JSON.parse(data);
+                    console.log(dataobj);
+                    // $("#caseid").html(dataobj.case.caseid);
+                    // $("#casename").html(dataobj.case.casename);
+                    // $("#description").html(dataobj.case.description);
+
+                },
+                error:function(result) {
+                    alert(result);
+                }
+            });
+    }
+
     // 查询任务详细信息
     // window.onload=function() {
     //     $.ajax({
@@ -57,26 +105,26 @@
     //     });
     // }
 
-    // 下载案例文档
-        function downloadcasefile() {
-            $.ajax({
-                type: "post",
-                url: "/downloadcasefile",
-                dataType: 'text',
-                contentType: "application/x-www-form-urlencoded",
-                traditional: true,
-                data:{
-                    "filename":"2.doc",
-                    "caseid":1
-                },
-                success: function (data) {
-
-                },
-                error:function(result) {
-                    alert(result);
-                }
-            });
-    }
+    // // 下载案例文档
+    //     function downloadcasefile() {
+    //         $.ajax({
+    //             type: "post",
+    //             url: "/downloadcasefile",
+    //             dataType: 'text',
+    //             contentType: "application/x-www-form-urlencoded",
+    //             traditional: true,
+    //             data:{
+    //                 "filename":"2.doc",
+    //                 "caseid":1
+    //             },
+    //             success: function (data) {
+    //
+    //             },
+    //             error:function(result) {
+    //                 alert(result);
+    //             }
+    //         });
+    // }
 </script>
 <body>
 登录成功页面

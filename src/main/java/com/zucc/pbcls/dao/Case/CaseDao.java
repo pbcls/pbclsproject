@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface CaseDao extends JpaRepository<CaseInfo,Integer> ,JpaSpecificationExecutor<CaseInfo> {
     List<CaseInfo> findAll();
+    List<CaseInfo> findAllByStatus(boolean status);
     CaseInfo findAllByCaseid(int caseid);
 }
