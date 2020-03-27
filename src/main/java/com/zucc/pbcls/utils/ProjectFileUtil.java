@@ -140,7 +140,7 @@ public class ProjectFileUtil {
             }
         }
 
-        FileOutputStream out = new FileOutputStream(filePath+ fileName);
+        FileOutputStream out = new FileOutputStream(filePath+ File.separator+fileName);
         out.write(submitfile);
         out.flush();
         out.close();

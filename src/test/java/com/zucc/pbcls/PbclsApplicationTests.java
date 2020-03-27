@@ -27,7 +27,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+
+import static com.zucc.pbcls.service.ProjectTaskScheduleService.timeUseDay;
+import static com.zucc.pbcls.service.ProjectTaskScheduleService.timeUseMinute;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -183,5 +189,21 @@ public class PbclsApplicationTests {
 		for (Project_Task project_task:project_taskDao.findByProjectidAndUid(1,"szz")){
 			System.out.println(project_task);
 		}
+	}
+
+	@Test
+	public void Datetest() throws ParseException {
+		SimpleDateFormat dayFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Project_Task project_task = project_taskDao.findByProjectTaskpk(new Project_Task_pk(1,1));
+		Project project = projectDao.findAllByProjectid(1);
+		Date latedate = new Date(new Date(project.getStarttime().getTime()).getTime() + project_task.getLatestart() * timeUseMinute);
+		Date nowday = new Date();
+		System.out.println(latedate);
+		System.out.println(nowday);
+	}
+
+	@Test
+	public void AutoStartEveryDay(){
+		new ProjectTaskScheduleService().AutoStartEveryDay();
 	}
 }

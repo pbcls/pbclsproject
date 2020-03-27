@@ -156,9 +156,11 @@ public class ProjectService {
         //找出前面得最早开始时间加上任务时长最大的任务点,即为除最终节点以外的最后一个关键路径的点
         int max = 0;
         for (Project_TaskToTask project_taskToTask:project_taskToTasks){
-            Project_Task project_task = project_taskDao.findByProjectTaskpk(new Project_Task_pk(project.getProjectid(),project_taskToTask.getPredecessorid()));
-            if (max <(project_task.getEarlystart()+project_task.getDuration()))
-                max = project_task.getEarlystart()+project_task.getDuration();
+            if (project_taskToTask.getPredecessorid()!=0) {
+                Project_Task project_task = project_taskDao.findByProjectTaskpk(new Project_Task_pk(project.getProjectid(), project_taskToTask.getPredecessorid()));
+                if (max < (project_task.getEarlystart() + project_task.getDuration()))
+                    max = project_task.getEarlystart() + project_task.getDuration();
+            }
         }
         lasttask.setIscritical(true);
         lasttask.setEarlystart(max);
@@ -341,6 +343,32 @@ public class ProjectService {
         return true;
     }
 
+    /**
+     * 1 有任务没有做完 强行结束
+     * 2 正常结束
+     */
+    public int  finishProject(int projectid){
+        List<Project_Task> project_tasks = project_taskDao.findByProjectTaskpk_Projectid(projectid);
+        Project project = projectDao.findAllByProjectid(projectid);
+        int flag = 0;
+        for (Project_Task project_task:project_tasks){
+            if (project_task.getStatus()!=2){
+                flag = 1;
+                break;
+            }
+        }
+        if (flag!=0){
+            project.setFinishtime(new Date());
+            project.setStatus(0);
+            projectDao.save(project);
+            return 1;
+        }else {
+            project.setFinishtime(new Date());
+            project.setStatus(3);
+            return 2;
+        }
+    }
+
 
 
     //AOE图赋值相关操作
@@ -458,6 +486,7 @@ public class ProjectService {
             }
         }
     }
+
 
 
     public void uploadDOC(int projectid, MultipartFile file) {

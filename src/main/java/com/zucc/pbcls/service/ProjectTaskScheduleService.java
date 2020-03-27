@@ -1,7 +1,9 @@
 package com.zucc.pbcls.service;
 
+import com.zucc.pbcls.dao.LogDao;
 import com.zucc.pbcls.dao.Project.*;
 import com.zucc.pbcls.dao.UserInfoDao;
+import com.zucc.pbcls.pojo.Log;
 import com.zucc.pbcls.pojo.Project.*;
 import com.zucc.pbcls.service.Project.ProjectService;
 import lombok.Data;
@@ -25,6 +27,9 @@ public class ProjectTaskScheduleService {
     private static Project_RoleToUserDao project_roleToUserDao;
     private static Project_TaskToRoleDao project_taskToRoleDao;
     private static Project_TaskToTaskDao project_taskToTaskDao;
+    private static LogDao logDao;
+    public static int timeUseMinute = 60 * 1000;
+    public static int timeUseDay = 24 * 60 * 60 * 1000;
 
 
 
@@ -59,7 +64,7 @@ public class ProjectTaskScheduleService {
             for (Project_Task project_running_task:project_running_tasks){
                 int duration=project_running_task.getDuration();
                 Date nowdate = new Date();
-                Date finishdate = new Date(project_running_task.getStarttime().getTime()+duration*24*60*60*1000);
+                Date finishdate = new Date(project_running_task.getStarttime().getTime()+duration*timeUseMinute);
                 //现在按照持续时间来判 超过持续时间即超时
                 if(nowdate.after(finishdate)){
                     //有任务超时了,将其强行终止,并设置一个flag,以便判断是否要去检查开启后继任务
@@ -67,6 +72,7 @@ public class ProjectTaskScheduleService {
                     project_running_task.setStatus(2);//设置任务结束
                     project_running_task.setFinishtime(new Date());
                     project_taskDao.save(project_running_task);
+                    System.out.println("项目"+project_running_task.getProjectTaskpk().getProjectid()+"任务"+project_running_task.getProjectTaskpk().getTaskid()+"超时,自动结束");
 
                     /**
                      * 这里还需要写任务评分的逻辑
@@ -92,10 +98,13 @@ public class ProjectTaskScheduleService {
         List<Project> projects = projectDao.findAllByStatus(2);
         //canStart,将可以开始的任务置为开始
         for (Project project:projects){
-            List<Project_Task> projects_unstart_tasks = project_taskDao.findByProjectTaskpk_ProjectidAndStatus(project.getProjectid(),0);
+            //查找未开始且不能开始的任务
+            List<Project_Task> projects_unstart_tasks = project_taskDao.findByProjectTaskpk_ProjectidAndStatusAndCanstart(project.getProjectid(),0,false);
             for (Project_Task projects_unstart_task:projects_unstart_tasks){
-                Date earlydate = new Date(dayFormat.parse(dayFormat.format(new Date(project.getStarttime().getTime()))).getTime()+projects_unstart_task.getEarlystart()*24*60*60*1000);
-                Date nowday = dayFormat.parse(dayFormat.format(new Date()));
+//                Date earlydate = new Date(dayFormat.parse(dayFormat.format(new Date(project.getStarttime().getTime()))).getTime()+projects_unstart_task.getEarlystart()*timeUseMinute);
+//                Date nowday = dayFormat.parse(dayFormat.format(new Date()));
+                Date earlydate = new Date(project.getStarttime().getTime()+projects_unstart_task.getEarlystart()*timeUseMinute);
+                Date nowday = new Date();
                 if (nowday.before(earlydate))
                     continue;//先判断有没有到最早开始时间,没有直接看下一个任务
                 else{
@@ -124,6 +133,7 @@ public class ProjectTaskScheduleService {
                         //能进到这里说明既满足已经过了最早开始时间,又满足前驱任务已经全部完成,或者为起始任务
                         projects_unstart_task.setCanstart(true);
                         project_taskDao.save(projects_unstart_task);
+                        System.out.println("项目"+projects_unstart_task.getProjectTaskpk().getProjectid()+"任务"+projects_unstart_task.getProjectTaskpk().getTaskid()+"被设置为canstart");
                     }
                 }
             }
@@ -135,9 +145,13 @@ public class ProjectTaskScheduleService {
         for(Project project:projects){
             List<Project_Task> projects_canstart_tasks = project_taskDao.findByProjectTaskpk_ProjectidAndStatusAndCanstart(project.getProjectid(),0,true);
             for (Project_Task projects_canstart_task:projects_canstart_tasks) {
-                Date latedate = new Date(dayFormat.parse(dayFormat.format(new Date(project.getStarttime().getTime()))).getTime() + projects_canstart_task.getLatestart() * 24 * 60 * 60 * 1000);
-                Date nowday = dayFormat.parse(dayFormat.format(new Date()));
-                if (nowday.compareTo(latedate) != 0)//如果当天不为最晚开始时间
+//                Date latedate = new Date(dayFormat.parse(dayFormat.format(new Date(project.getStarttime().getTime()))).getTime() + projects_canstart_task.getLatestart() * timeUseMinute);
+//                Date nowday = dayFormat.parse(dayFormat.format(new Date()));
+                Date latedate = new Date(new Date(project.getStarttime().getTime()).getTime() + projects_canstart_task.getLatestart() * timeUseMinute);
+                Date nowday = new Date();
+                System.out.println(latedate);
+                System.out.println(nowday);
+                if (nowday.before(latedate))//如果当天不为最晚开始时间
                     continue;
                 else {
                     //自动开启任务
@@ -145,6 +159,20 @@ public class ProjectTaskScheduleService {
                     projects_canstart_task.setStarttime(new Date());
                     projects_canstart_task.setNeedcheck(false);
                     project_taskDao.save(projects_canstart_task);
+                    System.out.println("项目"+projects_canstart_task.getProjectTaskpk().getProjectid()+"任务"+projects_canstart_task.getProjectTaskpk().getTaskid()+"被开始");
+                    //给所有参与任务人员发消息
+                    Project_TaskToRole project_taskToRole = project_taskToRoleDao.findAllByProjectidAndTaskid(projects_canstart_task.getProjectTaskpk().getProjectid(),
+                            projects_canstart_task.getProjectTaskpk().getTaskid());
+                    List<Project_RoleToUser> project_roleToUsers = project_roleToUserDao.findAllByProjectidAndRoleid(projects_canstart_task.getProjectTaskpk().getProjectid(),
+                            project_taskToRole.getRoleid());
+                    for (Project_RoleToUser project_roleToUser:project_roleToUsers){
+                        Log log = new Log();
+                        log.setType(3);
+                        log.setProjectid(projects_canstart_task.getProjectTaskpk().getProjectid());
+                        log.setTaskid(projects_canstart_task.getProjectTaskpk().getTaskid());
+                        log.setTouid(project_roleToUser.getUid());
+                        logDao.save(log);
+                    }
                 }
             }
         }
@@ -153,10 +181,13 @@ public class ProjectTaskScheduleService {
     public void StartTaskByProjectid(int projectid) throws ParseException {
         SimpleDateFormat dayFormat = new SimpleDateFormat("yyyy-MM-dd");
         Project project = projectDao.findAllByProjectid(projectid);
-        List<Project_Task> projects_unstart_tasks = project_taskDao.findByProjectTaskpk_ProjectidAndStatus(project.getProjectid(),0);
+        //查找未开始且不能开始的任务
+        List<Project_Task> projects_unstart_tasks = project_taskDao.findByProjectTaskpk_ProjectidAndStatusAndCanstart(project.getProjectid(),0,false);
         for (Project_Task projects_unstart_task:projects_unstart_tasks){
-            Date earlydate = new Date(dayFormat.parse(dayFormat.format(new Date(project.getStarttime().getTime()))).getTime()+projects_unstart_task.getEarlystart()*24*60*60*1000);
-            Date nowday = dayFormat.parse(dayFormat.format(new Date()));
+//            Date earlydate = new Date(dayFormat.parse(dayFormat.format(new Date(project.getStarttime().getTime()))).getTime()+projects_unstart_task.getEarlystart()*timeUseMinute);
+//            Date nowday = dayFormat.parse(dayFormat.format(new Date()));
+            Date earlydate = new Date(project.getStarttime().getTime()+projects_unstart_task.getEarlystart()*timeUseMinute);
+            Date nowday = new Date();
             if (nowday.before(earlydate))
                 continue;//先判断有没有到最早开始时间,没有直接看下一个任务
             else{
@@ -185,15 +216,18 @@ public class ProjectTaskScheduleService {
                     //能进到这里说明既满足已经过了最早开始时间,又满足前驱任务已经全部完成,或者为起始任务
                     projects_unstart_task.setCanstart(true);
                     project_taskDao.save(projects_unstart_task);
+                    System.out.println("项目"+projects_unstart_task.getProjectTaskpk().getProjectid()+"任务"+projects_unstart_task.getProjectTaskpk().getTaskid()+"被设置为canstart");
                 }
             }
         }
 
         List<Project_Task> projects_canstart_tasks = project_taskDao.findByProjectTaskpk_ProjectidAndStatusAndCanstart(project.getProjectid(),0,true);
         for (Project_Task projects_canstart_task:projects_canstart_tasks) {
-            Date latedate = new Date(dayFormat.parse(dayFormat.format(new Date(project.getStarttime().getTime()))).getTime() + projects_canstart_task.getLatestart() * 24 * 60 * 60 * 1000);
-            Date nowday = dayFormat.parse(dayFormat.format(new Date()));
-            if (nowday.compareTo(latedate) != 0)//如果当天不为最晚开始时间
+//            Date latedate = new Date(dayFormat.parse(dayFormat.format(new Date(project.getStarttime().getTime()))).getTime() + projects_canstart_task.getLatestart() * timeUseMinute);
+//            Date nowday = dayFormat.parse(dayFormat.format(new Date()));
+            Date latedate = new Date(new Date(project.getStarttime().getTime()).getTime() + projects_canstart_task.getLatestart() * timeUseMinute);
+            Date nowday = new Date();
+            if (nowday.before(latedate))//如果当天不为最晚开始时间
                 continue;
             else {
                 //自动开启任务
@@ -202,6 +236,20 @@ public class ProjectTaskScheduleService {
 //                projects_canstart_task.setNeedsubmit(true);
                 projects_canstart_task.setNeedcheck(false);
                 project_taskDao.save(projects_canstart_task);
+                System.out.println("项目"+projects_canstart_task.getProjectTaskpk().getProjectid()+"任务"+projects_canstart_task.getProjectTaskpk().getTaskid()+"被开始");
+                //给所有参与任务人员发消息
+                Project_TaskToRole project_taskToRole = project_taskToRoleDao.findAllByProjectidAndTaskid(projects_canstart_task.getProjectTaskpk().getProjectid(),
+                        projects_canstart_task.getProjectTaskpk().getTaskid());
+                List<Project_RoleToUser> project_roleToUsers = project_roleToUserDao.findAllByProjectidAndRoleid(projects_canstart_task.getProjectTaskpk().getProjectid(),
+                        project_taskToRole.getRoleid());
+                for (Project_RoleToUser project_roleToUser:project_roleToUsers){
+                    Log log = new Log();
+                    log.setType(3);
+                    log.setProjectid(projects_canstart_task.getProjectTaskpk().getProjectid());
+                    log.setTaskid(projects_canstart_task.getProjectTaskpk().getTaskid());
+                    log.setTouid(project_roleToUser.getUid());
+                    logDao.save(log);
+                }
             }
         }
     }
@@ -254,5 +302,13 @@ public class ProjectTaskScheduleService {
     public static void setProject_taskToTaskDao(Project_TaskToTaskDao project_taskToTaskDao) {
         ProjectTaskScheduleService.project_taskToTaskDao = project_taskToTaskDao;
     }
+    public static LogDao getLogDao() {
+        return logDao;
+    }
+
+    public static void setLogDao(LogDao logDao) {
+        ProjectTaskScheduleService.logDao = logDao;
+    }
+
 }
 

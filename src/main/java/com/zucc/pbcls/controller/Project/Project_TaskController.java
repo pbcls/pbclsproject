@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -59,6 +60,27 @@ public class Project_TaskController {
         new ProjectFileUtil().DownloadProjectTaskFile(filename,project_taskOutput,response);
     }
 
+    @RequestMapping("/checktask")
+    @ResponseBody
+    public void checkTask(@RequestParam(value = "projectid") int projectid,@RequestParam(value = "taskid") int taskid,
+                                        @RequestParam(value = "pass") boolean pass) {
+        project_taskService.checkTask(projectid,taskid,pass);
+    }
+
+
+    @RequestMapping("/submittask")
+    @ResponseBody
+    public void submitTask(@RequestParam(value = "submitfile") MultipartFile submitfile, @RequestParam(value = "projectid") int projectid,
+                           @RequestParam(value = "taskid") int taskid) {
+        project_taskService.submitTask(submitfile,projectid,taskid);
+    }
+
+
+    @RequestMapping("/starttask")
+    @ResponseBody
+    public boolean startTask(@RequestParam(value = "projectid") int projectid,@RequestParam(value = "taskid") int taskid) {
+        return project_taskService.manStartTask(projectid,taskid);
+    }
 
 
 

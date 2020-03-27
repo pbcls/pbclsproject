@@ -2,6 +2,7 @@ package com.zucc.pbcls.config;
 
 
 import com.zucc.pbcls.Listener.ExcelListener;
+import com.zucc.pbcls.dao.LogDao;
 import com.zucc.pbcls.dao.Project.*;
 import com.zucc.pbcls.dao.UserInfoDao;
 import com.zucc.pbcls.service.ProjectTaskScheduleService;
@@ -29,6 +30,8 @@ public class ListenerInitRun implements CommandLineRunner {
     Project_RoleDao project_roleDao;
     @Autowired
     Project_RoleToUserDao project_roleToUserDao;
+    @Autowired
+    LogDao logDao;
 
     @Override
     public void run(String... args) throws Exception {
@@ -40,6 +43,7 @@ public class ListenerInitRun implements CommandLineRunner {
         ProjectTaskScheduleService.setProject_taskToTaskDao(project_taskToTaskDao);
         ProjectTaskScheduleService.setProject_roleDao(project_roleDao);
         ProjectTaskScheduleService.setProject_roleToUserDao(project_roleToUserDao);
+        ProjectTaskScheduleService.setLogDao(logDao);
     }
 }
 

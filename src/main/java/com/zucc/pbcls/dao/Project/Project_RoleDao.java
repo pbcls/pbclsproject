@@ -13,10 +13,10 @@ public interface Project_RoleDao extends JpaRepository<Project_Role,Integer>{
     Project_Role findAllByProjectidAndRolename(int projectid,String rolename);
 
     @Query(nativeQuery = true,value = "select * from project_role where not exists(" +
-            "    select roleid from project_role where not exists("+
-            "            select roleid from project_roletouser where project_role.roleid=project_roletouser.roleid and project_roletouser.projectid = (:projectid)" +
-            "        )" +
-            "    )")
+            "                select roleid from project_role where not exists(" +
+            "                        select roleid from project_roletouser where project_role.roleid=project_roletouser.roleid and project_roletouser.projectid = (:projectid)" +
+            "                    ) and projectid = (:projectid)" +
+            "                )and projectid=(:projectid)")
     List<Project_Role> isAllRoleUsed(@Param("projectid") int projectid);
 
     List<Project_Role> findAllByProjectid(int projectid);

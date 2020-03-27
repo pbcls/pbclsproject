@@ -51,13 +51,14 @@ public class Project_TaskService {
         return project_taskDao.findByProjectidAndUid(projectid,uid);
     }
 
-    public boolean startTask(int projectid,int taskid){
+    public boolean manStartTask(int projectid,int taskid){
         Project_Task task = project_taskDao.findByProjectTaskpk(new Project_Task_pk(projectid,taskid));
         if (task.isCanstart()){
             task.setStarttime(new Date());
             task.setStatus(1);
             task.setNeedcheck(false);
             project_taskDao.save(task);
+            System.out.println("项目"+task.getProjectTaskpk().getProjectid()+"任务"+task.getProjectTaskpk().getTaskid()+"被开始");
             //给所有参与任务人员发消息
             Project_TaskToRole project_taskToRole = project_taskToRoleDao.findAllByProjectidAndTaskid(projectid,taskid);
             List<Project_RoleToUser> project_roleToUsers = project_roleToUserDao.findAllByProjectidAndRoleid(projectid,project_taskToRole.getRoleid());
@@ -135,13 +136,20 @@ public class Project_TaskService {
         return jsonObject.toString();
     }
 
-    public boolean checkTask(int projectid,int taskid,boolean pass){
+    public void checkTask(int projectid,int taskid,boolean pass){
         Project_Task project_task = project_taskDao.findByProjectTaskpk(new Project_Task_pk(projectid,taskid));
+        Project_Task lastTask = project_taskDao.findLastTask(projectid);
         Log log = new Log();
         if (pass){
             project_task.setStatus(2);
             project_task.setFinishtime(new Date());
             project_taskDao.save(project_task);
+            System.out.println("项目"+project_task.getProjectTaskpk().getProjectid()+"任务"+project_task.getProjectTaskpk().getTaskid()+"被开始");
+            if (project_task.getProjectTaskpk()==lastTask.getProjectTaskpk()){
+                /**
+                 * 这里补充是最后一个任务的评分相关
+                 */
+            }
             //将上个完成任务提交,并遍历项目查看后续任务是否可以开启
             try {
                 new ProjectTaskScheduleService().StartTaskByProjectid(projectid);
@@ -171,7 +179,6 @@ public class Project_TaskService {
             logDao.save(log);
         }
         //检查和结束 通过要开启后面的任务 然后上传文档
-        return true;
     }
 
     public void submitTask(MultipartFile file,int projectid , int taskid){

@@ -17,7 +17,8 @@ public interface Project_RoleToUserDao extends JpaRepository<Project_RoleToUser,
     @Query(nativeQuery = true,value ="SELECT COUNT(uid) FROM project_roletouser WHERE projectid=(:projectid)")
     int countByProjectid(@Param("projectid")int projectid);
 
-    @Query(nativeQuery = true,value = "SELECT prtu.uid from project_roletouser prtu,project_role pr where prtu.projectid = (:projectid) and pr.projectid=prtu.projectid and pr.rolename LIKE '项目经理'")
+    @Query(nativeQuery = true,value = "SELECT uid from project_roletouser,project_role where project_roletouser.roleid=project_role.roleid" +
+            "            AND project_role.projectid=project_roletouser.projectid AND rolename LIKE '项目经理'AND project_role.projectid=(:projectid);")
     String findPM(@Param("projectid") int projectid);
 
     @Query(nativeQuery = true,value = "SELECT * from project_roletouser,project_role where project_roletouser.roleid=project_role.roleid " +
