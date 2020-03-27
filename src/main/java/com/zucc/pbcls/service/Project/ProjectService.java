@@ -121,7 +121,7 @@ public class ProjectService {
             Project_TaskToRole project_taskToRole = new Project_TaskToRole();
             project_taskToRole.setProjectid(project.getProjectid());
             project_taskToRole.setTaskid(case_taskToRole.getTaskid());
-            project_taskToRole.setProject_role(project_roleDao.findAllByProjectidAndRoleid(project.getProjectid(),case_taskToRole.getCase_role().getRoleid()));
+            project_taskToRole.setRoleid(case_taskToRole.getCase_role().getRoleid());
             project_taskToRoleDao.save(project_taskToRole);
         }
 
@@ -148,6 +148,22 @@ public class ProjectService {
         System.out.println("以下是查找图的关键路径的程序。");
         G = CreateALGraph(G, project.getProjectid());
         CriticalPath(G);
+        //最后一个结束点需要单独赋值
+        Project_TaskToTask lasttaskToTask = project_taskToTaskDao.findAllByProjectidAndSuccessorid(project.getProjectid(),0).get(0);
+        Project_Task lasttask = project_taskDao.findByProjectTaskpk(new Project_Task_pk(project.getProjectid(),lasttaskToTask.getPredecessorid()));
+        //找出最后一个节点得所有前驱任务节点
+        List<Project_TaskToTask> projectTaskToTasks = project_taskToTaskDao.findAllByProjectidAndSuccessorid(project.getProjectid(),lasttask.getProjectTaskpk().getTaskid());
+        //找出前面得最早开始时间加上任务时长最大的任务点,即为除最终节点以外的最后一个关键路径的点
+        int max = 0;
+        for (Project_TaskToTask project_taskToTask:project_taskToTasks){
+            Project_Task project_task = project_taskDao.findByProjectTaskpk(new Project_Task_pk(project.getProjectid(),project_taskToTask.getPredecessorid()));
+            if (max <(project_task.getEarlystart()+project_task.getDuration()))
+                max = project_task.getEarlystart()+project_task.getDuration();
+        }
+        lasttask.setIscritical(true);
+        lasttask.setEarlystart(max);
+        lasttask.setLatestart(max);
+        project_taskDao.save(lasttask);
 
 
         //设置project_taskoutput,并创建文件夹
@@ -449,10 +465,14 @@ public class ProjectService {
         String filePath = project.getFoldername() + "/DOCS";
 
         try {
-            new ProjectFileUtil().uploadFiles(file.getBytes(), filePath, file.getName());
+            new ProjectFileUtil().uploadDOCSFiles(file.getBytes(), filePath, file.getName());
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean checkPM(int projectid,String uid){
+        return (uid.equals(project_roleToUserDao.findPM(projectid)));
     }
 
 }

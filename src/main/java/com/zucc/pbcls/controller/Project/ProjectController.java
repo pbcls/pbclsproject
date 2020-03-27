@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -173,11 +174,20 @@ public class ProjectController {
         Project project = projectService.findByProjectid(projectid);
         ProjectFileUtil projectFileUtil = new ProjectFileUtil();
         try {
-            projectFileUtil.uploadFiles(docfile.getBytes(),project.getFoldername()+"/DOCS/",docfile.getOriginalFilename());
+            projectFileUtil.uploadDOCSFiles(docfile.getBytes(),project.getFoldername()+"/DOCS/",docfile.getOriginalFilename());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    @RequestMapping("/checkPM")
+    @ResponseBody
+    public boolean checkPM(@RequestParam(value = "projectid") int projectid){
+        UserInfo user = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String uid = user.getUsername();
+        return projectService.checkPM(projectid,uid);
+    }
+
 
 
 

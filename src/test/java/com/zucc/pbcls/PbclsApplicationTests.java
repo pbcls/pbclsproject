@@ -178,4 +178,10 @@ public class PbclsApplicationTests {
 		new ProjectFileUtil().delProjectFile(file_project);
 	}
 
+	@Test
+	public void findByProjectidAndUid(){
+		for (Project_Task project_task:project_taskDao.findByProjectidAndUid(1,"szz")){
+			System.out.println(project_task);
+		}
+	}
 }

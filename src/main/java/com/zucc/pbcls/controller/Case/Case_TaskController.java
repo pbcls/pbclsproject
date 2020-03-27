@@ -34,9 +34,9 @@ public class Case_TaskController {
 
 
 
-    @RequestMapping("/showtaskinfo")
+    @RequestMapping("/showcasetaskinfo")
     @ResponseBody
-    public String showTaskInfo(@RequestBody Case_Task_pk case_task_pk){
+    public String showCaseTaskInfo(@RequestBody Case_Task_pk case_task_pk){
         Case_Task case_task = case_taskService.findAllByCaseTaskpk(case_task_pk);
         Case_TaskToRole case_taskToRole= case_taskToRoleService.findRoleByCaseidAndTaskid(case_task_pk);
         List<Case_TaskToTask> TasksSuccessor = case_taskToTaskService.findAllTasksSuccessor(case_taskToRole.getCaseid(),case_taskToRole.getTaskid());

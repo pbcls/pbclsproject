@@ -12,6 +12,7 @@ public interface Project_RoleToUserDao extends JpaRepository<Project_RoleToUser,
     List<Project_RoleToUser> findAllByUid(String uid);
     List<Project_RoleToUser> findAllByProjectid(int projectid);
     Project_RoleToUser findAllByUidAndProjectid(String uid,int projectid);
+    List<Project_RoleToUser> findAllByProjectidAndRoleid(int projectid,int roleis);
 
     @Query(nativeQuery = true,value ="SELECT COUNT(uid) FROM project_roletouser WHERE projectid=(:projectid)")
     int countByProjectid(@Param("projectid")int projectid);
@@ -22,5 +23,7 @@ public interface Project_RoleToUserDao extends JpaRepository<Project_RoleToUser,
     @Query(nativeQuery = true,value = "SELECT * from project_roletouser,project_role where project_roletouser.roleid=project_role.roleid " +
             "AND project_role.projectid=project_roletouser.projectid AND rolename LIKE '教师'AND project_role.projectid=(:projectid);")
     Project_RoleToUser findTeacher(@Param("projectid") int projectid);
+
+
 
 }

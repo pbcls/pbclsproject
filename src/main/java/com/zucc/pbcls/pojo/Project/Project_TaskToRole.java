@@ -31,9 +31,8 @@ public class Project_TaskToRole {
     private int projectid;
     private int taskid;
 
-    @ManyToOne()
-    @JoinColumn(name = "roleid",foreignKey = @ForeignKey(name = "none",value = ConstraintMode.NO_CONSTRAINT))
-    @NotFound(action= NotFoundAction.IGNORE)
-    private Project_Role project_role;
+    private int roleid;
+    @Transient
+    private String rolename;
 
 }

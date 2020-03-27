@@ -18,4 +18,11 @@ public interface Project_TaskDao extends JpaRepository<Project_Task,Project_Task
 
     List<Project_Task> findByProjectTaskpk_ProjectidAndStatus(int projectid,int status);
     List<Project_Task> findByProjectTaskpk_ProjectidAndStatusAndCanstart(int projectid,int status,boolean canstart);
+
+    @Query(nativeQuery = true,value = "select * FROM project_task WHERE projectid=(:projectid) AND taskid in (" +
+            "    select taskid FROM project_tasktorole WHERE project_tasktorole.projectid = (:projectid) AND  roleid in(" +
+            "        select roleid FROM project_roletouser WHERE project_roletouser.projectid = (:projectid) AND uid like (:uid)" +
+            "        )" +
+            "    )")
+    List<Project_Task> findByProjectidAndUid(@Param("projectid")int projectid,@Param("uid")String uid);
 }

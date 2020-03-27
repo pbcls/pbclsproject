@@ -59,51 +59,51 @@
     //         });
     // }
 
-    //查询所有项目
-    window.onload=function() {
-            $.ajax({
-                type: "post",
-                url: "/findallprojects",
-                dataType: 'text',
-                contentType: "application/x-www-form-urlencoded",
-                traditional: true,
-                success: function (data) {
-                    var dataobj = JSON.parse(data);
-                    console.log(dataobj);
-                    // $("#caseid").html(dataobj.case.caseid);
-                    // $("#casename").html(dataobj.case.casename);
-                    // $("#description").html(dataobj.case.description);
-
-                },
-                error:function(result) {
-                    alert(result);
-                }
-            });
-    }
+    // //查询所有项目
+    // window.onload=function() {
+    //         $.ajax({
+    //             type: "post",
+    //             url: "/findallprojects",
+    //             dataType: 'text',
+    //             contentType: "application/x-www-form-urlencoded",
+    //             traditional: true,
+    //             success: function (data) {
+    //                 var dataobj = JSON.parse(data);
+    //                 console.log(dataobj);
+    //                 // $("#caseid").html(dataobj.case.caseid);
+    //                 // $("#casename").html(dataobj.case.casename);
+    //                 // $("#description").html(dataobj.case.description);
+    //
+    //             },
+    //             error:function(result) {
+    //                 alert(result);
+    //             }
+    //         });
+    // }
 
     // 查询任务详细信息
-    // window.onload=function() {
-    //     $.ajax({
-    //         type: "post",
-    //         url: "/showtaskinfo",
-    //         dataType: 'text',
-    //         contentType: "application/json;charset=UTF-8",
-    //         //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
-    //         // 表示对象
-    //         data: JSON.stringify({  //json前面的东西要和后端实体类对应
-    //             "caseid": 1,
-    //             "taskid": 3
-    //         }),
-    //         success: function (data) {
-    //             var dataobj = JSON.parse(data);
-    //             console.log(dataobj);
-    //
-    //         },
-    //         error:function(result) {
-    //             alert(result);
-    //         }
-    //     });
-    // }
+    window.onload=function() {
+        $.ajax({
+            type: "post",
+            url: "/showprojecttaskinfo",
+            dataType: 'text',
+            contentType: "application/json;charset=UTF-8",
+            //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
+            // 表示对象
+            data: JSON.stringify({  //json前面的东西要和后端实体类对应
+                "projectid": 1,
+                "taskid": 3
+            }),
+            success: function (data) {
+                var dataobj = JSON.parse(data);
+                console.log(dataobj);
+
+            },
+            error:function(result) {
+                alert(result);
+            }
+        });
+    }
 
     // // 下载案例文档
     //     function downloadcasefile() {

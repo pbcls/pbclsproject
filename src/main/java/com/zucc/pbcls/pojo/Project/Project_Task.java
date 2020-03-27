@@ -48,9 +48,6 @@ public class Project_Task {
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss",timezone = "GMT+8")
     private Date finishtime;
 
-    @Column(name = "needsubmit",columnDefinition = "tinyint default 0")
-    private boolean needsubmit;
-
     @Column(name = "needcheck",columnDefinition = "tinyint default 0")
     private boolean needcheck;
 

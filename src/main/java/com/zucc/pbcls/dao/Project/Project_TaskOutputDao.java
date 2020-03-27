@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface Project_TaskOutputDao extends JpaRepository<Project_TaskOutput,Integer> {
     List<Project_TaskOutput> findAllByProjectid(int projectid);
+    Project_TaskOutput findAllByProjectidAndTaskid(int projectid,int taskid);
 }

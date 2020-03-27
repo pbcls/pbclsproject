@@ -67,6 +67,10 @@ public class ProjectTaskScheduleService {
                     project_running_task.setStatus(2);//设置任务结束
                     project_running_task.setFinishtime(new Date());
                     project_taskDao.save(project_running_task);
+
+                    /**
+                     * 这里还需要写任务评分的逻辑
+                     */
                 }
             }
             if (flag==1) {
@@ -139,7 +143,6 @@ public class ProjectTaskScheduleService {
                     //自动开启任务
                     projects_canstart_task.setStatus(1);
                     projects_canstart_task.setStarttime(new Date());
-                    projects_canstart_task.setNeedsubmit(true);
                     projects_canstart_task.setNeedcheck(false);
                     project_taskDao.save(projects_canstart_task);
                 }
@@ -196,7 +199,7 @@ public class ProjectTaskScheduleService {
                 //自动开启任务
                 projects_canstart_task.setStatus(1);
                 projects_canstart_task.setStarttime(new Date());
-                projects_canstart_task.setNeedsubmit(true);
+//                projects_canstart_task.setNeedsubmit(true);
                 projects_canstart_task.setNeedcheck(false);
                 project_taskDao.save(projects_canstart_task);
             }
