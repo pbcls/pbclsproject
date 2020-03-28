@@ -121,8 +121,8 @@ public class PbclsApplicationTests {
 	}
 
 	@Test
-	public void findAllByUid(){
-		System.out.println(projectService.findAllByUid("yzl"));
+	public void findUnfinishedProjectsByUid(){
+		System.out.println(projectService.findUnfinishedProjectsByUid("szz"));
 	}
 
 
@@ -206,4 +206,5 @@ public class PbclsApplicationTests {
 	public void AutoStartEveryDay(){
 		new ProjectTaskScheduleService().AutoStartEveryDay();
 	}
+
 }

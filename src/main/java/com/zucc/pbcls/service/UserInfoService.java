@@ -1,21 +1,53 @@
 package com.zucc.pbcls.service;
 
+import com.zucc.pbcls.dao.Project.ProjectDao;
+import com.zucc.pbcls.dao.Project.Project_RoleDao;
+import com.zucc.pbcls.dao.Project.Project_RoleToUserDao;
 import com.zucc.pbcls.dao.UserInfoDao;
 import com.zucc.pbcls.pojo.MyUser;
+import com.zucc.pbcls.pojo.Project.Project;
+import com.zucc.pbcls.pojo.Project.Project_Role;
+import com.zucc.pbcls.pojo.Project.Project_RoleToUser;
 import com.zucc.pbcls.utils.PortraitFileTool;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 
 @Service
 public class UserInfoService {
     @Autowired
     UserInfoDao userInfoDao;
+    @Autowired
+    Project_RoleToUserDao project_roleToUserDao;
+    @Autowired
+    ProjectDao projectDao;
+    @Autowired
+    Project_RoleDao project_roleDao;
 
     public MyUser showUserDetail(String uid){
         return userInfoDao.findByUid(uid);
+    }
+
+    public JSONArray findAllProjectByUid(String uid) {
+        List<Project_RoleToUser> project_roleToUsers = project_roleToUserDao.findAllByUid(uid);
+        JSONArray json_projects = new JSONArray();
+        for (int i = 0; i < project_roleToUsers.size(); i++) {
+            project_roleToUsers.get(i).setRolename(project_roleDao.findAllByProjectidAndRoleid(project_roleToUsers.get(i).getProjectid()
+                    , project_roleToUsers.get(i).getRoleid()).getRolename());
+            JSONObject json_project_roleToUser = new JSONObject(project_roleToUsers.get(i));
+            JSONObject json_project = new JSONObject(projectDao.findAllByProjectid(project_roleToUsers.get(i).getProjectid()));
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("project", json_project);
+            jsonObject.put("role", json_project_roleToUser);
+            json_projects.put(i, jsonObject);
+        }
+        return json_projects;
     }
 
     public boolean updateUserDetial(MyUser user){

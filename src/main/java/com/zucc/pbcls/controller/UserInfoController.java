@@ -34,6 +34,14 @@ public class UserInfoController {
         return userInfoService.showUserDetail(uid);
     }
 
+
+    ;
+    @RequestMapping("/findallprojectbyuid")
+    @ResponseBody
+    public String findAllProjectByUid(@RequestParam(value = "uid") String uid){
+        return userInfoService.findAllProjectByUid(uid).toString();
+    }
+
     @RequestMapping("/updateUserDetial")
     @ResponseBody
     public boolean updateUserDetial(@RequestBody MyUser user){

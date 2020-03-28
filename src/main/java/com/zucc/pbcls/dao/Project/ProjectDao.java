@@ -11,5 +11,4 @@ public interface ProjectDao extends JpaRepository<Project,Integer> ,JpaSpecifica
     List<Project> findAllByCaseid(int caseid);
     List<Project> findAllByStatus(int status);
     Project findAllByProjectid(int projectid);
-
 }

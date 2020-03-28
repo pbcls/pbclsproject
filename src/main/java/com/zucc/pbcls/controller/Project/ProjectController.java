@@ -91,11 +91,11 @@ public class ProjectController {
         projectService.createProjectByCase(user.getUsername(),caseid, projectname);
     }
 
-    @RequestMapping("/findprojectsbyuid")
+    @RequestMapping("/findunfinishedprojectsbyuid")
     @ResponseBody
-    public String findProjectsByUid(){
+    public String findUnfinishedProjectsByUid(){
         UserInfo user = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return projectService.findAllByUid(user.getUsername()).toString();
+        return projectService.findUnfinishedProjectsByUid(user.getUsername()).toString();
     }
 
     @RequestMapping("/isenteredproject")

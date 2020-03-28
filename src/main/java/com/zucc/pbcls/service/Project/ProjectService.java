@@ -1,6 +1,8 @@
 package com.zucc.pbcls.service.Project;
 
 import com.zucc.pbcls.dao.Case.*;
+import com.zucc.pbcls.dao.Evaluation_MemberDao;
+import com.zucc.pbcls.dao.Evaluation_MutualDao;
 import com.zucc.pbcls.dao.LogDao;
 import com.zucc.pbcls.dao.Project.*;
 import com.zucc.pbcls.dao.UserInfoDao;
@@ -8,6 +10,8 @@ import com.zucc.pbcls.pojo.AOE.ALGraph;
 import com.zucc.pbcls.pojo.AOE.ArcNode;
 import com.zucc.pbcls.pojo.AOE.VNode;
 import com.zucc.pbcls.pojo.Case.*;
+import com.zucc.pbcls.pojo.Evaluation_Member;
+import com.zucc.pbcls.pojo.Evaluation_Mutual;
 import com.zucc.pbcls.pojo.Log;
 import com.zucc.pbcls.pojo.Project.*;
 import com.zucc.pbcls.service.ProjectTaskScheduleService;
@@ -21,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -54,6 +59,10 @@ public class ProjectService {
     Project_RoleToUserDao project_roleToUserDao;
     @Autowired
     LogDao logDao;
+    @Autowired
+    Evaluation_MemberDao evaluation_memberDao;
+    @Autowired
+    Evaluation_MutualDao evaluation_mutualDao;
 
 
     public void createProjectByCase(String uid, int caseid, String projectname) {
@@ -189,6 +198,7 @@ public class ProjectService {
         project_roleToUser.setRoleid(project_roleDao.findAllByProjectidAndRolename(project.getProjectid(), "项目经理").getRoleid());
         project_roleToUser.setUid(uid);
         project_roleToUserDao.save(project_roleToUser);
+
     }
 
 
@@ -203,8 +213,16 @@ public class ProjectService {
         return projectDao.findAllByProjectid(projectid);
     }
 
-    public JSONArray findAllByUid(String uid) {
+    public JSONArray findUnfinishedProjectsByUid(String uid) {
         List<Project_RoleToUser> project_roleToUsers = project_roleToUserDao.findAllByUid(uid);
+        Iterator<Project_RoleToUser> iterator = project_roleToUsers.iterator();
+        while (iterator.hasNext()) {
+            Project_RoleToUser project_roleToUser = iterator.next();
+            int projectstatus = projectDao.findAllByProjectid(project_roleToUser.getProjectid()).getStatus();
+            //把已经完成的删掉 只留下未开始和正在进行的
+            if (projectstatus == 0|| projectstatus == 3)
+                iterator.remove();
+        }
         JSONArray json_projects = new JSONArray();
         for (int i = 0; i < project_roleToUsers.size(); i++) {
             project_roleToUsers.get(i).setRolename(project_roleDao.findAllByProjectidAndRoleid(project_roleToUsers.get(i).getProjectid()
@@ -340,6 +358,64 @@ public class ProjectService {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
+        //初始化任务自评表
+        List<Project_Task> projectTasks = project_taskDao.findByProjectTaskpk_Projectid(project.getProjectid());
+        for (Project_Task project_task:projectTasks){
+            Project_TaskToRole project_taskToRole = project_taskToRoleDao.findAllByProjectidAndTaskid(
+                    project_task.getProjectTaskpk().getProjectid(),project_task.getProjectTaskpk().getTaskid());
+            List<Project_RoleToUser> project_roleToUsers = project_roleToUserDao.findAllByProjectidAndRoleid(
+                    project_taskToRole.getProjectid(),project_taskToRole.getRoleid());
+            for (Project_RoleToUser projectRoleToUser:project_roleToUsers){
+                Evaluation_Member emember = new Evaluation_Member();
+                emember.setProjectid(project_task.getProjectTaskpk().getProjectid());
+                emember.setTaskid(project_task.getProjectTaskpk().getTaskid());
+                emember.setRoleid(projectRoleToUser.getRoleid());
+                emember.setUid(projectRoleToUser.getUid());
+                emember.setSelfEvaluated(false);
+                emember.setPmEvaluated(false);
+                evaluation_memberDao.save(emember);
+            }
+        }
+
+        //初始化互评表
+        List<Project_RoleToUser> project_roleToUsers = project_roleToUserDao.findAllByProjectid(projectid);
+        //删掉teacher
+        Iterator<Project_RoleToUser> iterator = project_roleToUsers.iterator();
+        while (iterator.hasNext()) {
+            Project_RoleToUser project_roleToUser = iterator.next();
+            Project_RoleToUser teacher = project_roleToUserDao.findTeacher(projectid);
+            //把已经完成的删掉 只留下未开始和正在进行的
+            if (project_roleToUser.getUid().equals(teacher.getUid()))
+                iterator.remove();
+        }
+
+
+        for (Project_RoleToUser self:project_roleToUsers){
+            //删掉自己
+            List<Project_RoleToUser> userExceptSelfs = new ArrayList<Project_RoleToUser>(project_roleToUsers);
+
+            Iterator<Project_RoleToUser> iterator_userExceptSelf = userExceptSelfs.iterator();
+            while (iterator_userExceptSelf.hasNext()) {
+                Project_RoleToUser user = iterator_userExceptSelf.next();
+                //把已经完成的删掉 只留下未开始和正在进行的
+                if (user.getUid().equals(self.getUid()))
+                    iterator_userExceptSelf.remove();
+            }
+
+            for (Project_RoleToUser userExceptSelf:userExceptSelfs){
+                Evaluation_Mutual emutual = new Evaluation_Mutual();
+                emutual.setProjectid(projectid);
+                emutual.setUid(self.getUid());
+                emutual.setTouid(userExceptSelf.getUid());
+                emutual.setEvaluated(false);
+                evaluation_mutualDao.save(emutual);
+            }
+
+        }
+
+
+
         return true;
     }
 
