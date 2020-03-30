@@ -3,6 +3,9 @@ package com.zucc.pbcls.controller.Project;
 import com.zucc.pbcls.dao.Case.CaseDao;
 import com.zucc.pbcls.dao.UserInfoDao;
 import com.zucc.pbcls.pojo.Case.CaseInfo;
+import com.zucc.pbcls.pojo.Evaluation_Member;
+import com.zucc.pbcls.pojo.Evaluation_Mutual;
+import com.zucc.pbcls.pojo.Evaluation_Team;
 import com.zucc.pbcls.pojo.Log;
 import com.zucc.pbcls.pojo.Project.Project;
 import com.zucc.pbcls.pojo.Project.Project_Role;
@@ -187,6 +190,84 @@ public class ProjectController {
         String uid = user.getUsername();
         return projectService.checkPM(projectid,uid);
     }
+
+    /**
+     * 所有互评除了评价的字段 给pm评价7个 给学生评价5个 projectid uid touid必须被提前set好  uid为提交评价的人 touid为被评价的人
+     */
+    @RequestMapping("/evaluatemutual")
+    @ResponseBody
+    public boolean evaluateMutual(@RequestBody List<Evaluation_Mutual> evaluation_mutuals){
+        return projectService.evaluateMutual(evaluation_mutuals);
+    }
+
+
+    /**
+     * 所有教师评价小组 除了评价的字段 projectid必须被提前set好
+     */
+    @RequestMapping("/evaluateteam")
+    @ResponseBody
+    public boolean evaluateTeam(@RequestBody Evaluation_Team evaluation_team){
+        return projectService.evaluateTeam(evaluation_team);
+    }
+
+
+
+    //用于互评前给前端反馈自己需要评价得人的列表,以及这些人的名称和角色
+    @RequestMapping("/showevaluatemutuallist")
+    @ResponseBody
+    public List<Evaluation_Mutual> showEvaluateMutualList(@RequestParam(value = "projectid") int projectid){
+        UserInfo user = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String uid = user.getUsername();
+        return projectService.showEvaluateMutualList(projectid,uid);
+    }
+
+    /**
+     * 判断项目是否可以正常结束
+     * true  可以正常结束
+     * false 还有任务或者评分没有完成
+     */
+    @RequestMapping("/checknormallyfinishproject")
+    @ResponseBody
+    public boolean checkNormallyFinishProject(@RequestParam(value = "projectid") int projectid){
+        return projectService.checkNormallyFinishProject(projectid);
+    }
+
+    /**
+     * 结束项目
+     * true  正常结束
+     * false 强行结束
+     */
+    @RequestMapping("/finishproject")
+    @ResponseBody
+    public boolean finishProject(@RequestParam(value = "projectid") int projectid){
+        return projectService.finishProject(projectid);
+    }
+
+
+    //,
+    /**
+     * 查看项目级评价:整体的我的自评/pm评价/教师评价/其他组员对我的评价/教师对小组的评价
+     * 项目结束后才可以查看
+     * 若没有该信息,例如pm用户的pm评价 显示 "暂无评价"
+     */
+    @RequestMapping("/showsumevaluation")
+    @ResponseBody
+    public String showSumEvaluation(@RequestParam(value = "projectid") int projectid){
+        UserInfo user = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String uid = user.getUsername();
+        return projectService.showSumEvaluation(projectid,uid);
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

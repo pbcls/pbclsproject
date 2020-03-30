@@ -1,17 +1,15 @@
 package com.zucc.pbcls.service.Project;
 
+import com.zucc.pbcls.dao.*;
 import com.zucc.pbcls.dao.Case.*;
-import com.zucc.pbcls.dao.Evaluation_MemberDao;
-import com.zucc.pbcls.dao.Evaluation_MutualDao;
-import com.zucc.pbcls.dao.LogDao;
 import com.zucc.pbcls.dao.Project.*;
-import com.zucc.pbcls.dao.UserInfoDao;
 import com.zucc.pbcls.pojo.AOE.ALGraph;
 import com.zucc.pbcls.pojo.AOE.ArcNode;
 import com.zucc.pbcls.pojo.AOE.VNode;
 import com.zucc.pbcls.pojo.Case.*;
 import com.zucc.pbcls.pojo.Evaluation_Member;
 import com.zucc.pbcls.pojo.Evaluation_Mutual;
+import com.zucc.pbcls.pojo.Evaluation_Team;
 import com.zucc.pbcls.pojo.Log;
 import com.zucc.pbcls.pojo.Project.*;
 import com.zucc.pbcls.service.ProjectTaskScheduleService;
@@ -63,6 +61,8 @@ public class ProjectService {
     Evaluation_MemberDao evaluation_memberDao;
     @Autowired
     Evaluation_MutualDao evaluation_mutualDao;
+    @Autowired
+    Evaluation_TeamDao evaluation_teamDao;
 
 
     public void createProjectByCase(String uid, int caseid, String projectname) {
@@ -385,7 +385,6 @@ public class ProjectService {
         while (iterator.hasNext()) {
             Project_RoleToUser project_roleToUser = iterator.next();
             Project_RoleToUser teacher = project_roleToUserDao.findTeacher(projectid);
-            //把已经完成的删掉 只留下未开始和正在进行的
             if (project_roleToUser.getUid().equals(teacher.getUid()))
                 iterator.remove();
         }
@@ -414,37 +413,278 @@ public class ProjectService {
 
         }
 
+        //教师给所有小组成员打分表
+        Project_RoleToUser teacher = project_roleToUserDao.findTeacher(projectid);
+        //单独给教师的互评赋值,列表已经删除了教师,所以给其他所有人评分即可
+        for (Project_RoleToUser project_roleToUser:project_roleToUsers) {
+            Evaluation_Mutual emutual = new Evaluation_Mutual();
+            emutual.setProjectid(projectid);
+            emutual.setUid(teacher.getUid());
+            emutual.setTouid(project_roleToUser.getUid());
+            emutual.setEvaluated(false);
+            evaluation_mutualDao.save(emutual);
+        }
 
+        //教师给小组(项目)打分表
+        Evaluation_Team eteam = new Evaluation_Team();
+        eteam.setProjectid(projectid);
+        eteam.setEvaluated(false);
+        evaluation_teamDao.save(eteam);
 
         return true;
     }
 
     /**
-     * 1 有任务没有做完 强行结束
-     * 2 正常结束
+     * 判断项目是否可以正常结束
+     * true  可以正常结束
+     * false 还有任务或者评分没有完成
      */
-    public int  finishProject(int projectid){
+    public boolean checkNormallyFinishProject(int projectid){
+        //判断是否所有任务结束
         List<Project_Task> project_tasks = project_taskDao.findByProjectTaskpk_Projectid(projectid);
+        for (Project_Task project_task:project_tasks)
+            if (project_task.getStatus()!=2)
+                return false;
+
+        //判断是否所有任务级别评价结束
+        List<Evaluation_Member> evaluation_members = evaluation_memberDao.findAllByProjectid(projectid);
+        for (Evaluation_Member evaluation_member:evaluation_members)
+            if (!evaluation_member.isSelfEvaluated() || !evaluation_member.isPmEvaluated() )
+                return false;
+
+        //判断是否所有项目级评价结束
+        List<Evaluation_Mutual> evaluation_mutuals = evaluation_mutualDao.findAllByProjectid(projectid);
+        for (Evaluation_Mutual evaluation_mutual:evaluation_mutuals)
+            if (!evaluation_mutual.isEvaluated())
+                return false;
+
+        //判断教师对小组的评价是否结束
+        Evaluation_Team evaluation_team = evaluation_teamDao.findAllByProjectid(projectid);
+        if (!evaluation_team.isEvaluated())
+            return false;
+
+
+        return true;
+    }
+
+    //结束项目
+
+    /**
+     * 结束项目
+     * true  正常结束
+     * false 强行结束
+     */
+    public boolean finishProject(int projectid){
+        boolean flag = checkNormallyFinishProject(projectid);
         Project project = projectDao.findAllByProjectid(projectid);
-        int flag = 0;
-        for (Project_Task project_task:project_tasks){
-            if (project_task.getStatus()!=2){
-                flag = 1;
-                break;
-            }
-        }
-        if (flag!=0){
+
+        if (flag){
+            project.setFinishtime(new Date());
+            project.setStatus(3);
+            return true;
+        }else {
             project.setFinishtime(new Date());
             project.setStatus(0);
             projectDao.save(project);
-            return 1;
-        }else {
-            project.setFinishtime(new Date());
-            project.setStatus(3);
-            return 2;
+            return false;
         }
     }
 
+
+
+    public boolean evaluateMutual(List<Evaluation_Mutual> evaluation_mutuals){
+        for (Evaluation_Mutual evaluation_mutual:evaluation_mutuals){
+            String pmuid = project_roleToUserDao.findPM(evaluation_mutual.getProjectid());
+            //如果互评是给pm的评价
+            if (evaluation_mutual.getTouid().equals(pmuid)){
+                Evaluation_Mutual olde = evaluation_mutualDao.findAllByProjectidAndUidAndTouid(
+                        evaluation_mutual.getProjectid(),evaluation_mutual.getUid(),evaluation_mutual.getTouid());
+                if (olde.isEvaluated())
+                    return false;
+                else {
+                    olde.setAttitude(evaluation_mutual.getAttitude());
+                    olde.setTechnique(evaluation_mutual.getTechnique());
+                    olde.setCommunication(evaluation_mutual.getCommunication());
+                    olde.setCooperation(evaluation_mutual.getCooperation());
+                    olde.setOrganization(evaluation_mutual.getOrganization());
+                    olde.setDecision(evaluation_mutual.getDecision());
+                    olde.setHelpme(evaluation_mutual.getHelpme());
+                    olde.setScore(EvaluateMutual_StudenttoPM(evaluation_mutual));
+                    olde.setMark(evaluation_mutual.getMark());
+                    olde.setEvaluated(true);
+                    evaluation_mutualDao.save(olde);
+                }
+            }
+            //如果互拼是给普通学生的评价
+            else{
+                Evaluation_Mutual olde = evaluation_mutualDao.findAllByProjectidAndUidAndTouid(
+                        evaluation_mutual.getProjectid(),evaluation_mutual.getUid(),evaluation_mutual.getTouid());
+                if (olde.isEvaluated())
+                    return false;
+                else {
+                    olde.setAttitude(evaluation_mutual.getAttitude());
+                    olde.setTechnique(evaluation_mutual.getTechnique());
+                    olde.setCommunication(evaluation_mutual.getCommunication());
+                    olde.setCooperation(evaluation_mutual.getCooperation());
+                    olde.setHelpme(evaluation_mutual.getHelpme());
+                    olde.setScore(EvaluateMutual_StudenttoStudent(evaluation_mutual));
+                    olde.setMark(evaluation_mutual.getMark());
+                    olde.setEvaluated(true);
+                    evaluation_mutualDao.save(olde);
+                }
+            }
+        }
+        return false;
+
+    }
+
+    public boolean evaluateTeam(Evaluation_Team evaluation_team){
+        Evaluation_Team olde = evaluation_teamDao.findAllByProjectid(evaluation_team.getProjectid());
+        if (olde.isEvaluated())
+            return false;
+        else {
+            olde.setDocPassTime(evaluation_team.getDocPassTime());
+            olde.setDocCorrectness(evaluation_team.getDocCorrectness());
+            olde.setDocInnovation(evaluation_team.getDocInnovation());
+            olde.setDocStyle(evaluation_team.getDocStyle());
+            olde.setAttitude(evaluation_team.getAttitude());
+            olde.setTechnique(evaluation_team.getTechnique());
+            olde.setCommunication(evaluation_team.getCommunication());
+            olde.setCooperation(evaluation_team.getCooperation());
+            olde.setScore(EvaluateTeam(evaluation_team));
+            olde.setMark(evaluation_team.getMark());
+            olde.setEvaluated(true);
+            return true;
+        }
+    }
+
+    public double EvaluateMutual_StudenttoPM(Evaluation_Mutual emutual){
+        double score;
+        score = emutual.getAttitude()*0.10
+                +emutual.getTechnique()*0.16
+                +emutual.getCommunication()*0.16
+                +emutual.getCooperation()*0.16
+                +emutual.getOrganization()*0.16
+                +emutual.getDecision()*0.16
+                +emutual.getHelpme()*0.10;
+        return score;
+    }
+    public double EvaluateMutual_StudenttoStudent(Evaluation_Mutual emutual){
+        double score;
+        score = emutual.getAttitude()*0.20
+                +emutual.getTechnique()*0.20
+                +emutual.getCommunication()*0.20
+                +emutual.getCooperation()*0.20
+                +emutual.getHelpme()*0.20;
+        return score;
+    }
+    public double EvaluateTeam(Evaluation_Team eteam){
+        double score;
+        score = eteam.getDocPassTime()*0.10
+                +eteam.getDocCorrectness()*0.30
+                +eteam.getDocInnovation()*0.10
+                +eteam.getDocStyle()*0.10
+                +eteam.getAttitude()*0.10
+                +eteam.getTechnique()*0.10
+                +eteam.getCommunication()*0.10
+                +eteam.getCooperation()*0.10;
+        return score;
+    }
+
+
+
+    public List<Evaluation_Mutual> showEvaluateMutualList(int projectid,String uid){
+        List<Evaluation_Mutual> evaluation_mutuals = evaluation_mutualDao.findAllByProjectidAndUidAndEvaluated(projectid, uid,false);
+        for (Evaluation_Mutual evaluation_mutual:evaluation_mutuals){
+            evaluation_mutual.setTousername(userInfoDao.findByUid(evaluation_mutual.getTouid()).getName());
+            int toroleid = project_roleToUserDao.findAllByUidAndProjectid(evaluation_mutual.getTouid(),evaluation_mutual.getProjectid()).getRoleid();
+            evaluation_mutual.setToroleid(toroleid);
+            evaluation_mutual.setTorolename(project_roleDao.findAllByProjectidAndRoleid(evaluation_mutual.getProjectid(),toroleid).getRolename());
+        }
+        return evaluation_mutuals;
+    }
+
+    public String showSumEvaluation(int projectid,String uid){
+        Project_RoleToUser teacher = project_roleToUserDao.findTeacher(projectid);
+        //所有任务的自评求和
+        JSONObject jsonObject = new JSONObject();
+
+        double sumSelfScore = 0;
+        int sumSelfCount = 0;
+        List<Evaluation_Member> sumTasksSelfEvaluation = evaluation_memberDao.findAllByProjectidAndUidAndSelfEvaluated(projectid,uid,true);
+        for (Evaluation_Member evaluation_member:sumTasksSelfEvaluation){
+            sumSelfCount++;
+            sumSelfScore+=evaluation_member.getSelfScore();
+        }
+        if (sumSelfCount!=0) {
+            sumSelfScore = sumSelfScore / sumSelfCount;
+            jsonObject.put("selfScore",new JSONObject(sumSelfScore));
+        }
+        else
+            jsonObject.put("selfScore","暂无评价");
+
+
+        //所有任务的PM评求和
+        String pmuid = project_roleToUserDao.findPM(projectid);
+        if (!pmuid.equals(uid)) {
+            double sumPmScore = 0;
+            int sumPmcount = 0;
+            List<Evaluation_Member> sumTasksPmEvaluation = evaluation_memberDao.findAllByProjectidAndUidAndPmEvaluated(projectid, uid, true);
+            for (Evaluation_Member evaluation_member : sumTasksPmEvaluation) {
+                sumPmcount++;
+                sumPmScore += evaluation_member.getPmScore();
+            }
+            if (sumPmcount != 0) {
+                sumPmScore = sumPmScore / sumPmcount;
+                jsonObject.put("pmScore",new JSONObject(sumPmScore));
+            }
+            else
+                jsonObject.put("pmScore","暂无评价");
+        }else {
+            jsonObject.put("pmScore","暂无评价");
+        }
+
+        //所有学生互评求和
+        double sumMutualStudentScore = 0;
+        int sumMutualStudentCount = 0;
+        //这里uidnot即把教师排除掉
+        List<Evaluation_Mutual> sumMutualStudentEvaluation = evaluation_mutualDao.findAllByProjectidAndUidNotAndTouidAndEvaluated(projectid, teacher.getUid(),uid, true);
+        for (Evaluation_Mutual evaluation_mutual:sumMutualStudentEvaluation){
+            sumMutualStudentCount++;
+            sumMutualStudentScore += evaluation_mutual.getScore();
+        }
+        if (sumMutualStudentCount != 0) {
+            sumMutualStudentScore = sumMutualStudentScore / sumMutualStudentCount;
+            jsonObject.put("mutualStudentScore",new JSONObject(sumMutualStudentScore));
+        }
+        else
+            jsonObject.put("mutualStudentScore","暂无评价");
+
+        //教师对所有人的评价
+        double sumMutualTeacherScore = 0;
+        int sumMutualTeacherCount = 0;
+        List<Evaluation_Mutual> sumMutualTeacherEvaluation = evaluation_mutualDao.findAllByProjectidAndUidAndTouidAndEvaluated(projectid, teacher.getUid(),uid, true);
+        for (Evaluation_Mutual evaluation_mutual:sumMutualTeacherEvaluation){
+            sumMutualTeacherCount++;
+            sumMutualTeacherScore += evaluation_mutual.getScore();
+        }
+        if (sumMutualTeacherCount != 0) {
+            sumMutualTeacherScore = sumMutualTeacherScore / sumMutualTeacherCount;
+            jsonObject.put("mutualTeacherScore",new JSONObject(sumMutualTeacherScore));
+        }
+        else
+            jsonObject.put("mutualTeacherScore","暂无评价");
+
+        //教师对小组的评价
+        Evaluation_Team evaluation_team = evaluation_teamDao.findAllByProjectid(projectid);
+        if (evaluation_team.isEvaluated())
+            jsonObject.put("teamScore",new JSONObject(evaluation_team.getScore()));
+        else
+            jsonObject.put("teamScore","暂无评价");
+
+
+        return jsonObject.toString();
+    }
 
 
     //AOE图赋值相关操作

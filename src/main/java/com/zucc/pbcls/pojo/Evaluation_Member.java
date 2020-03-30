@@ -42,14 +42,14 @@ public class Evaluation_Member {
     private int selfOrganization;
     @Column(name = "selfdecision",columnDefinition = "int default 0")
     private int selfDecision;
-    @Column(name = "selfscore",columnDefinition = "float default 0")
-    private float selfScore;
+    @Column(name = "selfscore",columnDefinition = "double default 0")
+    private double selfScore;
     @Column(name = "selfmark")
     private String selfMark;
     @Column(name = "selfexpectation")
     private String selfExpectation;
-    @Column(name = "isselfevaluated",columnDefinition = "tinyint default 0")
-    private boolean isSelfEvaluated;
+    @Column(name = "selfevaluated",columnDefinition = "tinyint default 0")
+    private boolean selfEvaluated;
     @Column(name = "pmattitude",columnDefinition = "int default 0")
     private int pmAttitude;
     @Column(name = "pmtechnique",columnDefinition = "int default 0")
@@ -68,11 +68,11 @@ public class Evaluation_Member {
     private int pmDocInnovation;
     @Column(name = "pmdocstyle",columnDefinition = "int default 0")
     private int pmDocStyle;
-    @Column(name = "pmscore",columnDefinition = "float default 0")
-    private float pmScore;
+    @Column(name = "pmscore",columnDefinition = "double default 0")
+    private double pmScore;
     @Column(name = "pmmark")
     private String pmMark;
-    @Column(name = "ispmevaluated",columnDefinition = "tinyint default 0")
-    private boolean isPmEvaluated;
+    @Column(name = "pmevaluated",columnDefinition = "tinyint default 0")
+    private boolean pmEvaluated;
 
 }

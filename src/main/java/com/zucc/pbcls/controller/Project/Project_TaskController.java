@@ -1,6 +1,7 @@
 package com.zucc.pbcls.controller.Project;
 
 import com.zucc.pbcls.pojo.Case.Case_Task_pk;
+import com.zucc.pbcls.pojo.Evaluation_Member;
 import com.zucc.pbcls.pojo.Project.Project_Task;
 import com.zucc.pbcls.pojo.Project.Project_TaskOutput;
 import com.zucc.pbcls.pojo.Project.Project_Task_pk;
@@ -44,10 +45,31 @@ public class Project_TaskController {
         return project_taskService.findalltaskbyprojectidanduid(projectid,uid);
     }
 
+    /**
+     * 显示任务信息先判断有没有结束
+     * 如果结束了看评价的两个布尔 self是自评 pm是pm评
+     * 如果为false即为还没评价 显示评价表单
+     * 如果为true即为已经评价 显示评价结果
+     */
     @RequestMapping("/showprojecttaskinfo")
     @ResponseBody
     public String showProjectTaskInfo(@RequestBody Project_Task_pk project_task_pk){
-        return project_taskService.showProjectTaskInfo(project_task_pk.getProjectid(),project_task_pk.getTaskid());
+        UserInfo user = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String uid = user.getUsername();
+        return project_taskService.showProjectTaskInfo(project_task_pk.getProjectid(),project_task_pk.getTaskid(),uid);
+    }
+
+
+    /**
+     * 如果是pm自评或者是学生自评,除了评价分数外 projectid,taskid,uid必须被set在传过来的值中  uid为被评价的人的uid
+     * 如果是pm评价学生,除了评价分数外 projectid和taskid必须被set在传过来的值中
+     */
+    @RequestMapping("/evaluatemember")
+    @ResponseBody
+    public boolean evaluateMember(@RequestBody Evaluation_Member evaluation_member){
+        UserInfo user = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String submituid = user.getUsername();
+        return project_taskService.evaluateMember(evaluation_member,submituid);
     }
 
 

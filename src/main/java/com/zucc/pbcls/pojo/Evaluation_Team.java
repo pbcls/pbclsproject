@@ -1,6 +1,5 @@
 package com.zucc.pbcls.pojo;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,24 +13,28 @@ import javax.persistence.*;
 @NoArgsConstructor
 
 @Entity
-@Table(name = "evaluation_mutual")
+@Table(name = "evaluation_team")
 @JsonIgnoreProperties({"handler","hibernateLazyInitializer"})
 @Component
-public class Evaluation_Mutual {
+public class Evaluation_Team {
     @Id
-    @Column(name = "emutualid")
+    @Column(name = "eteamid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int emutualid;
+    private int eteamid;
 
     private int projectid;
-    private String uid;
-    private String touid;
-    @Transient
-    private String tousername;
-    @Transient
-    private int toroleid;
-    @Transient
-    private String torolename;
+
+    @Column(name = "docpasstime",columnDefinition = "int default 0")
+    private int docPassTime;
+
+    @Column(name = "docdorrectness",columnDefinition = "int default 0")
+    private int docCorrectness;
+
+    @Column(name = "docInnovation",columnDefinition = "int default 0")
+    private int docInnovation;
+
+    @Column(name = "docstyle",columnDefinition = "int default 0")
+    private int docStyle;
 
     @Column(name = "attitude",columnDefinition = "int default 0")
     private int attitude;
@@ -45,15 +48,6 @@ public class Evaluation_Mutual {
     @Column(name = "cooperation",columnDefinition = "int default 0")
     private int cooperation;
 
-    @Column(name = "organization",columnDefinition = "int default 0")
-    private int organization;
-
-    @Column(name = "decision",columnDefinition = "int default 0")
-    private int decision;
-
-    @Column(name = "helpme",columnDefinition = "int default 0")
-    private int helpme;
-
     @Column(name = "score",columnDefinition = "double default 0")
     private double score;
 
@@ -62,7 +56,6 @@ public class Evaluation_Mutual {
 
     @Column(name = "evaluated",columnDefinition = "tinyint default 0")
     private boolean evaluated;
-
 
 
 }

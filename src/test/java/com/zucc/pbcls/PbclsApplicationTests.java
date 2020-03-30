@@ -203,8 +203,15 @@ public class PbclsApplicationTests {
 	}
 
 	@Test
-	public void AutoStartEveryDay(){
-		new ProjectTaskScheduleService().AutoStartEveryDay();
+	public void AutoStartEveryDay() {
+//		new ProjectTaskScheduleService().AutoStartEveryDay();
+		int a = 5;
+//		double b = 1;
+//		double c = b/a;
+//		System.out.println(c);
+		if ("暂无评价".equals(a))
+			System.out.println("相等");
+		else
+			System.out.println("不相等");
 	}
-
 }

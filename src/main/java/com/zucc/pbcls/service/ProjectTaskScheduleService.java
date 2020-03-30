@@ -1,8 +1,10 @@
 package com.zucc.pbcls.service;
 
+import com.zucc.pbcls.dao.Evaluation_MemberDao;
 import com.zucc.pbcls.dao.LogDao;
 import com.zucc.pbcls.dao.Project.*;
 import com.zucc.pbcls.dao.UserInfoDao;
+import com.zucc.pbcls.pojo.Evaluation_Member;
 import com.zucc.pbcls.pojo.Log;
 import com.zucc.pbcls.pojo.Project.*;
 import com.zucc.pbcls.service.Project.ProjectService;
@@ -28,6 +30,7 @@ public class ProjectTaskScheduleService {
     private static Project_TaskToRoleDao project_taskToRoleDao;
     private static Project_TaskToTaskDao project_taskToTaskDao;
     private static LogDao logDao;
+    private static Evaluation_MemberDao evaluation_memberDao;
     public static int timeUseMinute = 60 * 1000;
     public static int timeUseDay = 24 * 60 * 60 * 1000;
 
@@ -74,9 +77,42 @@ public class ProjectTaskScheduleService {
                     project_taskDao.save(project_running_task);
                     System.out.println("项目"+project_running_task.getProjectTaskpk().getProjectid()+"任务"+project_running_task.getProjectTaskpk().getTaskid()+"超时,自动结束");
 
+                    //自动设置该任务评分全部为0分
+                    List<Evaluation_Member> evaluation_members = evaluation_memberDao.findAllByProjectidAndTaskid(
+                            project_running_task.getProjectTaskpk().getProjectid(),project_running_task.getProjectTaskpk().getTaskid());
+                    for (Evaluation_Member evaluation_member:evaluation_members){
+                        evaluation_member.setSelfEvaluated(true);
+                        evaluation_member.setPmEvaluated(true);
+                        evaluation_memberDao.save(evaluation_member);
+                    }
                     /**
-                     * 这里还需要写任务评分的逻辑
+                     * 这里还需要写任务评分的逻辑 如果结束的是最后一个任务 需要提醒所有人去互评
                      */
+                    //给参加这个任务的人的通知
+                    List<Project_RoleToUser> project_roleToUsers = project_roleToUserDao.findAllByProjectidAndRoleid(
+                            project_running_task.getProjectTaskpk().getProjectid(),project_running_task.getProjectTaskpk().getTaskid());
+                    for (Project_RoleToUser project_roleToUser:project_roleToUsers){
+                        //告知任务结束的通知
+                        Log taskfinishlog = new Log();
+                        taskfinishlog.setType(4);
+                        taskfinishlog.setProjectid(project_running_task.getProjectTaskpk().getProjectid());
+                        taskfinishlog.setTaskid(project_running_task.getProjectTaskpk().getTaskid());
+                        taskfinishlog.setTouid(project_roleToUser.getUid());
+                        logDao.save(taskfinishlog);
+                    }
+                    //这里如果结束的是最后一个任务,提醒所有人互评开始
+                    Project_Task lastTask = project_taskDao.findLastTask(project.getProjectid());
+                    if (project_running_task.getProjectTaskpk()==lastTask.getProjectTaskpk()){
+                        //提醒项目互评的通知:最后一个任务结束
+                        List<Project_RoleToUser> projectallusers = project_roleToUserDao.findAllByProjectid(project.getProjectid());
+                        for (Project_RoleToUser user:projectallusers) {
+                            Log projectEvaluationLog = new Log();
+                            projectEvaluationLog.setType(6);
+                            projectEvaluationLog.setProjectid(project.getProjectid());
+                            projectEvaluationLog.setTouid(user.getUid());
+                            logDao.save(projectEvaluationLog);
+                        }
+                    }
                 }
             }
             if (flag==1) {
@@ -310,5 +346,12 @@ public class ProjectTaskScheduleService {
         ProjectTaskScheduleService.logDao = logDao;
     }
 
+    public static Evaluation_MemberDao getEvaluation_memberDao() {
+        return evaluation_memberDao;
+    }
+
+    public static void setEvaluation_memberDao(Evaluation_MemberDao evaluation_memberDao) {
+        ProjectTaskScheduleService.evaluation_memberDao = evaluation_memberDao;
+    }
 }
 
