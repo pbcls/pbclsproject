@@ -27,10 +27,10 @@ public class Evaluation_Team {
     @Column(name = "docpasstime",columnDefinition = "int default 0")
     private int docPassTime;
 
-    @Column(name = "docdorrectness",columnDefinition = "int default 0")
+    @Column(name = "doccorrectness",columnDefinition = "int default 0")
     private int docCorrectness;
 
-    @Column(name = "docInnovation",columnDefinition = "int default 0")
+    @Column(name = "docinnovation",columnDefinition = "int default 0")
     private int docInnovation;
 
     @Column(name = "docstyle",columnDefinition = "int default 0")
