@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>参与人员</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.1.0/css/bootstrap.min.css">
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- popper.min.js 用于弹窗、提示、下拉菜单 -->
+    <script src="https://cdn.bootcss.com/popper.js/1.12.5/umd/popper.min.js"></script>
+
+    <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
+    <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <script th:inline="javascript">
+
+        window.onload=function(){
+
+            var cid=GetRequest();
+            // $(document).ready(function(){
+            //     cid=GetRequest();
+            //     // console.log(cid);
+            // });
+            $.ajax({
+                type: "post",
+                url: "/showprojectinfo",
+                dataType: 'text',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                data:{
+                    "projectid":Number(cid)
+                },
+                success: function (data) {
+                    var dataobj = JSON.parse(data);
+                    console.log(dataobj);
+                    // alert(dataobj.case);
+                    // console.log(result[0].casename);
+                    var showMenu = $("#menu");  //获取ul（父节点）的位置
+                    showSideMenu(dataobj, showMenu)
+                },
+                error:function(result) {
+                    alert(result);
+                }
+            });
+            function showSideMenu(menuList, parent) {
+                // console.log(menuList.role_to_user);
+                for (var menu in menuList.role_to_user) {
+                    // console.log("1");
+                    //如果有子节点，则遍历该子节点
+                    // var name = menuList[menu].projects.projectname;
+                    // if (typeof (menuList[menu].children) != 'undefined') {
+                    //     //创建一个子节点li
+                    //     console.log(menuList[menu].casename);
+                    //     var li = $('<li class="dropdown"></li>');
+                    //     //将li的文本设置好，并马上添加一个空白的ul子节点，并且将这个li添加到父亲节点中
+                    //     $(li).append("<a href=''  class='dropdown-toggle' data-toggle='dropdown'> <span class='menu-text'>" + name + "</span><b class='arrow icon-angle-down'></b></a>").appendTo(parent);
+                    //     $(li).append("<ul class='dropdown-menu'></ul>");
+                    //     //将空白的ul作为下一个递归遍历的父亲节点传入
+                    //     showSideMenu(menuList[menu].children, $(li).children().last());
+                    // }
+                    // //如果该节点没有子节点，则直接将该节点li以及文本创建好直接添加到父亲节点中
+                    // else {
+                    //     console.log(menuList[menu].entity.url);
+                    //     var url = menuList[menu].entity.url;
+                    //     $("<li></li>").append("<a href='documentation_test.html' οnclick=getUrl('" + url + "','" + name + "')> <span class='menu-text'>" + name + "</span></a>").appendTo(parent);
+                    // }
+                    var cid = menuList.role_to_user[menu].user.uid;
+                    var name = menuList.role_to_user[menu].user.name;
+                    var img = menuList.role_to_user[menu].user.portrait;
+                    console.log(name);
+                    $("<li></li>").append("<img src='"+img+"' style='height: 20px; width: 20px; border-radius: 100px;'></img>").appendTo(parent);
+                    $("<li></li>").append("<a href='#' onclick='getUrl(" + cid + ")' class='turn'> <span class='menu-text'>" + name + "</span></a>").appendTo(parent);
+                    // console.log(menuList[2]);
+                    // console.log(menuList[3]);
+                    // console.log(menu+1);
+                    if(menuList[menu+1] == 'undefined') break;
+                }
+            }
+            function getUrl(cid) {
+                // console.log(parseParam(cid));
+                // var main = document.getElementById('main');
+                // main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojecttest?"+cid+"'></iframe>";
+                // main = document.getElementById('main2');
+                // main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojectplayer?"+cid+"'></iframe>";
+            }
+            var parseParam=function(paramObj, key){
+                var paramStr="";
+                if(paramObj instanceof String||paramObj instanceof Number||paramObj instanceof Boolean){
+                    paramStr+="&"+key+"="+encodeURIComponent(paramObj);
+                }else{
+                    $.each(paramObj,function(i){
+                        var k=key==null?i:key+(paramObj instanceof Array?"["+i+"]":"."+i);
+                        paramStr+='&'+parseParam(this, k);
+                    });
+                }
+                return paramStr.substr(1);
+            };
+            var urlEncode = function (paramObj, key, encode) {
+                if(paramObj==null) return '';
+                var paramStr = '';
+                var t = typeof (paramObj);
+                if (t == 'string' || t == 'number' || t == 'boolean') {
+                    paramStr += '&' + key + '=' + ((encode==null||encode) ? encodeURIComponent(paramObj) : paramObj);
+                } else {
+                    for (var i in paramObj) {
+                        var k = key == null ? i : key + (paramObj instanceof Array ? '[' + i + ']' : '.' + i);
+                        paramStr += urlEncode(paramObj[i], k, encode);
+                    }
+                }
+                return paramStr;
+            };
+            function GetRequest() {
+
+                var url = location.search; //获取url中"?"符后的字串
+                // var theRequest = new Object();
+                if (url.indexOf("?") != -1) {
+                    var str = url.substr(1); //substr()方法返回从参数值开始到结束的字符串；
+                    // console.log(str);
+                    // var strs = str.split("&");
+                    // for (var i = 0; i < strs.length; i++) {
+                    //     theRequest[strs[i].split("=")[0]] = (strs[i].split("=")[1]);
+                    // }
+                    // console.log(theRequest.currentSrc); //此时的theRequest就是我们需要的参数；
+                    // $('#videoId').attr('src', theRequest.currentSrc);
+                    return str;
+                }
+                return null;
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="tab-content">
+    <div id="menu" class="container tab-pane active">
+    </div>
+</div>
+</body>
+</html>

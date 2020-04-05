@@ -30,17 +30,51 @@
                     showSideMenu(result, showMenu)
                 }
             });
+            $.ajax({
+                type: "post",
+                url: "/showprojectlog",
+                dataType: 'json',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                success: function (result) {
+                    console.log(result);
+                    var showMenu2 = $("#menu2");
+                    for(var menu in result){
+                        var type = result[menu].type;
+                        // if(type == 1){
+                        //     $("<li></li>").append("<a href='#' onclick='getUrl(" + cid + ")' class='turn'> <span class='menu-text'>" + name + "</span></a>").appendTo(showMenu2);
+                        // }else if(type == 2){
+                        //
+                        // }else if(type == 3){
+                        //
+                        // }else if(type == 4){
+                        //
+                        // }else if(type == 5){
+                        //
+                        // }else if(type == 6){
+                        //
+                        // }else{
+                        //
+                        // }
+                        $("<li></li>").append("<a href='#' onclick='getUrl(" + cid + ")' class='turn'> <span class='menu-text'>" + name + "</span></a>").appendTo(showMenu2);
+                        if(result[menu+1] == 'undefined') break;
+                    }
+                },
+                error:function(result) {
+                    alert(result);
+                }
+            });
         }
         function showSideMenu(menuList, parent) {
             for (var menu in menuList) {
                 //如果有子节点，则遍历该子节点
-                var name = menuList[menu].projectname;
+                // var name = menuList[menu].projects.projectname;
                 // if (typeof (menuList[menu].children) != 'undefined') {
                 //     //创建一个子节点li
-                //     // console.log(menuList[menu].entity.alias);
+                //     console.log(menuList[menu].casename);
                 //     var li = $('<li class="dropdown"></li>');
                 //     //将li的文本设置好，并马上添加一个空白的ul子节点，并且将这个li添加到父亲节点中
-                //     $(li).append("<a href='documentation_test.html'  class='dropdown-toggle' data-toggle='dropdown'> <span class='menu-text'>" + name + "</span><b class='arrow icon-angle-down'></b></a>").appendTo(parent);
+                //     $(li).append("<a href=''  class='dropdown-toggle' data-toggle='dropdown'> <span class='menu-text'>" + name + "</span><b class='arrow icon-angle-down'></b></a>").appendTo(parent);
                 //     $(li).append("<ul class='dropdown-menu'></ul>");
                 //     //将空白的ul作为下一个递归遍历的父亲节点传入
                 //     showSideMenu(menuList[menu].children, $(li).children().last());
@@ -51,8 +85,11 @@
                 //     var url = menuList[menu].entity.url;
                 //     $("<li></li>").append("<a href='documentation_test.html' οnclick=getUrl('" + url + "','" + name + "')> <span class='menu-text'>" + name + "</span></a>").appendTo(parent);
                 // }
-                var cid = menuList[menu].projectid;
-                $("<li></li>").append("<a href='#' onclick='getUrl(" + cid + ")' class='turn'> <span class='menu-text'>" + name + "</span></a>").appendTo(parent);
+                for(var menu2 in menuList[menu].projects){
+                    var cid = menuList[menu].projects[menu2].projectid;
+                    var name = menuList[menu].projects[menu2].projectname;
+                    $("<li></li>").append("<a href='#' onclick='getUrl(" + cid + ")' class='turn'> <span class='menu-text'>" + name + "</span></a>").appendTo(parent);
+                }
                 // console.log(menuList[2]);
                 // console.log(menuList[3]);
                 // console.log(menu+1);
@@ -62,7 +99,9 @@
         function getUrl(cid) {
             // console.log(parseParam(cid));
             var main = document.getElementById('main');
-            main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='todocumentationtest?"+cid+"'></iframe>";
+            main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojecttest?"+cid+"'></iframe>";
+            main = document.getElementById('main2');
+            main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojectplayer?"+cid+"'></iframe>";
         }
         var parseParam=function(paramObj, key){
             var paramStr="";
@@ -147,12 +186,18 @@
             <div id="middle" class="col-md-4" style="border-right: solid; border-color: #0B3E5B;">
                 <div class="main-content">
                     <div class="page-content " id="main" style="height: 1000px;">
+                        fangzuodifangle
                     </div>
                 </div>
             </div>
-            <div id="right" class="col-md-4">
+            <div id="right" class="col-md-4" style="border-right: solid;">
                 <div class="main-content">
-                    <div class="page-content " id="message" style="height: 1000px;">
+                    <div class="page-content " id="main2" style="height: 1000px;">
+                        <nav class="navbar navbar-default" role="navigation">
+                            <div class="sidebar">
+                                <ul id='menu2' class='nav navbar-nav'></ul>
+                            </div>
+                        </nav>
                     </div>
                 </div>
             </div>

@@ -52,6 +52,16 @@ public class ProjectController {
         return "student/project";
     }
 
+    @RequestMapping("/toprojecttest")
+    public String toprojecttest(){
+        return "student/project_test";
+    }
+
+    @RequestMapping("/toprojectplayer")
+    public String toprojectplayer(){
+        return "student/project_player";
+    }
+
     @RequestMapping("/findallprojects")
     @ResponseBody
     //这里返回caseinfo的原因是前端项目分类显示,每个案例下面都有一个对应的项目的List
