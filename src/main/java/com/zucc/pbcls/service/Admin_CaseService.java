@@ -152,6 +152,11 @@ public class Admin_CaseService {
                 for (Project project:projects){
                     deleteProject(project.getProjectid());
                 }
+                //删除和案例有关的一切log
+                List<Log> logs = logDao.findAllByCaseid(caseid);
+                for (Log log:logs){
+                    logDao.delete(log);
+                }
 
                 List<Case_Role> case_roles = case_roleDao.findAllByCaseid(caseid);
                 for (Case_Role case_role:case_roles){
@@ -207,6 +212,11 @@ public class Admin_CaseService {
             for (Project_TaskToRole project_taskToRole:project_taskToRoles){
                 project_taskToRoleDao.delete(project_taskToRole);
             }
+            //注意要删除和项目有关的一切log
+            List<Log> logs = logDao.findAllByProjectid(projectid);
+            for (Log log:logs){
+                logDao.delete(log);
+            }
 
             List<Project_RoleToUser> project_roleToUsers = project_roleToUserDao.findAllByProjectid(projectid);
             for (Project_RoleToUser project_roleToUser:project_roleToUsers){
@@ -217,6 +227,7 @@ public class Admin_CaseService {
                 logDao.save(log);
                 project_roleToUserDao.delete(project_roleToUser);
             }
+
 
             List<Project_TaskOutput> project_taskOutputs = project_taskOutputDao.findAllByProjectid(projectid);
             for (Project_TaskOutput project_taskOutput:project_taskOutputs){

@@ -251,14 +251,26 @@ public class ProjectService {
     public List<Log> showProjectLog(String uid) {
         List<Log> logs = logDao.findAllByTouid(uid);
         for (Log log : logs) {
-            if (log.getCaseid() != 0)
-                log.setCasename(caseDao.findAllByCaseid(log.getCaseid()).getCasename());
-            if (log.getProjectid() != 0)
-                log.setProjectname(projectDao.findAllByProjectid(log.getProjectid()).getProjectname());
-            if (log.getTaskid() != 0)
-                log.setTaskname(project_taskDao.findByProjectTaskpk(new Project_Task_pk(log.getProjectid(), log.getTaskid())).getTaskname());
-            if (log.getRoleid() != 0)
-                log.setRolename(project_roleDao.findAllByProjectidAndRoleid(log.getProjectid(),log.getRoleid()).getRolename());
+            if (log.getCaseid() != 0){
+                CaseInfo caseInfo = caseDao.findAllByCaseid(log.getCaseid());
+                if (caseInfo!=null)
+                    log.setCasename(caseInfo.getCasename());
+            }
+            if (log.getProjectid() != 0) {
+                Project project = projectDao.findAllByProjectid(log.getProjectid());
+                if (project!=null)
+                    log.setProjectname(project.getProjectname());
+            }
+            if (log.getTaskid() != 0) {
+                Project_Task project_task = project_taskDao.findByProjectTaskpk(new Project_Task_pk(log.getProjectid(), log.getTaskid()));
+                if (project_task!=null)
+                    log.setTaskname(project_task.getTaskname());
+            }
+            if (log.getRoleid() != 0) {
+                Project_Role project_role=project_roleDao.findAllByProjectidAndRoleid(log.getProjectid(), log.getRoleid());
+                if (project_role!=null)
+                    log.setRolename(project_role.getRolename());
+            }
             if (!("").equals(log.getUid()) && log.getUid() != null)
                 log.setUsername(userInfoDao.findByUid(log.getUid()).getName());
             if (!("").equals(log.getTouid()) && log.getTouid() != null)

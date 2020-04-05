@@ -35,7 +35,6 @@ public class UserInfoController {
     }
 
 
-    ;
     @RequestMapping("/findallprojectbyuid")
     @ResponseBody
     public String findAllProjectByUid(@RequestParam(value = "uid") String uid){

@@ -9,6 +9,7 @@ import com.zucc.pbcls.pojo.Case.Case_Task;
 import com.zucc.pbcls.pojo.Case.Case_Task_pk;
 import com.zucc.pbcls.pojo.MyUser;
 import com.zucc.pbcls.pojo.Project.*;
+import com.zucc.pbcls.service.Admin_CaseService;
 import com.zucc.pbcls.service.Admin_UserService;
 import com.zucc.pbcls.service.Case.CaseService;
 import com.zucc.pbcls.service.Case.Case_RoleService;
@@ -110,7 +111,10 @@ public class PbclsApplicationTests {
 
 	@Test
 	public void createProjectByCase(){
-		projectService.createProjectByCase("yzl",1,"testDOCSproject1");
+		Date olddate = new Date();
+		projectService.createProjectByCase("yzl",2,"testDOCSproject2");
+		Date newdate = new Date();
+		System.out.println(newdate.getTime()-olddate.getTime());
 	}
 
 	@Test
@@ -138,7 +142,19 @@ public class PbclsApplicationTests {
 
 	@Test
 	public void startProject(){
-		System.out.println(projectService.startProject(1));
+		Date olddate = new Date();
+		System.out.println(projectService.startProject(3));
+		Date newdate = new Date();
+		System.out.println(newdate.getTime()-olddate.getTime());
+	}
+	@Autowired
+	Admin_CaseService admin_caseService;
+	@Test
+	public void deleteProject(){
+		Date olddate = new Date();
+		System.out.println(admin_caseService.deleteProject(3));
+		Date newdate = new Date();
+		System.out.println(newdate.getTime()-olddate.getTime());
 	}
 
 	@Test

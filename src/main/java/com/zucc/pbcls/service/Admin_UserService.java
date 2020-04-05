@@ -23,60 +23,10 @@ public class Admin_UserService {
     @Autowired
     UserInfoDao userInfoDao;
 
-//    使用列表查询,用于测试
+    //分页查询
     public Page<MyUser> findUsers(boolean needuid ,boolean needname,boolean needemail,String findstr,
                                 boolean notAccountNonLocked,boolean isAccountNonLocked,
                                 String role,Pageable pageable) {
-//        List<MyUser> list = userInfoDao.findAll(new Specification<MyUser>(){
-//            @Override
-//            public Predicate toPredicate(Root<MyUser> root,CriteriaQuery<?>query,CriteriaBuilder cb) {
-//                //listOrAccountNonLocked
-//                List<Predicate> listOrAccountNonLocked = new ArrayList<Predicate>();
-//
-//                if (notAccountNonLocked&&!isAccountNonLocked){
-//                    listOrAccountNonLocked.add(cb.equal(root.get("accountNonLocked"),true));
-//                }else if (!notAccountNonLocked&&isAccountNonLocked){
-//                    listOrAccountNonLocked.add(cb.equal(root.get("accountNonLocked"),false));
-//                }else if (!notAccountNonLocked&&!isAccountNonLocked){
-//                    listOrAccountNonLocked.add(cb.equal(root.get("accountNonLocked"),3));
-//                }
-//                Predicate[] arrayAccountNonLocked = new Predicate[listOrAccountNonLocked.size()];
-//                Predicate AccountNonLocked = cb.and(listOrAccountNonLocked.toArray(arrayAccountNonLocked));
-//
-//                List<Predicate> listOrInfo = new ArrayList<Predicate>();
-//                if (needuid) {
-//                    listOrInfo.add(cb.like(root.get("uid"), "%" + findstr + "%"));
-//                }
-//                if (needname) {
-//                    listOrInfo.add(cb.like(root.get("name"), "%" + findstr + "%"));
-//                }
-//                if (needemail) {
-//                    listOrInfo.add(cb.like(root.get("email"), "%" + findstr + "%"));
-//                }
-//                Predicate[] arrayInfo = new Predicate[listOrInfo.size()];
-//                Predicate Info = cb.or(listOrInfo.toArray(arrayInfo));
-//
-//                //Or连接的查询
-//                List<Predicate> listOrRole = new ArrayList<Predicate>();
-//                if (!"".equals(role)) {
-//                    String arr[] = role.split(",");
-//                    for (int i = 0; i < arr.length; i++) {
-//                        if (arr[i] != null && !"".equals(arr[i])) {
-//                            listOrRole.add(cb.equal(root.get("role"), arr[i]));
-//                        }
-//                    }
-//                    Predicate[] arrayRole = new Predicate[listOrRole.size()];
-//                    Predicate Role = cb.or(listOrRole.toArray(arrayRole));
-//                    return query.where(AccountNonLocked,Info,Role).getRestriction();
-//                } else {
-//                    return null;
-//                }
-//            }
-//        }, new Sort(Sort.Direction.ASC,"uid"));
-//        return list;
-//    }
-
-//分页
     Page<MyUser> pageList = userInfoDao.findAll(new Specification<MyUser>(){
         @Override
         public Predicate toPredicate(Root<MyUser> root,CriteriaQuery<?>query,CriteriaBuilder cb) {

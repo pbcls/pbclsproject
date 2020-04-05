@@ -8,30 +8,29 @@
 </head>
 <script>
     // 查询案例详细信息
-    // window.onload=function() {
-    //         $.ajax({
-    //             type: "post",
-    //             url: "/showcaseinfo",
-    //             dataType: 'text',
-    //             contentType: "application/x-www-form-urlencoded",
-    //             traditional: true,
-    //             data:{
-    //                 "caseid":1
-    //             },
-    //             success: function (data) {
-    //                 var dataobj = JSON.parse(data);
-    //                 console.log(dataobj);
-    //                 console.log(dataobj.case);
-    //                 $("#caseid").html(dataobj.case.caseid);
-    //                 $("#casename").html(dataobj.case.casename);
-    //                 $("#description").html(dataobj.case.description);
-    //
-    //             },
-    //             error:function(result) {
-    //                 alert(result);
-    //             }
-    //         });
-    // }
+    window.onload=function() {
+            $.ajax({
+                type: "post",
+                url: "/showprojectlog",
+                dataType: 'text',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                data:{
+                },
+                success: function (data) {
+                    var dataobj = JSON.parse(data);
+                    console.log(dataobj);
+                    console.log(dataobj.case);
+                    // $("#caseid").html(dataobj.case.caseid);
+                    // $("#casename").html(dataobj.case.casename);
+                    // $("#description").html(dataobj.case.description);
+
+                },
+                error:function(result) {
+                    alert(result);
+                }
+            });
+    }
 
     // //查询项目详细信息
     // window.onload=function() {
