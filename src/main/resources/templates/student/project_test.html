@@ -19,13 +19,16 @@
     <script th:inline="javascript">
 
         window.onload=function(){
+            var cid=GetRequest();
             $("#btn_add").click(function () {
                 // alert("111111");
-                $("#myModalLabel").text("创建项目");
-                $('#myModal').modal();
+                var url = "toprojectdetind?"+cid;
+                window.open(url);
+                // var main = document.getElementById('main');
+                // main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojecttest?"+cid+"'></iframe>";
+                // main = document.getElementById('main2');
+                // main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojectplayer?"+cid+"'></iframe>";
             });
-
-            var cid=GetRequest();
             // $(document).ready(function(){
             //     cid=GetRequest();
             //     // console.log(cid);
@@ -153,31 +156,31 @@
                         <td id="time"></td>
                     </tr>
                 </table>
-                <button type="button" class="btn btn-primary" id="btn_add">创建项目</button>
-                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title" id="myModalLabel">创建项目</h4>
-                                <!--                            <button type="button" class="btn btn-primary">创建项目</button>-->
-                            </div>
-                            <div class="modal-body">
-                                <form style="text-align: center;">
-                                    <div class="form-group" style="padding-top: 45px;">
-                                        <label for="name" stype="display:inline;">项目名称：</label>
-                                        <input type="text" class="form-control" id="name" style="display:inline;width:200px;" autocomplete="off"/>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-outline-primary" data-dismiss="modal" onclick="create()"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>确定创建</button>
-                                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>取消</button>
-                            </div>
+                <button type="button" class="btn btn-primary" id="btn_add">进入项目</button>
+<!--                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">-->
+<!--                    <div class="modal-dialog" role="document">-->
+<!--                        <div class="modal-content">-->
+<!--                            <div class="modal-header">-->
+<!--                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+<!--                                <h4 class="modal-title" id="myModalLabel">创建项目</h4>-->
+<!--                                &lt;!&ndash;                            <button type="button" class="btn btn-primary">创建项目</button>&ndash;&gt;-->
+<!--                            </div>-->
+<!--                            <div class="modal-body">-->
+<!--                                <form style="text-align: center;">-->
+<!--                                    <div class="form-group" style="padding-top: 45px;">-->
+<!--                                        <label for="name" stype="display:inline;">项目名称：</label>-->
+<!--                                        <input type="text" class="form-control" id="name" style="display:inline;width:200px;" autocomplete="off"/>-->
+<!--                                    </div>-->
+<!--                                </form>-->
+<!--                            </div>-->
+<!--                            <div class="modal-footer">-->
+<!--                                <button type="submit" class="btn btn-outline-primary" data-dismiss="modal" onclick="create()"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>确定创建</button>-->
+<!--                                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>取消</button>-->
+<!--                            </div>-->
 
-                        </div>
-                    </div>
-                </div>
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
             </div>
         </div>
         <div id="menu2" class="container tab-pane fade"><br>

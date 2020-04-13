@@ -16,6 +16,7 @@
     <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
     <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
     <script th:inline="javascript">
+        var userid;
         window.onload=function() {
             $.ajax({
                 type: "post",
@@ -41,22 +42,47 @@
                     var showMenu2 = $("#menu2");
                     for(var menu in result){
                         var type = result[menu].type;
-                        // if(type == 1){
-                        //     $("<li></li>").append("<a href='#' onclick='getUrl(" + cid + ")' class='turn'> <span class='menu-text'>" + name + "</span></a>").appendTo(showMenu2);
-                        // }else if(type == 2){
-                        //
-                        // }else if(type == 3){
-                        //
-                        // }else if(type == 4){
-                        //
-                        // }else if(type == 5){
-                        //
-                        // }else if(type == 6){
-                        //
-                        // }else{
-                        //
-                        // }
-                        $("<li></li>").append("<a href='#' onclick='getUrl(" + cid + ")' class='turn'> <span class='menu-text'>" + name + "</span></a>").appendTo(showMenu2);
+                        userid = result[menu].touid;
+                        if(type == 1){
+                            console.log("1");
+                            var name = result[menu].username;
+                            var rolename = result[menu].rolename;
+                            var proname = result[menu].projectname;
+                            $("<li></li>").append("<span class='menu-text'>" + name + "申请以" + rolename + "职位进入" + proname + "项目</span>").appendTo(showMenu2);
+                        }else if(type == 2){
+                            console.log("2");
+                            var flag = result[menu].passstatus;
+                            var rolename = result[menu].rolename;
+                            var proname = result[menu].projectname;
+                            if(flag==1){
+                                $("<li></li>").append("<span class='menu-text'>" + proname + "项目" + rolename + "职位的申请已通过。</span>").appendTo(showMenu2);
+                            }else if(flag==2){
+                                $("<li></li>").append("<span class='menu-text'>" + proname + "项目" + rolename + "职位的申请未通过。</span>").appendTo(showMenu2);
+                            }
+                        }else if(type == 3){
+                            console.log("3");
+                            var tname = result[menu].taskname;
+                            var proname = result[menu].projectname;
+                            $("<li></li>").append("<span class='menu-text'>" + proname + "项目" + tname + "任务已经开始。</span>").appendTo(showMenu2);
+                        }else if(type == 4){
+                            console.log("4");
+                            var tname = result[menu].taskname;
+                            var proname = result[menu].projectname;
+                            $("<li></li>").append("<span class='menu-text'>" + proname + "项目" + tname + "任务已经结束。</span>").appendTo(showMenu2);
+                        }else if(type == 5){
+                            console.log("5");
+                            var tname = result[menu].taskname;
+                            var proname = result[menu].projectname;
+                            $("<li></li>").append("<span class='menu-text'>" + proname + "项目" + tname + "任务自评已经开始。</span>").appendTo(showMenu2);
+                        }else if(type == 6){
+                            console.log("6");
+                            var proname = result[menu].projectname;
+                            $("<li></li>").append("<span class='menu-text'>" + proname + "项目自评已经开始。</span>").appendTo(showMenu2);
+                        }else{
+                            console.log("7");
+                            var log = result[menu].logmsg;
+                            $("<li></li>").append("<span class='menu-text'>" + log + "</span>").appendTo(showMenu2);
+                        }
                         if(result[menu+1] == 'undefined') break;
                     }
                 },

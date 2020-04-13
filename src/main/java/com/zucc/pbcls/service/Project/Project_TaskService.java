@@ -145,13 +145,13 @@ public class Project_TaskService {
         jsonObject.put("output",json_taskOutput);
 
         MyUser myUser = userInfoDao.findByUid(uid);
+
+        //如果任务完成找到对应评价
         if(project_task.getStatus()==2 && users.contains(myUser)){
-            //如果任务完成找到对应评价
             Evaluation_Member evaluation_member = evaluation_memberDao.findAllByProjectidAndTaskidAndUid(projectid,taskid,uid);
             JSONObject json_evaluation_member = new JSONObject(evaluation_member);
             jsonObject.put("evaluation",json_evaluation_member);
         }
-
         return jsonObject.toString();
     }
 

@@ -65,6 +65,36 @@ public class ProjectController {
         return "student/project_player";
     }
 
+    @RequestMapping("/toprojectdetcom")
+    public String toprojectdetcom(){
+        return "student/project_detailed_communication";
+    }
+
+    @RequestMapping("/toprojectdetdoc")
+    public String toprojectdetdoc(){
+        return "student/project_detailed_document";
+    }
+
+    @RequestMapping("/toprojectdeteva")
+    public String toprojectdeteva(){
+        return "student/project_detailed_evaluation";
+    }
+
+    @RequestMapping("/toprojectdetind")
+    public String toprojectdetind(){
+        return "student/project_detailed_index";
+    }
+
+    @RequestMapping("/toprojectdetman")
+    public String toprojectdetman(){
+        return "student/project_detailed_management";
+    }
+
+//    @RequestMapping("/toprojectdettask")
+//    public String toprojectdettask(){
+//        return "student/project_detailed_task";
+//    }
+
     @RequestMapping("/findallprojects")
     @ResponseBody
     //这里返回caseinfo的原因是前端项目分类显示,每个案例下面都有一个对应的项目的List
