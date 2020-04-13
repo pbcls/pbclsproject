@@ -162,13 +162,12 @@ public class ProjectFileUtil {
             // 删除子文件夹和子文件
             for (File file : files) {
                 if (file.isDirectory()) {
-                    delProjectFile(file);//递归删除
+                    delProjectFile(file); //递归删除
                 } else {
                     file.delete();
                     System.out.println("删除" + file.getAbsolutePath());
                 }
             }
-
             // 删除文件夹本身
             project.delete();
             System.out.println("删除" + project.getAbsolutePath());
@@ -180,7 +179,6 @@ public class ProjectFileUtil {
         List<String> files = new ArrayList<String>();
         File file = new File(path);
         File[] tempList = file.listFiles();
-
         for (int i = 0; i < tempList.length; i++) {
             if (tempList[i].isFile()) {
 //                files.add(tempList[i].toString());

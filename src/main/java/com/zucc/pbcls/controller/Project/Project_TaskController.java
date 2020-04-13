@@ -25,6 +25,11 @@ public class Project_TaskController {
     @Autowired
     Project_TaskService project_taskService;
 
+    @RequestMapping("/toprojectdettask")
+    public String toprojectdettask(){
+        return "student/project_detailed_task";
+    }
+
 
     /**
      * 先读status 判断任务是未开始还是进行中还是结束
