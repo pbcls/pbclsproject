@@ -18,6 +18,8 @@ import com.zucc.pbcls.utils.ProjectFileUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 @Controller
@@ -120,9 +123,10 @@ public class ProjectController {
 
     @RequestMapping("/showprojectlog")
     @ResponseBody
-    public List<Log> showProjectLog(){
+    public List<Log> showProjectLog(@RequestParam(value = "pagenum") int pagenum, @RequestParam(value = "pagesize") int pagesize){
         UserInfo user = (UserInfo) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return projectService.showProjectLog(user.getUsername());
+        Pageable pageable = PageRequest.of(pagenum, pagesize, Sort.Direction.DESC, "logtime");
+        return projectService.showProjectLog(user.getUsername(),pageable);
     }
 
     /**

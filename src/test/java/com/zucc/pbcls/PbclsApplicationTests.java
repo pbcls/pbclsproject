@@ -17,6 +17,9 @@ import com.zucc.pbcls.service.Case.Case_TaskService;
 import com.zucc.pbcls.service.Project.ProjectService;
 import com.zucc.pbcls.service.ProjectTaskScheduleService;
 import com.zucc.pbcls.utils.ProjectFileUtil;
+import org.databene.contiperf.PerfTest;
+import org.databene.contiperf.junit.ContiPerfRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,7 +115,7 @@ public class PbclsApplicationTests {
 	@Test
 	public void createProjectByCase(){
 		Date olddate = new Date();
-		projectService.createProjectByCase("yzl",2,"testDOCSproject2");
+		projectService.createProjectByCase("yzl",1,"test1");
 		Date newdate = new Date();
 		System.out.println(newdate.getTime()-olddate.getTime());
 	}
@@ -143,10 +146,26 @@ public class PbclsApplicationTests {
 	@Test
 	public void startProject(){
 		Date olddate = new Date();
-		System.out.println(projectService.startProject(3));
+		System.out.println(projectService.startProject(1));
 		Date newdate = new Date();
 		System.out.println(newdate.getTime()-olddate.getTime());
 	}
+
+	@Test
+	public void testgetprojectfilelist(){
+		Project project = projectService.findByProjectid(1);
+		new ProjectFileUtil().getProjectFileList(project);
+	}
+	@Autowired
+	Project_TaskOutputDao project_taskOutputDao;
+	@Test
+	public void getTaskFileList(){
+		Project_TaskOutput project = project_taskOutputDao.findAllByProjectidAndTaskid(3,1);
+		new ProjectFileUtil().getTaskFileList(project);
+	}
+
+
+
 	@Autowired
 	Admin_CaseService admin_caseService;
 	@Test
@@ -230,4 +249,118 @@ public class PbclsApplicationTests {
 		else
 			System.out.println("不相等");
 	}
+
+//	public class Login {
+//		@Rule
+//		public JunitPerfRule junitPerfRule = new JunitPerfRule();
+//
+//		@JunitPerfConfig(duration = 10)
+//		public void login() throws InterruptedException {
+////			projectService.createProjectByCase("yzl",1,"Performance Testing");
+//			projectService.findAllProjects();
+//		}
+//
+//	}
+
+	//引入 ContiPerf 进行性能测试
+	@Rule
+	public ContiPerfRule rule = new ContiPerfRule();
+
+
+	//10个线程 执行100次
+	@Test
+	@PerfTest(invocations = 100,threads = 10)
+	public void testCreateProject(){
+		projectService.createProjectByCase("yzl",1,"Performance Testing");
+	}
+
+
+
+	@Test
+	@PerfTest(invocations = 100,threads = 10)
+	public void testApplyProject(){
+		projectService.applyProject("zk",106,2);
+	}
+
+
+	static int projectid = 6;
+
+	@Test
+	@PerfTest(invocations = 100,threads = 1)
+	public void setRoletoUser(){
+		List<Project_RoleToUser> project_roleToUsers = project_roleToUserDao.findAll();
+		for (Project_RoleToUser project_roleToUser :project_roleToUsers){
+			if (project_roleToUser.getProjectid()==projectid){
+				Project_RoleToUser project_roleToUser1 = new Project_RoleToUser();
+				project_roleToUser1.setProjectid(project_roleToUser.getProjectid());
+				project_roleToUser1.setRoleid(2);
+				project_roleToUser1.setUid("zk");
+				project_roleToUserDao.save(project_roleToUser1);
+				Project_RoleToUser project_roleToUser2 = new Project_RoleToUser();
+				project_roleToUser2.setProjectid(project_roleToUser.getProjectid());
+				project_roleToUser2.setRoleid(3);
+				project_roleToUser2.setUid("yzf");
+				project_roleToUserDao.save(project_roleToUser2);
+				Project_RoleToUser project_roleToUser3 = new Project_RoleToUser();
+				project_roleToUser3.setProjectid(project_roleToUser.getProjectid());
+				project_roleToUser3.setRoleid(12);
+				project_roleToUser3.setUid("teacher");
+				project_roleToUserDao.save(project_roleToUser3);
+				projectid++;
+			}
+		}
+	}
+
+	@Test
+	@PerfTest(invocations = 100,threads = 1)
+	public void testStartPeoject(){
+		projectService.startProject(projectid);
+		projectid++;
+	}
+
+	@Test
+	public void deleteRoletoUser(){
+		List<Project_RoleToUser> project_roleToUsers = project_roleToUserDao.findAll();
+		for (Project_RoleToUser project_roleToUser :project_roleToUsers){
+			if (project_roleToUser.getProjectid()>=6 ){
+				int roleid = project_roleToUser.getRoleid();
+				if (roleid== 12||roleid==2||roleid==3)
+					project_roleToUserDao.delete(project_roleToUser);
+			}
+		}
+	}
+
+	@Test
+	@PerfTest(invocations = 100,threads = 10)
+	public void testFindProjects(){
+		Pageable pageable = PageRequest.of(0, 100, Sort.Direction.ASC, "projectname");
+		admin_caseService.findProjects(true,true,true,true,"case",pageable);
+	}
+
+	@Test
+	@PerfTest(invocations = 1000,threads = 10)
+	public void testFindUser(){
+		Pageable pageable = PageRequest.of(0, 100, Sort.Direction.ASC, "registerTime");
+		System.out.println(admin_userService.findUsers(true, true, true,
+				"y", true, true, "STUDENT,ADMIN", pageable).getTotalElements());
+	}
+
+	static int pagenum = 0;
+	@Test
+	@PerfTest(invocations = 50,threads = 1)
+	public void testShowProjectLog(){
+		Pageable pageable = PageRequest.of(pagenum, 30, Sort.Direction.DESC, "logtime");
+		System.out.println(projectService.showProjectLog("yzl", pageable));
+		pagenum++;
+	}
+
+
+//	@Test
+//	@PerfTest(invocations = 1,threads = 1)
+//	public void testShowProjectinfo(){
+//		projectService.;
+//	}
+
+
+
 }

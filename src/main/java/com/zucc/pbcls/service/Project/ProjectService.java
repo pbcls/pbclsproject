@@ -17,6 +17,7 @@ import com.zucc.pbcls.utils.ProjectFileUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -248,8 +249,8 @@ public class ProjectService {
     /**
      * false maxplayer满了
      */
-    public List<Log> showProjectLog(String uid) {
-        List<Log> logs = logDao.findAllByTouid(uid);
+    public List<Log> showProjectLog(String uid, Pageable pageable) {
+        List<Log> logs = logDao.findAllByTouid(uid,pageable);
         for (Log log : logs) {
             if (log.getCaseid() != 0){
                 CaseInfo caseInfo = caseDao.findAllByCaseid(log.getCaseid());

@@ -126,8 +126,7 @@ public class Project_TaskService {
             Project_TaskOutput project_taskOutput = project_taskOutputDao.findAllByProjectidAndTaskid(projectid, taskid);
             taskOutput = new ProjectFileUtil().getTaskFileList(project_taskOutput);
         }
-        //如果任务完成找到对应评价
-        Evaluation_Member evaluation_member = evaluation_memberDao.findAllByProjectidAndTaskidAndUid(projectid,taskid,uid);
+
 
         //封装成json
         JSONObject json_project_task = new JSONObject(project_task);
@@ -136,7 +135,6 @@ public class Project_TaskService {
         JSONObject json_project_taskToRole = new JSONObject(project_taskToRole);
         JSONArray json_users = new JSONArray(users);
         JSONArray json_taskOutput = new JSONArray(taskOutput);
-        JSONObject json_evaluation_member = new JSONObject(evaluation_member);
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("task",json_project_task);
@@ -145,7 +143,14 @@ public class Project_TaskService {
         jsonObject.put("successor",json_TasksSuccessor);
         jsonObject.put("users",json_users);
         jsonObject.put("output",json_taskOutput);
-        jsonObject.put("evaluation",json_evaluation_member);
+
+        MyUser myUser = userInfoDao.findByUid(uid);
+        if(project_task.getStatus()==2 && users.contains(myUser)){
+            //如果任务完成找到对应评价
+            Evaluation_Member evaluation_member = evaluation_memberDao.findAllByProjectidAndTaskidAndUid(projectid,taskid,uid);
+            JSONObject json_evaluation_member = new JSONObject(evaluation_member);
+            jsonObject.put("evaluation",json_evaluation_member);
+        }
 
         return jsonObject.toString();
     }

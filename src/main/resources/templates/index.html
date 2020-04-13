@@ -131,7 +131,7 @@
     <span sec:authentication="principal.username"></span>
     登录成功啦!
 </div>
-<div th:text="${session.SPRING_SECURITY_CONTEXT.authentication.principal.myUserPortrait}"></div>
+<div th:text="${session.SPRING_SECURITY_CONTEXT.authentication.principal.authorities}"></div>
 <div sec:authorize="!isAuthenticated()">登陆失败了!</div>
 <div sec:authorize="hasRole('ADMIN')">你有admin权限</div>
 <div sec:authorize="hasRole('USER')">你有user权限</div>

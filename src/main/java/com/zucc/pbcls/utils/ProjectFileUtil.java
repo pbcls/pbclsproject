@@ -17,7 +17,7 @@ import java.util.List;
 @Component
 public class ProjectFileUtil {
     public void InitDirectory(String filePath) throws Exception {
-        File targetFile = new File("src/main/resources/static/case"+filePath);
+        File targetFile = new File("src/main/resources/static/case" + filePath);
         if (!targetFile.exists()) {
             targetFile.mkdirs();
         }
@@ -25,7 +25,7 @@ public class ProjectFileUtil {
 
     public void copyCDocToPDoc(String oldfilepath, String newfilepath) {
         try {
-            oldfilepath = "src/main/resources/static/case"+oldfilepath;
+            oldfilepath = "src/main/resources/static/case" + oldfilepath;
             File old = new File(oldfilepath);
             String[] file = old.list();
             File temp = null;
@@ -38,7 +38,7 @@ public class ProjectFileUtil {
 
                 if (temp.isFile()) {
                     FileInputStream input = new FileInputStream(temp);
-                    FileOutputStream output = new FileOutputStream("src/main/resources/static/case"+newfilepath + "/" +
+                    FileOutputStream output = new FileOutputStream("src/main/resources/static/case" + newfilepath + "/" +
                             (temp.getName()).toString());
                     byte[] b = new byte[1024 * 5];
                     int len;
@@ -57,7 +57,7 @@ public class ProjectFileUtil {
     }
 
     public List<String> getProjectFileList(Project project) {
-        String path = "src/main/resources/static/case" +project.getFoldername() + "/DOCS";
+        String path = "src/main/resources/static/case" + project.getFoldername() + "/DOCS";
         List<String> files = new ArrayList<String>();
         File file = new File(path);
         File[] tempList = file.listFiles();
@@ -75,8 +75,8 @@ public class ProjectFileUtil {
         return files;
     }
 
-    public String DownloadProjectFile(String filename,Project project,HttpServletResponse response) {
-        String downloadFilePath = "src/main/resources/static/case"+project.getFoldername()+"/DOCS/"+filename;//被下载的文件在服务器中的路径,
+    public String DownloadProjectFile(String filename, Project project, HttpServletResponse response) {
+        String downloadFilePath = "src/main/resources/static/case" + project.getFoldername() + "/DOCS/" + filename;//被下载的文件在服务器中的路径,
         String fileName = filename;//被下载文件的名称
 
         File file = new File(downloadFilePath);
@@ -121,14 +121,14 @@ public class ProjectFileUtil {
 
     public void uploadDOCSFiles(byte[] file, String filePath, String fileName) throws Exception {
 //        File targetFile = new File(filePath);
-        FileOutputStream out = new FileOutputStream("src/main/resources/static/case"+filePath + fileName);
+        FileOutputStream out = new FileOutputStream("src/main/resources/static/case" + filePath + fileName);
         out.write(file);
         out.flush();
         out.close();
     }
 
     public void submitTaskFiles(byte[] submitfile, String filePath, String fileName) throws Exception {
-        filePath = "src/main/resources/static/case"+filePath;
+        filePath = "src/main/resources/static/case" + filePath;
         File task = new File(filePath);
         File[] files = task.listFiles();
         for (File file : files) {
@@ -140,7 +140,7 @@ public class ProjectFileUtil {
             }
         }
 
-        FileOutputStream out = new FileOutputStream(filePath+ File.separator+fileName);
+        FileOutputStream out = new FileOutputStream(filePath + File.separator + fileName);
         out.write(submitfile);
         out.flush();
         out.close();
@@ -176,7 +176,7 @@ public class ProjectFileUtil {
     }
 
     public List<String> getTaskFileList(Project_TaskOutput taskOutput) {
-        String path = "src/main/resources/static/case" +taskOutput.getTaskoutput();
+        String path = "src/main/resources/static/case" + taskOutput.getTaskoutput();
         List<String> files = new ArrayList<String>();
         File file = new File(path);
         File[] tempList = file.listFiles();
@@ -194,8 +194,8 @@ public class ProjectFileUtil {
         return files;
     }
 
-    public String DownloadProjectTaskFile(String filename,Project_TaskOutput project_taskOutput,HttpServletResponse response) {
-        String downloadFilePath = "src/main/resources/static/case"+project_taskOutput.getTaskoutput()+"/"+filename;//被下载的文件在服务器中的路径,
+    public String DownloadProjectTaskFile(String filename, Project_TaskOutput project_taskOutput, HttpServletResponse response) {
+        String downloadFilePath = "src/main/resources/static/case" + project_taskOutput.getTaskoutput() + "/" + filename;//被下载的文件在服务器中的路径,
         String fileName = filename;//被下载文件的名称
 
         File file = new File(downloadFilePath);
