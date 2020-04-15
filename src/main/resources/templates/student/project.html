@@ -37,6 +37,10 @@
                 dataType: 'json',
                 contentType: "application/x-www-form-urlencoded",
                 traditional: true,
+                data:{
+                  "pagenum":0,
+                  "pagesize":30
+                },
                 success: function (result) {
                     console.log(result);
                     var showMenu2 = $("#menu2");
