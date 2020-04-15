@@ -168,6 +168,7 @@ public class ProjectFileUtil {
                     System.out.println("删除" + file.getAbsolutePath());
                 }
             }
+
             // 删除文件夹本身
             project.delete();
             System.out.println("删除" + project.getAbsolutePath());

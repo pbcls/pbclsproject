@@ -48,7 +48,8 @@
                             var name = result[menu].username;
                             var rolename = result[menu].rolename;
                             var proname = result[menu].projectname;
-                            $("<li></li>").append("<span class='menu-text'>" + name + "申请以" + rolename + "职位进入" + proname + "项目</span>").appendTo(showMenu2);
+                            $("<li><span class='menu-text'>" + name + "申请以" + rolename + "职位进入" + proname + "项目</span><button type='button' class='btn btn-primary' id='btn_apply' style='width: 60px; height: 30px;line-height: 17px;'>操作</button></li>").appendTo(showMenu2);
+                            // $("<button type='button' class='btn btn-primary' id='btn_apply' style='margin-top: 3px; width: 60px;'>操作</button>").appendTo(showMenu2);
                         }else if(type == 2){
                             console.log("2");
                             var flag = result[menu].passstatus;
@@ -84,6 +85,10 @@
                             $("<li></li>").append("<span class='menu-text'>" + log + "</span>").appendTo(showMenu2);
                         }
                         if(result[menu+1] == 'undefined') break;
+                        $("#btn_apply").click(function () {
+                            $("#myModalLabel").text("申请信息");
+                            $('#myModal').modal();
+                        });
                     }
                 },
                 error:function(result) {
@@ -155,6 +160,33 @@
             }
             return paramStr;
         };
+
+        function apply() {
+            console.log("111");
+            $.ajax({
+                type: "post",
+                url: "/judgeapply",
+                dataType:'text',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                data:{
+                    "logid":1653,
+                    "projectid":102,
+                    "roleid":2,
+                    "memberid":"szz",
+                    "pass":true
+                },
+                success: function (result) {
+                    console.log(result);
+                    if(result === "true") alert("已同意");
+                    else alert("项目成员已满");
+                },
+                error:function(result) {
+                    alert(result);
+                }
+            });
+        }
+
     </script>
 </head>
 <body>
@@ -229,6 +261,31 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">成员申请</h4>
+                    <!--                            <button type="button" class="btn btn-primary">创建项目</button>-->
+                </div>
+                <div class="modal-body">
+                    <form style="text-align: center;">
+                        <div class="form-group" style="padding-top: 45px;">
+                            <h6 stype="display:inline;">是否同意该成员的职位申请？</h6>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" id="add">
+                    <button type="submit" class="btn btn-outline-primary" data-dismiss="modal" onclick="apply()"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>确定申请</button>
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>取消</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
 </div>
 </body>
 </html>

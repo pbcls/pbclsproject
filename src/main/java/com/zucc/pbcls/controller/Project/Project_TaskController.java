@@ -30,6 +30,11 @@ public class Project_TaskController {
         return "student/project_detailed_task";
     }
 
+    @RequestMapping("/toprojecttasktest")
+    public String toprojecttasktest(){
+        return "student/project_task_test";
+    }
+
 
     /**
      * 先读status 判断任务是未开始还是进行中还是结束

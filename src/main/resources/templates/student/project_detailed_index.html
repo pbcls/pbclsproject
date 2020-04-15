@@ -18,9 +18,7 @@
     <script th:inline="javascript">
 
         window.onload=function () {
-            var uid;
-            var uid2 = [[${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}]];
-            console.log(uid2);
+            var uid = [[${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}]];
             var cid = GetRequest();
             function GetRequest() {
                 var url = location.search; //获取url中"?"符后的字串
@@ -39,66 +37,54 @@
                 return null;
             }
 
+            var indexmenu = $("#menuindex");
+
+            $('<li class="nav-item"><a class="nav-link active" href="/toprojectdetind?'+cid+'" style="background-color: #96B87D; font-weight: bold;">基本信息</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link" href="/toprojectdettask?'+uid+'&'+cid+'" style="color: #0B3E5B; font-weight: bold;">我的任务</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link" href="/toprojectdetman?'+uid+'&'+cid+'" style="color: #0B3E5B; font-weight: bold;">组内信息</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link" href="/toprojectdetdoc?'+uid+'&'+cid+'" style="color: #0B3E5B; font-weight: bold;">我的文档</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link" href="/toprojectdeteva?'+uid+'&'+cid+'" style="color: #0B3E5B; font-weight: bold;">我的评价</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link" href="/toprojectdetcom?'+uid+'&'+cid+'" style="color: #0B3E5B; font-weight: bold;">聊天室</a></li>').appendTo(indexmenu);
+
+            console.log(uid);
+
             $.ajax({
                 type: "post",
-                url: "/showprojectlog",
-                dataType: 'json',
+                url: "/showprojectinfo",
+                dataType: 'text',
                 contentType: "application/x-www-form-urlencoded",
                 traditional: true,
-                success: function (result) {
-                    console.log(result);
-                    uid = result[0].touid;
-                    var indexmenu = $("#menuindex");
+                data:{
+                    "projectid":Number(cid)
+                },
+                success: function (data) {
+                    var dataobj = JSON.parse(data);
+                    console.log(dataobj);
+                    // alert(dataobj.case);
+                    var showMenu2 = $("#menu2");
+                    var showMenu3 = $("#menu3");
+                    var showMenu4 = $("#menu4");
+                    var showMenu5 = $("#menu5");
+                    for(var menu in dataobj.role_to_user) {
+                        var userid = dataobj.role_to_user[menu].uid;
+                        console.log(uid);
+                        console.log(userid);
 
-                    $('<li class="nav-item"><a class="nav-link active" href="/toprojectdetind?'+cid+'" style="background-color: #96B87D; font-weight: bold;">基本信息</a></li>').appendTo(indexmenu);
-                    $('<li class="nav-item"><a class="nav-link" href="/toprojectdettask?'+uid+'&'+cid+'" style="color: #0B3E5B; font-weight: bold;">我的任务</a></li>').appendTo(indexmenu);
-                    $('<li class="nav-item"><a class="nav-link" href="/toprojectdetman?'+uid+'&'+cid+'" style="color: #0B3E5B; font-weight: bold;">组内信息</a></li>').appendTo(indexmenu);
-                    $('<li class="nav-item"><a class="nav-link" href="/toprojectdetdoc?'+uid+'&'+cid+'" style="color: #0B3E5B; font-weight: bold;">我的文档</a></li>').appendTo(indexmenu);
-                    $('<li class="nav-item"><a class="nav-link" href="/toprojectdeteva?'+uid+'&'+cid+'" style="color: #0B3E5B; font-weight: bold;">我的评价</a></li>').appendTo(indexmenu);
-                    $('<li class="nav-item"><a class="nav-link" href="/toprojectdetcom?'+uid+'&'+cid+'" style="color: #0B3E5B; font-weight: bold;">聊天室</a></li>').appendTo(indexmenu);
-
-                    console.log(uid);
-                    $.ajax({
-                        type: "post",
-                        url: "/showprojectinfo",
-                        dataType: 'text',
-                        contentType: "application/x-www-form-urlencoded",
-                        traditional: true,
-                        data:{
-                            "projectid":Number(cid)
-                        },
-                        success: function (data) {
-                            var dataobj = JSON.parse(data);
-                            console.log(dataobj);
-                            // alert(dataobj.case);
-                            var showMenu2 = $("#menu2");
-                            var showMenu3 = $("#menu3");
-                            var showMenu4 = $("#menu4");
-                            var showMenu5 = $("#menu5");
-                            for(var menu in dataobj.role_to_user) {
-                                var userid = dataobj.role_to_user[menu].uid;
-                                console.log(uid);
-                                console.log(userid);
-                                if(userid == uid){
-                                    $("#headimg").attr("src",dataobj.role_to_user[menu].user.portrait);
-                                    $("#name").html(dataobj.role_to_user[menu].user.name);
-                                    $("#rolename").html(dataobj.role_to_user[menu].rolename);
-                                }
-
-                                $("<li style='margin-top: 10px;'></li>").append(dataobj.role_to_user[menu].user.name).appendTo(showMenu2);
-                                $("<li style='margin-top: 10px;'></li>").append(dataobj.role_to_user[menu].rolename).appendTo(showMenu3);
-                                $("<li style='margin-top: 10px;'></li>").append(dataobj.role_to_user[menu].user.role).appendTo(showMenu4);
-                                $("<li style='margin-top: 10px;'></li>").append("开启").appendTo(showMenu5);
-                                if(dataobj.role_to_user[menu+1] == 'undefined') break;
-                            }
-                            $("#pname").html(dataobj.project.projectname);
-                            $("#description").html(dataobj.project.description);
-                            $("#time").html(dataobj.project.starttime);
-                        },
-                        error:function(result) {
-                            alert(result);
+                        if(userid == uid){
+                            $("#headimg").attr("src",dataobj.role_to_user[menu].user.portrait);
+                            $("#name").html(dataobj.role_to_user[menu].user.name);
+                            $("#rolename").html(dataobj.role_to_user[menu].rolename);
                         }
-                    });
+
+                        $("<li style='margin-top: 10px;'></li>").append(dataobj.role_to_user[menu].user.name).appendTo(showMenu2);
+                        $("<li style='margin-top: 10px;'></li>").append(dataobj.role_to_user[menu].rolename).appendTo(showMenu3);
+                        $("<li style='margin-top: 10px;'></li>").append(dataobj.role_to_user[menu].user.role).appendTo(showMenu4);
+                        $("<li style='margin-top: 10px;'></li>").append("开启").appendTo(showMenu5);
+                        if(dataobj.role_to_user[menu+1] == 'undefined') break;
+                    }
+                    $("#pname").html(dataobj.project.projectname);
+                    $("#description").html(dataobj.project.description);
+                    $("#time").html(dataobj.project.starttime);
                 },
                 error:function(result) {
                     alert(result);

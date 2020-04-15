@@ -52,6 +52,7 @@
                 }
                 return null;
             }
+
             //jQuery写法
             $.ajax({
                 type: "post",  //post put get 等等
@@ -100,39 +101,13 @@
                     var Menulist = $("#menu");
                     var Menulist2 = $("#menu2");
                     for(var menu in data){
-                        $("<li style='margin-top: 15px; text-align: center;width: 300px;'></li>").append("<a href='#' style='text-align: center;'> <span class='menu-text' style='text-align: center;'>" + data[menu].taskname + "</span></a>").appendTo(Menulist);
+                        // $("<li style='margin-top: 15px; text-align: center;width: 300px;'></li>").append("<a href='#' onclick='getUrl(" + cid + "," + data[menu].projectTaskpk.taskid + ")' style='text-align: center;'> <span class='menu-text' style='text-align: center;'>" + data[menu].taskname + "</span></a>").appendTo(Menulist);
+                        $("<li style='margin-top: 15px; text-align: center;width: 100px;'></li>").append("<a href='#' onclick='getUrl("+ cid +" , " + data[menu].projectTaskpk.taskid + ")' style='text-align: center;'> <span class='menu-text' style='text-align: center;'>" + data[menu].taskname + "</span></a>").appendTo(Menulist);
                         if(data[menu].status == 0) $("<li style='margin-top: 15px; text-align: center;'>未开始</li>").appendTo(Menulist2);
                         else if(data[menu].status == 1) $("<li style='margin-top: 15px; text-align: center;'>进行中</li>").appendTo(Menulist2);
                         else if(data[menu].status == 2) $("<li style='margin-top: 15px; text-align: center;'>已结束</li>").appendTo(Menulist2);
-
-                        $.ajax({
-                            type: "post",
-                            url: "/showprojecttaskinfo",
-                            dataType:'text',
-                            contentType: "application/json;charset=UTF-8",
-                            traditional: true,
-                            data:JSON.stringify({
-                                "projectid":cid,
-                                "taskid":data[menu].projectTaskpk.taskid
-                            }),
-                            success: function (result) {
-                                var dataobj = JSON.parse(result);
-                                // console.log(dataobj);
-                                var Menulist3 = $("#menu3");
-                                // console.log(dataobj.task.canstart);
-                                // console.log(dataobj.task.status);
-                                if(dataobj.task.canstart === true && dataobj.task.status == 0){
-                                    $("<button type='button' class='btn btn-primary' id='btn_start' style='margin-top: 3px;'>开始任务</button>").appendTo(Menulist3);
-                                }else if(dataobj.task.canstart === false || dataobj.task.status != 2){
-                                    $("<button type='button' class='btn btn-default' id='btn_start' style='margin-top: 3px;'>不可操作</button>").appendTo(Menulist3);
-                                }else if(dataobj.task.status == 2){
-                                    $("<button type='button' class='btn btn-info' id='btn_start' style='margin-top: 3px;'>开始自评</button>").appendTo(Menulist3);
-                                }
-                            },
-                            error:function(result) {
-                                alert(result);
-                            }
-                        });
+                        // console.log(cid);
+                        // console.log(data[menu].projectTaskpk.taskid);
 
                         if(data[menu+1] == 'undefined') break;
                         // onclick='getUrl(" + menu + ")' class='turn'
@@ -159,42 +134,12 @@
                     console.log(data);
                     var Menulist = $("#menu11");
                     var Menulist2 = $("#menu12");
+                    console.log("1111111111111111");
                     for(var menu in data){
-                        $("<li style='margin-top: 15px; text-align: center;width: 300px;'></li>").append("<a href='#' style='text-align: center;'> <span class='menu-text' style='text-align: center;'>" + data[menu].taskname + "</span></a>").appendTo(Menulist);
+                        $("<li style='margin-top: 15px; text-align: center;width: 100px;'></li>").append("<a href='#' onclick='getUrl2("+ cid +" , " + data[menu].projectTaskpk.taskid + ")' style='text-align: center;'> <span class='menu-text' style='text-align: center;'>" + data[menu].taskname + "</span></a>").appendTo(Menulist);
                         if(data[menu].status == 0) $("<li style='margin-top: 15px; text-align: center;'>未开始</li>").appendTo(Menulist2);
                         else if(data[menu].status == 1) $("<li style='margin-top: 15px; text-align: center;'>进行中</li>").appendTo(Menulist2);
                         else if(data[menu].status == 2) $("<li style='margin-top: 15px; text-align: center;'>已结束</li>").appendTo(Menulist2);
-
-                        $.ajax({
-                            type: "post",
-                            url: "/showprojecttaskinfo",
-                            dataType:'text',
-                            contentType: "application/json;charset=UTF-8",
-                            traditional: true,
-                            data:JSON.stringify({
-                                "projectid":cid,
-                                "taskid":data[menu].projectTaskpk.taskid
-                            }),
-                            success: function (result) {
-                                var dataobj = JSON.parse(result);
-                                // console.log(dataobj);
-                                var Menulist3 = $("#menu13");
-                                // console.log(dataobj.task.canstart);
-                                // console.log(dataobj.task.status);
-                                if(dataobj.task.canstart === true && dataobj.task.status == 0){
-                                    $("<button type='button' class='btn btn-primary' id='btn_start' style='margin-top: 3px;'>开始任务</button>").appendTo(Menulist3);
-                                }else if(dataobj.task.canstart === false || dataobj.task.status != 2){
-                                    $("<button type='button' class='btn btn-default' id='btn_start' style='margin-top: 3px;'>不可操作</button>").appendTo(Menulist3);
-                                }else if(dataobj.task.status == 2){
-                                    $("<button type='button' class='btn btn-info' id='btn_start' style='margin-top: 3px;'>开始自评</button>").appendTo(Menulist3);
-                                }
-                            },
-                            error:function(result) {
-                                console.log(cid);
-                                console.log(data[menu].projectTaskpk.taskid);
-                                alert(result);
-                            }
-                        });
 
                         if(data[menu+1] == 'undefined') break;
                         // onclick='getUrl(" + menu + ")' class='turn'
@@ -204,40 +149,44 @@
                     alert(result);
                 }
             });
-            // function getUrl(menu) {
-            //     // console.log(parseParam(cid));
-            //     var main = document.getElementById('main');
-            //     main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojecttest?"+cid+"&"menu"'></iframe>";
-            //     main = document.getElementById('main2');
-            //     main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojectplayer?"+cid+"'></iframe>";
-            // }
-            // var parseParam=function(paramObj, key){
-            //     var paramStr="";
-            //     if(paramObj instanceof String||paramObj instanceof Number||paramObj instanceof Boolean){
-            //         paramStr+="&"+key+"="+encodeURIComponent(paramObj);
-            //     }else{
-            //         $.each(paramObj,function(i){
-            //             var k=key==null?i:key+(paramObj instanceof Array?"["+i+"]":"."+i);
-            //             paramStr+='&'+parseParam(this, k);
-            //         });
-            //     }
-            //     return paramStr.substr(1);
-            // };
-            // var urlEncode = function (paramObj, key, encode) {
-            //     if(paramObj==null) return '';
-            //     var paramStr = '';
-            //     var t = typeof (paramObj);
-            //     if (t == 'string' || t == 'number' || t == 'boolean') {
-            //         paramStr += '&' + key + '=' + ((encode==null||encode) ? encodeURIComponent(paramObj) : paramObj);
-            //     } else {
-            //         for (var i in paramObj) {
-            //             var k = key == null ? i : key + (paramObj instanceof Array ? '[' + i + ']' : '.' + i);
-            //             paramStr += urlEncode(paramObj[i], k, encode);
-            //         }
-            //     }
-            //     return paramStr;
-            // };
         }
+
+        function getUrl(cid,taskid){
+            var main = document.getElementById('main');
+            main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojecttasktest?"+cid+"&"+taskid+"'></iframe>";
+        }
+
+        function getUrl2(cid,taskid){
+            var main = document.getElementById('main2');
+            main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojecttasktest?"+cid+"&"+taskid+"'></iframe>";
+        }
+
+        var parseParam=function(paramObj, key){
+            var paramStr="";
+            if(paramObj instanceof String||paramObj instanceof Number||paramObj instanceof Boolean){
+                paramStr+="&"+key+"="+encodeURIComponent(paramObj);
+            }else{
+                $.each(paramObj,function(i){
+                    var k=key==null?i:key+(paramObj instanceof Array?"["+i+"]":"."+i);
+                    paramStr+='&'+parseParam(this, k);
+                });
+            }
+            return paramStr.substr(1);
+        };
+        var urlEncode = function (paramObj, key, encode) {
+            if(paramObj==null) return '';
+            var paramStr = '';
+            var t = typeof (paramObj);
+            if (t == 'string' || t == 'number' || t == 'boolean') {
+                paramStr += '&' + key + '=' + ((encode==null||encode) ? encodeURIComponent(paramObj) : paramObj);
+            } else {
+                for (var i in paramObj) {
+                    var k = key == null ? i : key + (paramObj instanceof Array ? '[' + i + ']' : '.' + i);
+                    paramStr += urlEncode(paramObj[i], k, encode);
+                }
+            }
+            return paramStr;
+        };
     </script>
 </head>
 <body>
@@ -315,51 +264,46 @@
                 <div class="tab-content">
                     <div id="menu01" class="container tab-pane active"><br>
                         <div class="row" style="text-align: center;">
-                            <div class="col-md-7">
-                                <nav class="navbar navbar-default" role="navigation">
-                                    <div class="sidebar">
-                                        <ul id='menu' class='nav navbar-nav' style="text-align: center;"></ul>
-                                    </div>
-                                </nav>
-                            </div>
                             <div class="col-md-3">
                                 <nav class="navbar navbar-default" role="navigation">
                                     <div class="sidebar">
-                                        <ul id='menu2' class='nav navbar-nav' style="text-align: center;"></ul>
+                                        <ul id='menu' class='nav navbar-nav' style="text-align: center;margin-top: 20px;"></ul>
                                     </div>
                                 </nav>
                             </div>
-                            <div class="col-md-2">
-                                <nav class="navbar navbar-default" role="navigation">
-                                    <div class="sidebar">
-                                        <ul id='menu3' class='nav navbar-nav' style="text-align: center;"></ul>
+                            <div class="col-md-9">
+                                <div class="main-content">
+                                    <div class="page-content " id="main" style="height: 1000px;">
+                                        <nav class="navbar navbar-default" role="navigation">
+                                            <div class="sidebar">
+                                                <ul id='menu2' class='nav navbar-nav' style="text-align: center;margin-top: 20px;"></ul>
+                                            </div>
+                                        </nav>
                                     </div>
-                                </nav>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div id="menu02" class="container tab-pane fade"><br>
+                        <h3>个人动态</h3>
                         <div class="row" style="text-align: center;">
-                            <div class="col-md-7">
-                                <nav class="navbar navbar-default" role="navigation">
-                                    <div class="sidebar">
-                                        <ul id='menu11' class='nav navbar-nav' style="text-align: center;"></ul>
-                                    </div>
-                                </nav>
-                            </div>
                             <div class="col-md-3">
                                 <nav class="navbar navbar-default" role="navigation">
                                     <div class="sidebar">
-                                        <ul id='menu12' class='nav navbar-nav' style="text-align: center;"></ul>
+                                        <ul id='menu11' class='nav navbar-nav' style="text-align: center;margin-top: 20px;"></ul>
                                     </div>
                                 </nav>
                             </div>
-                            <div class="col-md-2">
-                                <nav class="navbar navbar-default" role="navigation">
-                                    <div class="sidebar">
-                                        <ul id='menu13' class='nav navbar-nav' style="text-align: center;"></ul>
+                            <div class="col-md-9">
+                                <div class="main-content">
+                                    <div class="page-content " id="main2" style="height: 1000px;">
+                                        <nav class="navbar navbar-default" role="navigation">
+                                            <div class="sidebar">
+                                                <ul id='menu12' class='nav navbar-nav' style="text-align: center;margin-top: 20px;"></ul>
+                                            </div>
+                                        </nav>
                                     </div>
-                                </nav>
+                                </div>
                             </div>
                         </div>
                     </div>

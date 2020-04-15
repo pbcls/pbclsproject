@@ -17,18 +17,11 @@
     <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
     <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
     <script th:inline="javascript">
-
+        var uid;
+        var cid;
         window.onload=function(){
-            var cid=GetRequest();
-            $("#btn_add").click(function () {
-                // alert("111111");
-                var url = "toprojectdetind?"+cid;
-                window.open(url);
-                // var main = document.getElementById('main');
-                // main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojecttest?"+cid+"'></iframe>";
-                // main = document.getElementById('main2');
-                // main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojectplayer?"+cid+"'></iframe>";
-            });
+            uid = [[${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}]];
+            cid=GetRequest();
             // $(document).ready(function(){
             //     cid=GetRequest();
             //     // console.log(cid);
@@ -59,13 +52,44 @@
                     }
                     // $("#status").html(dataobj.project.status);
                     $("#time").html(dataobj.project.starttime);
+                    var Menulist1 = $("#menu1");
+                    var Menulist2 = $("#name");
+                    var flag = 1;
+                    for(var menu in dataobj.roles){
+                        $("<option value='"+ dataobj.roles[menu].roleid +"'>"+ dataobj.roles[menu].rolename +"</option>").appendTo(Menulist2);
+                        if(dataobj.roles[menu+1] == 'undefined') break;
+                    }
+                    for(var menu in dataobj.role_to_user){
+                        if(dataobj.role_to_user[menu].uid === uid){
+                            $("<button type='button' class='btn btn-primary' id='btn_add' style='margin-top: 3px;'>进入项目</button>").appendTo(Menulist1);
+                            flag = 0;
+                            break;
+                        }
+                        if(dataobj.role_to_user[menu+1] == 'undefined') break;
+                    }
+                    if(flag == 1){
+                        $("<button type='button' class='btn btn-primary' id='btn_apply' style='margin-top: 3px;'>申请进入项目</button>").appendTo(Menulist1);
+                    }
+                    $("#btn_add").click(function () {
+                        var url = "toprojectdetind?"+cid;
+                        window.open(url);
+                        // var main = document.getElementById('main');
+                        // main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojecttest?"+cid+"'></iframe>";
+                        // main = document.getElementById('main2');
+                        // main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojectplayer?"+cid+"'></iframe>";
+                    });
+
+                    $("#btn_apply").click(function () {
+                        $("#myModalLabel").text("创建项目");
+                        $('#myModal').modal();
+                    });
                 },
                 error:function(result) {
                     alert(result);
                 }
             });
-            function GetRequest() {
 
+            function GetRequest() {
                 var url = location.search; //获取url中"?"符后的字串
                 // var theRequest = new Object();
                 if (url.indexOf("?") != -1) {
@@ -83,46 +107,53 @@
             }
         }
 
-        function create(){
-            var cid=GetRequest();
-            function GetRequest() {
-
-                var url = location.search; //获取url中"?"符后的字串
-                // var theRequest = new Object();
-                if (url.indexOf("?") != -1) {
-                    var str = url.substr(1); //substr()方法返回从参数值开始到结束的字符串；
-                    // console.log(str);
-                    // var strs = str.split("&");
-                    // for (var i = 0; i < strs.length; i++) {
-                    //     theRequest[strs[i].split("=")[0]] = (strs[i].split("=")[1]);
-                    // }
-                    // console.log(theRequest.currentSrc); //此时的theRequest就是我们需要的参数；
-                    // $('#videoId').attr('src', theRequest.currentSrc);
-                    return str;
-                }
-                return null;
-            }
+        function apply() {
             var name = $('#name').val();
-            // var str = document.getElementById('name').value;
+            console.log(name);
             $.ajax({
-                type: "post",  //post put get 等等
-                url: "/createprojectbycase",
-                dataType: 'text',
+                type: "post",
+                url: "/applyproject",
+                dataType:'text',
                 contentType: "application/x-www-form-urlencoded",
                 traditional: true,
                 data:{
-                    "caseid":Number(cid),
-                    "projectname":name
+                    "projectid":Number(cid),
+                    "roleid":name
                 },
-                success: function (data, textStatus) {
-                    alert("创建成功！");
-                    // window.location.href="tologin";
+                success: function (result) {
+                    console.log(result);
+                    if(result == 0) alert("申请成功！");
+                    else if(result == 1) alert("该项目已经开始！");
+                    else alert("该项目人员已满！");
                 },
-                error: function () {
-                    alert("sile");
+                error:function(result) {
+                    alert(result);
                 }
             });
         }
+
+        // function create(){
+        //     var cid=GetRequest();
+        //     function GetRequest() {
+        //
+        //         var url = location.search; //获取url中"?"符后的字串
+        //         // var theRequest = new Object();
+        //         if (url.indexOf("?") != -1) {
+        //             var str = url.substr(1); //substr()方法返回从参数值开始到结束的字符串；
+        //             // console.log(str);
+        //             // var strs = str.split("&");
+        //             // for (var i = 0; i < strs.length; i++) {
+        //             //     theRequest[strs[i].split("=")[0]] = (strs[i].split("=")[1]);
+        //             // }
+        //             // console.log(theRequest.currentSrc); //此时的theRequest就是我们需要的参数；
+        //             // $('#videoId').attr('src', theRequest.currentSrc);
+        //             return str;
+        //         }
+        //         return null;
+        //     }
+        //     var name = $('#name').val();
+        //     // var str = document.getElementById('name').value;
+        // }
     </script>
 </head>
 <body>
@@ -156,7 +187,7 @@
                         <td id="time"></td>
                     </tr>
                 </table>
-                <button type="button" class="btn btn-primary" id="btn_add">进入项目</button>
+<!--                <button type="button" class="btn btn-primary" id="btn_add">进入项目</button>-->
 <!--                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">-->
 <!--                    <div class="modal-dialog" role="document">-->
 <!--                        <div class="modal-content">-->
@@ -182,6 +213,33 @@
 <!--                    </div>-->
 <!--                </div>-->
             </div>
+
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">创建项目</h4>
+                            <!--                            <button type="button" class="btn btn-primary">创建项目</button>-->
+                        </div>
+                        <div class="modal-body">
+                            <form style="text-align: center;">
+                                <div class="form-group" style="padding-top: 45px;">
+                                    <label for="name" stype="display:inline;">申请职位：</label>
+                                    <select class="selectpicker" title="职位选择" id="name">
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-outline-primary" data-dismiss="modal" onclick="apply()"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>确定申请</button>
+                            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>取消</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
         </div>
         <div id="menu2" class="container tab-pane fade"><br>
             <h3>个人动态</h3>
