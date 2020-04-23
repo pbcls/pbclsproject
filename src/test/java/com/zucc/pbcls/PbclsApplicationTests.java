@@ -16,20 +16,28 @@ import com.zucc.pbcls.service.Case.Case_RoleService;
 import com.zucc.pbcls.service.Case.Case_TaskService;
 import com.zucc.pbcls.service.Project.ProjectService;
 import com.zucc.pbcls.service.ProjectTaskScheduleService;
+import com.zucc.pbcls.service.UserInfoService;
 import com.zucc.pbcls.utils.ProjectFileUtil;
 import org.databene.contiperf.PerfTest;
 import org.databene.contiperf.junit.ContiPerfRule;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -347,12 +355,33 @@ public class PbclsApplicationTests {
 
 	static int pagenum = 0;
 	@Test
-	@PerfTest(invocations = 50,threads = 1)
+	@PerfTest(invocations = 20,threads = 1)
 	public void testShowProjectLog(){
 		Pageable pageable = PageRequest.of(pagenum, 30, Sort.Direction.DESC, "logtime");
 		System.out.println(projectService.showProjectLog("yzl", pageable));
 		pagenum++;
 	}
+
+	@Test
+	@PerfTest(invocations = 1000,threads = 10)
+	public void testShowEvaluateMutualList(){
+		projectService.showEvaluateMutualList(1,"yzl");
+	}
+
+	@Test
+	@PerfTest(invocations = 1000,threads = 10)
+	public void testShowSumEvaluation(){
+		projectService.showSumEvaluation(1,"yzl");
+	}
+
+	@Autowired
+	UserInfoService userInfoService;
+	@Test
+	@PerfTest(invocations = 1000,threads = 10)
+	public void testShowUserDetial(){
+		userInfoService.showUserDetail("yzl");
+	}
+
 
 
 //	@Test
