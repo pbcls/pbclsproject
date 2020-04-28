@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PM项目评价</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.1.0/css/bootstrap.min.css">
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- popper.min.js 用于弹窗、提示、下拉菜单 -->
+    <script src="https://cdn.bootcss.com/popper.js/1.12.5/umd/popper.min.js"></script>
+
+    <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
+    <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <script th:inline="javascript">
+        var uid = [[${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}]];
+        var page = 1;
+        var cid,touid;
+        var evalist = [];
+        window.onload=function(){
+            cid = GetRequest();
+            function GetRequest() {
+                var url = location.search; //获取url中"?"符后的字串
+                if (url.indexOf("?") != -1) {
+                    var str = url.substr(1); //substr()方法返回从参数值开始到结束的字符串；
+                    return str;
+                }
+                return null;
+            }
+            $.ajax({
+                type: "post",
+                url: "/showevaluatemutuallist",
+                dataType: 'text',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                data:{
+                    "projectid":Number(cid)
+                },
+                success: function (data) {
+                    document.getElementById("last").style.visibility="hidden";
+                    // document.getElementById("last").style.visibility="visible";
+                    document.getElementById("next").style.visibility="hidden";
+                    // document.getElementById("next").style.visibility="visible";
+                    document.getElementById("submit").style.visibility="hidden";
+                    var dataobj = JSON.parse(data);
+                    console.log(dataobj);
+                    // alert(dataobj.case);
+                    // var showMenulist = $("#list");
+                    if(dataobj[1] != 'undefined'){
+                        document.getElementById("next").style.visibility="visible";
+                    }
+                    $("#name").html(dataobj[0].tousername);
+                    $("#rolename").html(dataobj[0].torolename);
+                },
+                error:function(data) {
+                    alert(data);
+                }
+            });
+        }
+        function btn_last(){
+            evalist[page-1]
+            page = page - 1;
+            document.getElementById("last").style.visibility="hidden";
+            document.getElementById("next").style.visibility="hidden";
+            document.getElementById("submit").style.visibility="hidden";
+            $.ajax({
+                type: "post",
+                url: "/showevaluatemutuallist",
+                dataType: 'text',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                data:{
+                    "projectid":Number(cid)
+                },
+                success: function (data) {
+                    var dataobj = JSON.parse(data);
+                    console.log(dataobj);
+                    // alert(dataobj.case);
+                    var showMenulist = $("#list");
+                    if(dataobj.length == 1){
+                    }else if(page == 1){
+                        document.getElementById("next").style.visibility="visible";
+                    }else if(page == Number(dataobj.length)){
+                        document.getElementById("last").style.visibility="visible";
+                    }else{
+                        document.getElementById("last").style.visibility="visible";
+                        document.getElementById("next").style.visibility="visible";
+                    }
+                    $("#name").html(dataobj[page-1].tousername);
+                    $("#rolename").html(dataobj[page-1].torolename);
+                },
+                error:function(data) {
+                    alert(data);
+                }
+            });
+        }
+        function btn_next(){
+            page = page + 1;
+            document.getElementById("last").style.visibility="hidden";
+            document.getElementById("next").style.visibility="hidden";
+            document.getElementById("submit").style.visibility="hidden";
+            $.ajax({
+                type: "post",
+                url: "/showevaluatemutuallist",
+                dataType: 'text',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                data:{
+                    "projectid":Number(cid)
+                },
+                success: function (data) {
+                    // document.getElementById("next").style.visibility="visible";
+                    var dataobj = JSON.parse(data);
+                    console.log(dataobj);
+                    // alert(dataobj.case);
+                    var showMenulist = $("#list");
+                    if(dataobj.length == 1){
+                    }else if(page == 1){
+                        document.getElementById("next").style.visibility="visible";
+                    }else if(page == Number(dataobj.length)){
+                        document.getElementById("last").style.visibility="visible";
+                        document.getElementById("submit").style.visibility="visible";
+                    }else{
+                        document.getElementById("last").style.visibility="visible";
+                        document.getElementById("next").style.visibility="visible";
+                    }
+                    $("#name").html(dataobj[page-1].tousername);
+                    $("#rolename").html(dataobj[page-1].torolename);
+                },
+                error:function(data) {
+                    alert(data);
+                }
+            });
+        }
+        function btn_submit() {
+
+        }
+    </script>
+</head>
+<body>
+<div class="tab-content">
+    <div id="list">
+        <div>
+            <table border="1" frame="void" rules="none" cellpadding="10px" style="font-weight: bold;">
+                <tr>
+                    <th>评价者姓名：</th>
+                    <th id="name" style="color: #96B87D"></th>
+                    <th>评价者职位：</th>
+                    <th id="rolename" style="color: #96B87D"></th>
+                </tr>
+                <tr>
+                    <td>通过率：</td>
+                    <td><select id="pass" class="selectpicker">
+                        <option>A</option>
+                        <option>B</option>
+                        <option>C</option>
+                        <option>D</option>
+                    </select></td>
+                    <td>时间情况：</td>
+                    <td><select id="time" class="selectpicker">
+                        <option>A</option>
+                        <option>B</option>
+                        <option>C</option>
+                        <option>D</option>
+                    </select></td>
+                </tr>
+                <tr>
+                    <td>正确程度：</td>
+                    <td><select id="access" class="selectpicker">
+                        <option>A</option>
+                        <option>B</option>
+                        <option>C</option>
+                        <option>D</option>
+                    </select></td>
+                    <td>创新情况：</td>
+                    <td><select id="new" class="selectpicker">
+                        <option>A</option>
+                        <option>B</option>
+                        <option>C</option>
+                        <option>D</option>
+                    </select></td>
+                </tr>
+                <tr>
+                    <td>风格：</td>
+                    <td><select id="fengge" class="selectpicker">
+                        <option>A</option>
+                        <option>B</option>
+                        <option>C</option>
+                        <option>D</option>
+                    </select></td>
+                </tr>
+                <tr>
+                    <td>学习态度：</td>
+                    <td><select id="taidu" class="selectpicker">
+                        <option>A</option>
+                        <option>B</option>
+                        <option>C</option>
+                        <option>D</option>
+                    </select></td>
+                    <td>专业能力：</td>
+                    <td><select id="zhuanye" class="selectpicker">
+                        <option>A</option>
+                        <option>B</option>
+                        <option>C</option>
+                        <option>D</option>
+                    </select></td>
+                </tr>
+                <tr>
+                    <td>沟通能力：</td>
+                    <td><select id="goutong" class="selectpicker">
+                        <option>A</option>
+                        <option>B</option>
+                        <option>C</option>
+                        <option>D</option>
+                    </select></td>
+                    <td>协作能力：</td>
+                    <td><select id="xiezuo" class="selectpicker">
+                        <option>A</option>
+                        <option>B</option>
+                        <option>C</option>
+                        <option>D</option>
+                    </select></td>
+                <tr>
+                    <td>综合评价：</td>
+                    <td><select id="sum" class="selectpicker">
+                        <option>A</option>
+                        <option>B</option>
+                        <option>C</option>
+                        <option>D</option>
+                    </select></td>
+                </tr>
+            </table>
+            <button class="btn btn-outline-primary" id="last" onclick="btn_last()" style="margin-left: 50px;">上一页</button>
+            <button class="btn btn-outline-primary" id="next" onclick="btn_next()" style="margin-left: 50px;">下一页</button>
+            <button class="btn btn-outline-primary" id="submit" onclick="btn_submit()" style="margin-left: 50px;">提交</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -120,9 +120,9 @@ public class Project_TaskService {
             MyUser user = userInfoDao.findByUid(project_roleToUser.getUid());
             users.add(user);
         }
-        //如果任务完成找对应文件
+        //如果任务已提交或完成找对应文件
         List<String> taskOutput = new ArrayList<>();
-        if(project_task.getStatus() == 2) {
+        if(project_task.getStatus() == 2 || project_task.isNeedcheck()) {
             Project_TaskOutput project_taskOutput = project_taskOutputDao.findAllByProjectidAndTaskid(projectid, taskid);
             taskOutput = new ProjectFileUtil().getTaskFileList(project_taskOutput);
         }
@@ -147,8 +147,15 @@ public class Project_TaskService {
         MyUser myUser = userInfoDao.findByUid(uid);
 
         //如果任务完成找到对应评价
+        //如果他是这个任务的人
         if(project_task.getStatus()==2 && users.contains(myUser)){
             Evaluation_Member evaluation_member = evaluation_memberDao.findAllByProjectidAndTaskidAndUid(projectid,taskid,uid);
+            JSONObject json_evaluation_member = new JSONObject(evaluation_member);
+            jsonObject.put("evaluation",json_evaluation_member);
+        }
+        //如果他不是这个任务的但是他是PM
+        else if (uid.equals(project_roleToUserDao.findPM(projectid))){
+            Evaluation_Member evaluation_member = evaluation_memberDao.findAllByProjectidAndTaskid(projectid,taskid).get(0);
             JSONObject json_evaluation_member = new JSONObject(evaluation_member);
             jsonObject.put("evaluation",json_evaluation_member);
         }

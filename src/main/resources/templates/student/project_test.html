@@ -44,11 +44,13 @@
                     $("#player").html(dataobj.role_to_user.length);
                     $("#maxplayer").html(dataobj.project.maxplayer);
                     if(dataobj.project.status==0){
-                        $("#status").html("未开始");
+                        $("#status").html("中途终止");
                     }else if(dataobj.project.status==1){
-                        $("#status").html("进行中");
+                        $("#status").html("未开始");
+                    }else if(dataobj.project.status==2){
+                        $("#status").html("正在进行");
                     }else{
-                        $("#status").html("已结束");
+                        $("#status").html("已完成");
                     }
                     // $("#status").html(dataobj.project.status);
                     $("#time").html(dataobj.project.starttime);

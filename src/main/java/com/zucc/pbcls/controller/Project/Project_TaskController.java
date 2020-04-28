@@ -35,6 +35,20 @@ public class Project_TaskController {
         return "student/project_task_test";
     }
 
+    @RequestMapping("/totaskeva")
+    public String totaskeva(){
+        return "student/project_task_evaluation";
+    }
+
+    @RequestMapping("/totaskselfPM")
+    public String totaskselfPM(){
+        return "student/project_task_selfevaluation_PM";
+    }
+
+    @RequestMapping("/totaskselfstu")
+    public String totaskselfstu(){
+        return "student/project_task_selfevaluation_student";
+    }
 
     /**
      * 先读status 判断任务是未开始还是进行中还是结束
