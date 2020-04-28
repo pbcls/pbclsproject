@@ -173,13 +173,15 @@ public class PbclsApplicationTests {
 	}
 
 
+	public static int projectdeleteid = 104;
 
 	@Autowired
 	Admin_CaseService admin_caseService;
 	@Test
 	public void deleteProject(){
 		Date olddate = new Date();
-		System.out.println(admin_caseService.deleteProject(3));
+		for (int i = projectdeleteid;i <= 117; i++)
+			System.out.println(admin_caseService.deleteProject(i));
 		Date newdate = new Date();
 		System.out.println(newdate.getTime()-olddate.getTime());
 	}

@@ -90,6 +90,16 @@ public class ProjectController {
         return "student/project_detailed_management";
     }
 
+    @RequestMapping("/toprojectevaPM")
+    public String toprojectevaPM(){
+        return "student/project_evaluation_PM";
+    }
+
+    @RequestMapping("/toprojectevastu")
+    public String toprojectevastu(){
+        return "student/project_evaluation_student";
+    }
+
 //    @RequestMapping("/toprojectdettask")
 //    public String toprojectdettask(){
 //        return "student/project_detailed_task";

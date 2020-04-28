@@ -196,6 +196,7 @@ public class ProjectService {
         //将创建者设置为该项目PM
         Project_RoleToUser project_roleToUser = new Project_RoleToUser();
         project_roleToUser.setProjectid(project.getProjectid());
+        System.out.println("项目经理"+project.getProjectid()+","+project_roleDao.findAllByProjectidAndRolename(project.getProjectid(), "项目经理"));
         project_roleToUser.setRoleid(project_roleDao.findAllByProjectidAndRolename(project.getProjectid(), "项目经理").getRoleid());
         project_roleToUser.setUid(uid);
         project_roleToUserDao.save(project_roleToUser);

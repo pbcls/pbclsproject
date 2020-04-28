@@ -17,10 +17,15 @@
     <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
     <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
     <script th:inline="javascript">
-
+        var uid = [[${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}]];
+        var cid,taskid,role;
         window.onload=function(){
-            var cid = GetRequest();
-            var taskid = GetRequest2();
+            cid = GetRequest();
+            taskid = GetRequest2();
+            document.getElementById("PMeva").style.display="none";
+            document.getElementById("selfeva").style.display="none";
+            document.getElementById("PMbtn").style.display="none";
+            document.getElementById("selfbtn").style.display="none";
             function GetRequest() {
                 var url = location.search; //获取url中"?"符后的字串
                 var strr;
@@ -54,45 +59,6 @@
                 return null;
             }
 
-            // $("#id_file").change(function () {
-            //     // 获取文件对象
-            //     var fileObj = $(this)[0].files[0];
-            //     //利用内置对象文件阅读器生成文件对象的二进制数据
-            //     var fileReader = new FileReader();
-            //     //将文件对象交给文件阅读器，生成文件对象的二进制数据
-            //     fileReader.readAsDataURL(fileObj); //异步
-            //     // fileReader.onload = function () {
-            //     //     $("#id_img").attr('src', fileReader.result);
-            //     // }
-            // });
-
-            $('#id_submit').click(function () {
-                var fileObj = document.getElementById('id_file').files[0];
-                var form = new FormData();
-                form.append('file', fileObj);
-                for (var [a, b] of form.entries()) {
-                    console.log(a, b);
-                }
-                $.ajax({
-                    type: "post",
-                    url: "/submittask",
-                    dataType: 'text',
-                    contentType: "application/x-www-form-urlencoded",
-                    traditional: true,
-                    data:{
-                        "submitfile":form,
-                        "projectid":cid,
-                        "taskid":taskid
-                    },
-                    success: function (data) {
-
-                    },
-                    error:function(result) {
-                        alert(result);
-                    }
-                });
-            });
-
             $.ajax({
                 type: "post",
                 url: "/showprojecttaskinfo",
@@ -112,16 +78,122 @@
                         $("#status").html("未开始");
                     }else if(dataobj.task.status == 1){
                         $("#status").html("进行中");
+                        if(dataobj.hasOwnProperty("output")){
+                            console.log("output");
+
+                            $.ajax({
+                                type: "post",
+                                url: "/downloadprojecttaskfile",
+                                dataType: 'json',
+                                contentType: "application/x-www-form-urlencoded",
+                                traditional: true,
+                                data:{
+                                    "filename":dataobj.output[0],
+                                    "projectid":cid,
+                                    "taskid":taskid
+                                },
+                                success: function (result) {
+                                    var dataobj = JSON.parse(result);
+                                    console.log(dataobj);
+                                },
+                                error:function(result) {
+                                    alert(result);
+                                }
+                            });
+
+                        }
                     }else{
                         $("#status").html("已结束");
+                        if(dataobj.hasOwnProperty("output")){
+                            console.log("output");
+                            console.log(dataobj.output[0]);
+                            $.ajax({
+                                type: "post",
+                                url: "/downloadprojecttaskfile",
+                                dataType: 'json',
+                                contentType: "application/x-www-form-urlencoded",
+                                traditional: true,
+                                data:{
+                                    "filename":dataobj.output[0],
+                                    "projectid":cid,
+                                    "taskid":taskid
+                                },
+                                success: function (result) {
+                                    var dataobj = JSON.parse(result);
+                                    console.log(dataobj);
+                                },
+                                error:function(result) {
+                                    // alert(result);
+                                    console.log(result);
+                                }
+                            });
+
+                        }
+                        if(dataobj.evaluation.pmEvaluated == true){
+                            document.getElementById("PMeva").style.display="";
+                            $("#PMevath").html(dataobj.evaluation.pmScore);
+                        }else{
+                            document.getElementById("PMbtn").style.display="";
+                        }
+                        if(dataobj.evaluation.selfEvaluated == true){
+                            document.getElementById("selfeva").style.display="";
+                            $("#selfevath").html(dataobj.evaluation.selfScore);
+                        }
                     }
                     $("#rolename").html(dataobj.role.rolename);
                     var namelist = [];
                     for(var menu in dataobj.users) {
+                        if(dataobj.users[menu].uid === uid){
+                            var Menuslist = $("#menus");
+                            if(dataobj.task.status == 1){
+                                $('<input type="file" name="myfile" id="id_file" class="hidden">' +
+                                    '<input type="button" class="btn btn-success pull-right" value="上传" id="id_submit">').appendTo(Menuslist);
+                                if(dataobj.evaluation.selfEvaluated == false){
+                                    document.getElementById("selfbtn").style.display="";
+                                }
+                            }
+                        }
                         namelist.push(dataobj.users[menu].name);
                         $("#player").html(dataobj.users[menu].name);
                         if(dataobj.users[menu+1] == 'undefined') break;
                     }
+
+                    $('#id_submit').click(function () {
+                        var fileObj = document.getElementById("id_file").files[0];
+                        if (typeof (fileObj) == "undefined" || fileObj.size <= 0) {
+                            alert("请选择文件");
+                            return;
+                        }
+                        var form = new FormData(); // FormData 对象
+                        form.append("submitfile", fileObj); // 文件对象
+                        form.append("projectid", cid);
+                        form.append("taskid", taskid);
+                        // var form = new FormData();
+                        // form.append('file', fileObj);
+                        // console.log(document.getElementById("id_file").value);
+                        // for (var [a, b] of form.entries()) {
+                        //     console.log(a, b);
+                        // }
+                        // var file = new File(document.getElementById("id_file").value);
+                        // var input = new FileInputStream(file);
+                        // var multipartFile =new MockMultipartFile("file", file.getName(), "text/plain", IOUtils.toByteArray(input));
+                        console.log("111");
+                        $.ajax({
+                            type: "post",
+                            url: "/submittask",
+                            dataType: 'text',
+                            contentType: false,
+                            processData: false,
+                            traditional: true,
+                            data: form,
+                            success: function (data) {
+                                alert("成功");
+                            },
+                            error:function(result) {
+                                alert(result);
+                            }
+                        });
+                    });
 
                     // var Menulist3 = $("#menu3");
                     // // console.log(dataobj.task.canstart);
@@ -138,6 +210,33 @@
                     alert(result);
                 }
             });
+
+            // $('#id_submit').click(function () {
+            //     var fileObj = document.getElementById('id_file').files[0];
+            //     var form = new FormData();
+            //     form.append('file', fileObj);
+            //     for (var [a, b] of form.entries()) {
+            //         console.log(a, b);
+            //     }
+            //     $.ajax({
+            //         type: "post",
+            //         url: "/submittask",
+            //         dataType: 'text',
+            //         contentType: "application/x-www-form-urlencoded",
+            //         traditional: true,
+            //         data:{
+            //             "submitfile":form,
+            //             "projectid":cid,
+            //             "taskid":taskid
+            //         },
+            //         success: function (data) {
+            //
+            //         },
+            //         error:function(result) {
+            //             alert(result);
+            //         }
+            //     });
+            // });
 
             // $.ajax({
             //     type: "post",
@@ -171,13 +270,28 @@
             //     }
             // });
         }
-
+        function selfeva() {
+            // if(role === "项目经理"){
+                var main = document.getElementById('evalist');
+                main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='totaskselfstu?"+cid+"&"+taskid+"'></iframe>";
+            // }else{
+            //     var main = document.getElementById('evalist');
+            //     main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojectevastu?"+cid+"'></iframe>";
+            // }
+        }
 
     </script>
 </head>
 <body>
 <div class="tab-content">
     <div id="menu1" class="container tab-pane active"><br>
+        <div class="modal" id="mymodal">
+            <div class="modal-dialog" style="height: 500px;">
+                <div class="modal-content" style="height: 500px;" id="evalist">
+                    xianshishi
+                </div>
+            </div>
+        </div>
         <div>
             <h4 style="text-align: center;color: #0B3E5B; font-weight: bold;">基本信息</h4>
             <table border="1" frame="void" rules="none" cellpadding="10px" style="font-weight: bold;">
@@ -201,15 +315,28 @@
                     <th>任务参与人：</th>
                     <th id="player"></th>
                 </tr>
+                <tr id="PMeva">
+                    <th>PM评价：</th>
+                    <th id="PMevath"></th>
+                </tr>
+                <tr id="selfeva">
+                    <th>自我评价：</th>
+                    <th id="selfevath"></th>
+                </tr>
 <!--                <tr>-->
 <!--                    <td>开始时间：</td>-->
 <!--                    <td id="time"></td>-->
 <!--                </tr>-->
             </table>
-            <input type="file" name="myfile" id="id_file" class="hidden">
-            <input type="button" class="btn btn-success pull-right" value="上传" id="id_submit">
+            <div id="menus">
+
+            </div>
+<!--            <input type="file" name="myfile" id="id_file" class="hidden">-->
+<!--            <input type="button" class="btn btn-success pull-right" value="上传" id="id_submit">-->
 <!--            <button type="button" class="btn btn-primary" id="btn_add">进入项目</button>-->
         </div>
+        <button type="button" class="btn btn-primary" id="PMbtn">任务评论</button>
+        <button class="btn btn-outline-primary" data-toggle="modal" data-target="#mymodal" id="selfbtn" onclick="selfeva()">自我评论</button>
     </div>
 </div>
 </body>

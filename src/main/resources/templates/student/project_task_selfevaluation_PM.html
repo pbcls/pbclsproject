@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PM任务自评</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.1.0/css/bootstrap.min.css">
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- popper.min.js 用于弹窗、提示、下拉菜单 -->
+    <script src="https://cdn.bootcss.com/popper.js/1.12.5/umd/popper.min.js"></script>
+
+    <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
+    <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <script th:inline="javascript">
+        var uid = [[${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}]];
+        var cid,tid;
+        var tasklist = [];
+        window.onload=function(){
+            cid = GetRequest();
+            tid = GetRequest2();
+            console.log(cid);
+            console.log(tid);
+            tasklist.projectid = Number(cid);
+            tasklist.taskid = Number(tid);
+            tasklist.userid = uid;
+            function GetRequest() {
+                var url = location.search; //获取url中"?"符后的字串
+                var strr;
+                // var theRequest = new Object();
+                if (url.indexOf("?") != -1) {
+                    var str = url.substr(1); //substr()方法返回从参数值开始到结束的字符串；
+                    // console.log(str);
+                    // var strs = str.split("&");
+                    for (var i = 0; i < str.length; i++) {
+                        if(str[i] == "&") strr = str.substring(0,i);
+                        console.log(strr);
+                    }
+                    return strr;
+                }
+                return null;
+            }
+            function GetRequest2() {
+                var url = location.search; //获取url中"?"符后的字串
+                var strr;
+                // var theRequest = new Object();
+                if (url.indexOf("?") != -1) {
+                    var str = url.substr(1); //substr()方法返回从参数值开始到结束的字符串；
+                    // console.log(str);
+                    // var strs = str.split("&");
+                    for (var i = 0; i < str.length; i++) {
+                        if(str[i] == "&") strr = str.substring(i+1,str.length);
+                        console.log(strr);
+                    }
+                    return strr;
+                }
+                return null;
+            }
+            $.ajax({
+                type: "post",
+                url: "/showprojecttaskinfo",
+                dataType:'text',
+                contentType: "application/json;charset=UTF-8",
+                traditional: true,
+                data:JSON.stringify({
+                    "projectid":cid,
+                    "taskid":tid
+                }),
+                success: function (result) {
+                    var dataobj = JSON.parse(result);
+                    console.log(dataobj);
+                    $("#name").html(dataobj.users[0].name);
+                    $("#rolename").html(dataobj.role.rolename);
+                },
+                error:function(result) {
+                    alert(result);
+                }
+            });
+        }
+        function btn_submit() {
+            // tasklist.selfattitude = Number($('#taidu').val());
+            // tasklist.selftechnique = Number($('#zhuanye').val());
+            // tasklist.selfcommunication = Number($('#goutong').val());
+            // tasklist.selfcooperation = Number($('#xietiao').val());
+            // tasklist.selfachievement = Number($('#chengguo').val());
+            // tasklist.selforganization = Number($('#zuzhi').val());
+            // tasklist.selfdecision = Number($('#juece').val());
+            // tasklist.selfmark = $('#zonghe').val();
+            // tasklist.selfexpectation = $('#zhanwang').val();
+            // console.log(tasklist);
+            $.ajax({
+                type: "post",
+                url: "/evaluatemember",
+                dataType: 'text',
+                contentType: "application/json;charset=UTF-8",
+                traditional: true,
+                data:JSON.stringify({
+                    "projectid":Number(cid),
+                    "taskid":Number(tid),
+                    "uid":uid,
+                    "selfattitude":Number($('#taidu').val()),
+                    "selftechnique":Number($('#zhuanye').val()),
+                    "selfcommunication":Number($('#goutong').val()),
+                    "selfcooperation":Number($('#xietiao').val()),
+                    "selfachievement":Number($('#chengguo').val()),
+                    "selforganization":Number($('#zuzhi').val()),
+                    "selfdecision":Number($('#juece').val()),
+                    "selfmark":$('#zonghe').val(),
+                    "selfexpectation":$('#zhanwang').val(),
+                }),
+                success: function (data) {
+                    console.log(data);
+                    alert("评价成功！");
+                },
+                error:function(data) {
+                    alert(data);
+                }
+            });
+            // list的ajax
+            // $.ajax({
+            //     type: "post",
+            //     url: "/evaluatemember",
+            //     dataType: 'text',
+            //     contentType: "application/json;charset=UTF-8",
+            //     traditional: true,
+            //     data: JSON.stringify(//json前面的东西要和后端实体类对应
+            //         tasklist
+            //     ),
+            //     success: function (data) {
+            //         console.log(data);
+            //         alert("评价成功！");
+            //     },
+            //     error:function(data) {
+            //         alert(data);
+            //     }
+            // });
+        }
+    </script>
+</head>
+<body>
+<div class="tab-content">
+    <div id="list">
+        <div>
+            <table border="1" frame="void" rules="none" cellpadding="10px" style="font-weight: bold;">
+                <tr>
+                    <th>评价者姓名：</th>
+                    <th id="name" style="color: #96B87D"></th>
+                    <th>评价者职位：</th>
+                    <th id="rolename" style="color: #96B87D"></th>
+                </tr>
+                <tr>
+                    <td>学习态度：</td>
+                    <td><select id="taidu" class="selectpicker">
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
+                    </select></td>
+                    <td>专业能力：</td>
+                    <td><select id="zhuanye" class="selectpicker">
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
+                    </select></td>
+                </tr>
+                <tr>
+                    <td>沟通能力：</td>
+                    <td><select id="goutong" class="selectpicker">
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
+                    </select></td>
+                    <td>组织能力：</td>
+                    <td><select id="zuzhi" class="selectpicker">
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
+                    </select></td>
+                </tr>
+                <tr>
+                    <td>协调能力：</td>
+                    <td><select id="xietiao" class="selectpicker">
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
+                    </select></td>
+                    <td>决策能力：</td>
+                    <td><select id="juece" class="selectpicker">
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
+                    </select></td>
+                </tr>
+                <tr>
+                    <td>学习成果：</td>
+                    <td><select id="chengguo" class="selectpicker">
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
+                    </select></td>
+                </tr>
+                <tr>
+                    <td>综合评价：</td>
+                    <td><select id="zonghe" class="selectpicker">
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
+                    </select></td>
+                <tr>
+                    <td>学习展望：</td>
+                    <td><select id="zhanwang" class="selectpicker">
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
+                    </select></td>
+                </tr>
+            </table>
+            <button class="btn btn-outline-primary" id="submit" onclick="btn_submit()" style="margin-left: 50px;">提交</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>
