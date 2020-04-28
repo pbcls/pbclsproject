@@ -30,3 +30,5 @@ build/
 ### VS Code ###
 .vscode/
 /src/main/java/com/zucc/pbcls/config/WebMvcConfig.java
+.DS_Store
+src/main/java/com/zucc/pbcls/config/WebMvcConfig.java
