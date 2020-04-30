@@ -18,7 +18,7 @@
     <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
     <script th:inline="javascript">
         var uid = [[${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}]];
-        var cid,taskid,role;
+        var cid, taskid, role = 0;
         window.onload=function(){
             cid = GetRequest();
             taskid = GetRequest2();
@@ -26,6 +26,8 @@
             document.getElementById("selfeva").style.display="none";
             document.getElementById("PMbtn").style.display="none";
             document.getElementById("selfbtn").style.display="none";
+            document.getElementById("download").style.display="none";
+            document.getElementById("start_task").style.display="none";
             function GetRequest() {
                 var url = location.search; //获取url中"?"符后的字串
                 var strr;
@@ -72,72 +74,60 @@
                 success: function (result) {
                     var dataobj = JSON.parse(result);
                     console.log(dataobj);
+                    for(var menu in dataobj.users) {
+                        if (dataobj.users[menu].uid === uid) {
+                            role = 1;
+                        }
+                    }
+                    if(role != 1) role = 2;
                     $("#tname").html(dataobj.task.taskname);
                     $("#description").html(dataobj.task.description);
                     if(dataobj.task.status == 0){
                         $("#status").html("未开始");
+                        if(role != 0){
+                            console.log("weikaishi");
+                            if(dataobj.task.canstart == true){
+                                document.getElementById("start_task").style.display="";
+                            }
+                        }
                     }else if(dataobj.task.status == 1){
                         $("#status").html("进行中");
                         if(dataobj.hasOwnProperty("output")){
                             console.log("output");
-
-                            $.ajax({
-                                type: "post",
-                                url: "/downloadprojecttaskfile",
-                                dataType: 'json',
-                                contentType: "application/x-www-form-urlencoded",
-                                traditional: true,
-                                data:{
-                                    "filename":dataobj.output[0],
-                                    "projectid":cid,
-                                    "taskid":taskid
-                                },
-                                success: function (result) {
-                                    var dataobj = JSON.parse(result);
-                                    console.log(dataobj);
-                                },
-                                error:function(result) {
-                                    alert(result);
-                                }
-                            });
-
+                            document.getElementById("download").style.display="";
+                            var Menulistdown = $("#download");
+                            var Menumeg = $("#meg");
+                            $("<th style='margin-top: 30px;'></th>").append("<a href='/downloadprojecttaskfile?filename="+dataobj.output[0]+"&projectid="+cid+"&taskid="+taskid+"'>"+dataobj.output[0]+"</a>").appendTo(Menulistdown);
+                            $("<button class='btn btn-outline-primary' onclick='checktrue()'>通过</button>").appendTo(Menulistdown);
+                            $("<button class='btn btn-block' onclick='checkfalse()'>未通过</button>").appendTo(Menulistdown);
                         }
                     }else{
                         $("#status").html("已结束");
+                        console.log("已结束");
                         if(dataobj.hasOwnProperty("output")){
                             console.log("output");
                             console.log(dataobj.output[0]);
-                            $.ajax({
-                                type: "post",
-                                url: "/downloadprojecttaskfile",
-                                dataType: 'json',
-                                contentType: "application/x-www-form-urlencoded",
-                                traditional: true,
-                                data:{
-                                    "filename":dataobj.output[0],
-                                    "projectid":cid,
-                                    "taskid":taskid
-                                },
-                                success: function (result) {
-                                    var dataobj = JSON.parse(result);
-                                    console.log(dataobj);
-                                },
-                                error:function(result) {
-                                    // alert(result);
-                                    console.log(result);
-                                }
-                            });
-
+                            document.getElementById("download").style.display="";
+                            var Menulistdown = $("#download");
+                            $("<tr style='margin-top: 30px;'></tr>").append("<a href='/downloadprojecttaskfile?filename="+dataobj.output[0]+"&projectid="+cid+"&taskid="+taskid+"'>"+dataobj.output[0]+"</a>").appendTo(Menulistdown);
                         }
                         if(dataobj.evaluation.pmEvaluated == true){
                             document.getElementById("PMeva").style.display="";
                             $("#PMevath").html(dataobj.evaluation.pmScore);
-                        }else{
+                        }else if(dataobj.evaluation.pmEvaluated == false && role === "项目经理"){
                             document.getElementById("PMbtn").style.display="";
                         }
                         if(dataobj.evaluation.selfEvaluated == true){
                             document.getElementById("selfeva").style.display="";
                             $("#selfevath").html(dataobj.evaluation.selfScore);
+                        }
+                        var namelist = [];
+                        for(var menu in dataobj.users) {
+                            if(dataobj.users[menu].uid === uid){
+                                if(dataobj.evaluation.selfEvaluated == false){
+                                    document.getElementById("selfbtn").style.display="";
+                                }
+                            }
                         }
                     }
                     $("#rolename").html(dataobj.role.rolename);
@@ -148,9 +138,9 @@
                             if(dataobj.task.status == 1){
                                 $('<input type="file" name="myfile" id="id_file" class="hidden">' +
                                     '<input type="button" class="btn btn-success pull-right" value="上传" id="id_submit">').appendTo(Menuslist);
-                                if(dataobj.evaluation.selfEvaluated == false){
-                                    document.getElementById("selfbtn").style.display="";
-                                }
+                                // if(dataobj.evaluation.selfEvaluated == false){
+                                //     document.getElementById("selfbtn").style.display="";
+                                // }
                             }
                         }
                         namelist.push(dataobj.users[menu].name);
@@ -210,91 +200,110 @@
                     alert(result);
                 }
             });
-
-            // $('#id_submit').click(function () {
-            //     var fileObj = document.getElementById('id_file').files[0];
-            //     var form = new FormData();
-            //     form.append('file', fileObj);
-            //     for (var [a, b] of form.entries()) {
-            //         console.log(a, b);
-            //     }
-            //     $.ajax({
-            //         type: "post",
-            //         url: "/submittask",
-            //         dataType: 'text',
-            //         contentType: "application/x-www-form-urlencoded",
-            //         traditional: true,
-            //         data:{
-            //             "submitfile":form,
-            //             "projectid":cid,
-            //             "taskid":taskid
-            //         },
-            //         success: function (data) {
-            //
-            //         },
-            //         error:function(result) {
-            //             alert(result);
-            //         }
-            //     });
-            // });
-
-            // $.ajax({
-            //     type: "post",
-            //     url: "/showprojectinfo",
-            //     dataType: 'text',
-            //     contentType: "application/x-www-form-urlencoded",
-            //     traditional: true,
-            //     data:{
-            //         "projectid":Number(cid)
-            //     },
-            //     success: function (data) {
-            //         var dataobj = JSON.parse(data);
-            //         console.log(dataobj);
-            //         // alert(dataobj.case);
-            //         $("#pname").html(dataobj.project.projectname);
-            //         $("#description").html(dataobj.project.description);
-            //         $("#player").html(dataobj.role_to_user.length);
-            //         $("#maxplayer").html(dataobj.project.maxplayer);
-            //         if(dataobj.project.status==0){
-            //             $("#status").html("未开始");
-            //         }else if(dataobj.project.status==1){
-            //             $("#status").html("进行中");
-            //         }else{
-            //             $("#status").html("已结束");
-            //         }
-            //         // $("#status").html(dataobj.project.status);
-            //         $("#time").html(dataobj.project.starttime);
-            //     },
-            //     error:function(result) {
-            //         alert(result);
-            //     }
-            // });
         }
         function selfeva() {
-            // if(role === "项目经理"){
+            if(role == 2){
+                var main = document.getElementById('evalist');
+                main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='totaskselfPM?"+cid+"&"+taskid+"'></iframe>";
+            }else if(role == 1){
                 var main = document.getElementById('evalist');
                 main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='totaskselfstu?"+cid+"&"+taskid+"'></iframe>";
-            // }else{
-            //     var main = document.getElementById('evalist');
-            //     main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojectevastu?"+cid+"'></iframe>";
-            // }
+            }
+        }
+
+        function PMeva() {
+            console.log("PMeva");
+            var main = document.getElementById('evalist');
+            main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='totaskeva?"+cid+"&"+taskid+"'></iframe>";
+        }
+
+        function startbtn() {
+            console.log("开始任务");
+            $.ajax({
+                type: "post",  //post put get 等等
+                url: "/starttask",
+                dataType: 'text',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
+                // 表示对象
+                data: {  //json前面的东西要和后端实体类对应
+                    "projectid": cid,
+                    "taskid":taskid,
+                },
+                success: function (data) {
+                    console.log(data);
+                    alert("任务开始！");
+                },
+                error: function (result) {  //连接至ashx文件失败时，执行函数
+                    alert(result);
+                }
+            });
+        }
+
+        function checktrue() {
+            $.ajax({
+                type: "post",  //post put get 等等
+                url: "/checktask",
+                dataType: 'text',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
+                // 表示对象
+                data: {  //json前面的东西要和后端实体类对应
+                    "projectid": cid,
+                    "taskid":taskid,
+                    "pass":true
+                },
+                success: function (data) {
+                    console.log(data);
+                    alert("已通过当前任务，接下来请刷新界面进行任务评价。");
+                },
+                error: function (result) {  //连接至ashx文件失败时，执行函数
+                    alert(result);
+                }
+            });
+        }
+
+        function checkfalse() {
+            $.ajax({
+                type: "post",  //post put get 等等
+                url: "/checktask",
+                dataType: 'text',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
+                // 表示对象
+                data: {  //json前面的东西要和后端实体类对应
+                    "projectid": cid,
+                    "taskid":taskid,
+                    "pass":false
+                },
+                success: function (data) {
+                    console.log(data);
+                    alert("操作成功");
+                },
+                error: function (result) {  //连接至ashx文件失败时，执行函数
+                    alert(result);
+                }
+            });
         }
 
     </script>
 </head>
 <body>
 <div class="tab-content">
-    <div id="menu1" class="container tab-pane active"><br>
+    <div id="menu1" class="container tab-pane active" style="height: 600px;"><br>
         <div class="modal" id="mymodal">
-            <div class="modal-dialog" style="height: 500px;">
-                <div class="modal-content" style="height: 500px;" id="evalist">
+            <div class="modal-dialog" style="height: 400px;">
+                <div class="modal-content" style="height: 400px;" id="evalist">
                     xianshishi
                 </div>
             </div>
         </div>
         <div>
             <h4 style="text-align: center;color: #0B3E5B; font-weight: bold;">基本信息</h4>
-            <table border="1" frame="void" rules="none" cellpadding="10px" style="font-weight: bold;">
+            <table border="1" frame="void" rules="none" cellpadding="10px" style="font-weight: bold;" id="meg">
                 <tr>
                     <th>任务名称：</th>
                     <th id="tname"></th>
@@ -323,6 +332,10 @@
                     <th>自我评价：</th>
                     <th id="selfevath"></th>
                 </tr>
+                <tr id="download">
+                    <th>文件下载：</th>
+<!--                    <th id="downloadth"></th>-->
+                </tr>
 <!--                <tr>-->
 <!--                    <td>开始时间：</td>-->
 <!--                    <td id="time"></td>-->
@@ -335,7 +348,8 @@
 <!--            <input type="button" class="btn btn-success pull-right" value="上传" id="id_submit">-->
 <!--            <button type="button" class="btn btn-primary" id="btn_add">进入项目</button>-->
         </div>
-        <button type="button" class="btn btn-primary" id="PMbtn">任务评论</button>
+        <button class="btn btn-outline-primary" id="start_task" onclick="startbtn()">开始任务</button>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#mymodal" id="PMbtn" onclick="PMeva()">任务评论</button>
         <button class="btn btn-outline-primary" data-toggle="modal" data-target="#mymodal" id="selfbtn" onclick="selfeva()">自我评论</button>
     </div>
 </div>

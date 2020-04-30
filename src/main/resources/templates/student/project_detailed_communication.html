@@ -18,8 +18,46 @@
     <script th:inline="javascript">
 
         window.onload=function () {
-            var uid = [[${uid}]];
+            var uid = GetRequest();
+            var cid = GetRequest2();
+
+            function GetRequest() {
+                var url = location.search; //获取url中"?"符后的字串
+                var strr;
+                // var theRequest = new Object();
+                if (url.indexOf("?") != -1) {
+                    var str = url.substr(1); //substr()方法返回从参数值开始到结束的字符串；
+                    // console.log(str);
+                    // var strs = str.split("&");
+                    for (var i = 0; i < str.length; i++) {
+                        if (str[i] == "&") strr = str.substring(0, i);
+                        console.log(strr);
+                    }
+                    return strr;
+                }
+                return null;
+            }
+
+            function GetRequest2() {
+                var url = location.search; //获取url中"?"符后的字串
+                var strr;
+                // var theRequest = new Object();
+                if (url.indexOf("?") != -1) {
+                    var str = url.substr(1); //substr()方法返回从参数值开始到结束的字符串；
+                    // console.log(str);
+                    // var strs = str.split("&");
+                    for (var i = 0; i < str.length; i++) {
+                        if (str[i] == "&") strr = str.substring(i + 1, str.length);
+                        console.log(strr);
+                    }
+                    return strr;
+                }
+                return null;
+            }
+
             //jQuery写法
+
+            //初始化
             $.ajax({
                 type: "post",  //post put get 等等
                 url: "/student/showUserDetial",
@@ -32,8 +70,18 @@
                     "uid": uid
                 },
                 success: function (data, textStatus) {
-                    $("#headimg").attr("src",data.portrait);
+                    $("#headimg").attr("src", data.portrait);
                     $("#name").html(data.name);
+                    // $("#rolename").html(data.rolename);
+                    var indexmenu = $("#menuindex");
+
+                    $('<li class="nav-item"><a class="nav-link" href="/toprojectdetind?' + cid + '" style="color: #0B3E5B; font-weight: bold;">基本信息</a></li>').appendTo(indexmenu);
+                    $('<li class="nav-item"><a class="nav-link" href="/toprojectdettask?' + uid + '&' + cid + '" style="color: #0B3E5B; font-weight: bold;">我的任务</a></li>').appendTo(indexmenu);
+                    $('<li class="nav-item"><a class="nav-link" href="/toprojectdetman?' + uid + '&' + cid + '" style="color: #0B3E5B; font-weight: bold;">组内信息</a></li>').appendTo(indexmenu);
+                    $('<li class="nav-item"><a class="nav-link" href="/toprojectdetdoc?' + uid + '&' + cid + '" style="color: #0B3E5B; font-weight: bold;">我的文档</a></li>').appendTo(indexmenu);
+                    $('<li class="nav-item"><a class="nav-link" href="/toprojectdeteva?' + uid + '&' + cid + '" style="color: #0B3E5B; font-weight: bold;">我的评价</a></li>').appendTo(indexmenu);
+                    $('<li class="nav-item"><a class="nav-link active" href="/toprojectdetcom?' + uid + '&' + cid + '" style="background-color: #96B87D; font-weight: bold;">聊天室</a></li>').appendTo(indexmenu);
+
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {  //连接至ashx文件失败时，执行函数
                     alert("error");
@@ -97,13 +145,7 @@
                     用户名：<h7 id="name" style="color: #0B3E5B; font-weight: bold;" text=""></h7>
                 </div>
                 <div style="margin-top: 70px;">
-                    <ul class="nav nav-pills flex-column" role="tablist">
-                        <li class="nav-item"><a class="nav-link" href="/toprojectdetind" style="color: #0B3E5B; font-weight: bold;">基本信息</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/toprojectdettask" style="color: #0B3E5B; font-weight: bold;">我的任务</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/toprojectdetman" style="color: #0B3E5B; font-weight: bold;">组内信息</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/toprojectdetdoc" style="color: #0B3E5B; font-weight: bold;">我的文档</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/toprojectdeteva" style="color: #0B3E5B; font-weight: bold;">我的评价</a></li>
-                        <li class="nav-item"><a class="nav-link active" href="/toprojectdetcom" style="background-color: #96B87D; font-weight: bold;">聊天室</a></li>
+                    <ul class="nav nav-pills flex-column" role="tablist" id="menuindex">
                     </ul>
                 </div>
             </div>
