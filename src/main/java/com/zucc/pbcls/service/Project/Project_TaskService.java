@@ -1,5 +1,6 @@
 package com.zucc.pbcls.service.Project;
 
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.zucc.pbcls.dao.Evaluation_MemberDao;
 import com.zucc.pbcls.dao.Evaluation_MutualDao;
 import com.zucc.pbcls.dao.LogDao;
@@ -159,6 +160,7 @@ public class Project_TaskService {
             JSONObject json_evaluation_member = new JSONObject(evaluation_member);
             jsonObject.put("evaluation",json_evaluation_member);
         }
+
         return jsonObject.toString();
     }
 
