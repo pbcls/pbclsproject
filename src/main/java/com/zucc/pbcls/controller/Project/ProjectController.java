@@ -324,6 +324,20 @@ public class ProjectController {
 
 
 
+    //检查所有任务是否完成
+    @RequestMapping("/checkalltasksover")
+    @ResponseBody
+    public boolean checkAllTasksOver(@RequestParam(value = "projectid") int projectid){
+        return projectService.checkAllTasksOver(projectid);
+    }
+
+    //检查教师是否已经评价过了
+    @RequestMapping("/checkevalutedteam")
+    @ResponseBody
+    public boolean checkEvalutedTeam(@RequestParam(value = "projectid") int projectid){
+        return projectService.checkEvalutedTeam(projectid);
+    }
+
 
 
 
