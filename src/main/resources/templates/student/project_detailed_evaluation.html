@@ -107,14 +107,38 @@
                             role = dataobj.role_to_user[menu].rolename;
                             var showMenu = $("#eva");
                             if(dataobj.project.status == 2){
-                                if(dataobj.role_to_user[menu].rolename === "项目经理"){
-                                    $("<button type='button' class='btn btn-primary' data-toggle='modal' data-target='#mymodal' onclick='eva_PM()' style='margin-top: 20px; margin-left: 20px;'>项目成员互评</button>").appendTo(showMenu);
-                                }else if(dataobj.role_to_user[menu].rolename === "教师"){
-                                    $("<button type='button' class='btn btn-primary' data-toggle='modal' data-target='#mymodal' onclick='eva_tea()' style='margin-top: 20px; margin-left: 20px;'>项目成员评价</button>").appendTo(showMenu);
-                                    $("<button type='button' class='btn btn-primary' data-toggle='modal' data-target='#mymodal' onclick='eva_team()' style='margin-top: 20px; margin-left: 20px;'>项目小组评价</button>").appendTo(showMenu);
-                                }else{
-                                    $("<button type='button' class='btn btn-primary' data-toggle='modal' data-target='#mymodal' onclick='eva_stu()' style='margin-top: 20px; margin-left: 20px;'>项目成员互评</button>").appendTo(showMenu);
-                                }
+
+                                $.ajax({
+                                    type: "post",
+                                    url: "/checkalltasksover",
+                                    dataType: 'text',
+                                    contentType: "application/x-www-form-urlencoded",
+                                    traditional: true,
+                                    data:{
+                                        "projectid":Number(cid)
+                                    },
+                                    success: function (data2) {
+                                        // var dataobj = JSON.parse(data);
+                                        console.log(data2);
+                                        var showMenufalse = $("#false");
+                                        if(data2 === "true"){
+                                            $('<th>该项目任务已经全部完成，请尽快开始项目互评或小组评价。</th>').appendTo(showMenufalse);
+                                            if(dataobj.role_to_user[menu].rolename === "项目经理"){
+                                                $("<button type='button' class='btn btn-primary' data-toggle='modal' data-target='#mymodal' onclick='eva_PM()' style='margin-top: 20px; margin-left: 20px;'>项目成员互评</button>").appendTo(showMenu);
+                                            }else if(dataobj.role_to_user[menu].rolename === "教师"){
+                                                $("<button type='button' class='btn btn-primary' data-toggle='modal' data-target='#mymodal' onclick='eva_tea()' style='margin-top: 20px; margin-left: 20px;'>项目成员评价</button>").appendTo(showMenu);
+                                                $("<button type='button' class='btn btn-primary' data-toggle='modal' data-target='#mymodal' onclick='eva_team()' style='margin-top: 20px; margin-left: 20px;'>项目小组评价</button>").appendTo(showMenu);
+                                            }else{
+                                                $("<button type='button' class='btn btn-primary' data-toggle='modal' data-target='#mymodal' onclick='eva_stu()' style='margin-top: 20px; margin-left: 20px;'>项目成员互评</button>").appendTo(showMenu);
+                                            }
+                                        }else{
+                                            $('<th>还有任务未完成，评价系统暂未开放。</th>').appendTo(showMenufalse);
+                                        }
+                                    },
+                                    error:function(data2) {
+                                        alert(data2);
+                                    }
+                                });
                             }else if (dataobj.project.status == 3){
                                 $.ajax({
                                     type: "post",
@@ -227,8 +251,30 @@
             });
         }
         function eva_team() {
-            var main = document.getElementById('evalist');
-            main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojectteameva?"+cid+"'></iframe>";
+            $.ajax({
+                type: "post",
+                url: "/checkevalutedteam",
+                dataType: 'text',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                data:{
+                    "projectid":Number(cid)
+                },
+                success: function (data) {
+                    // var dataobj = JSON.parse(data);
+                    console.log(data);
+                    if(data === "true"){
+                        var main = document.getElementById('evalist');
+                        main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojectteameva?"+cid+"'></iframe>";
+                    }else{
+                        alert("您已经评价过该项目小组了！");
+                        return;
+                    }
+                },
+                error:function(data) {
+                    alert(data);
+                }
+            });
         }
     </script>
 </head>
@@ -291,7 +337,7 @@
                 </div>
             </div>
             <div id="middle" class="col-md-8">
-                还有任务未完成，评价系统暂未开放。
+                <div id="false"></div>
                 <div class="modal" id="mymodal">
                     <div class="modal-dialog" style="height: 500px;">
                         <div class="modal-content" style="height: 500px;" id="evalist">
@@ -300,7 +346,6 @@
                     </div>
                 </div>
                 <div id="eva">
-
                 </div>
             </div>
         </div>
