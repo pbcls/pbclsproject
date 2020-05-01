@@ -384,6 +384,17 @@ public class PbclsApplicationTests {
 		userInfoService.showUserDetail("yzl");
 	}
 
+	@Test
+	public void testStartTask(){
+		try {
+			new ProjectTaskScheduleService().StartTask();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+
 
 
 //	@Test

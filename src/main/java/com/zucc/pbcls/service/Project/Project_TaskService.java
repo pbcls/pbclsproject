@@ -149,13 +149,13 @@ public class Project_TaskService {
 
         //如果任务完成找到对应评价
         //如果他是这个任务的人
-        if(project_task.getStatus()==2 && users.contains(myUser)){
+        if(project_task.getStatus() == 2 && users.contains(myUser)){
             Evaluation_Member evaluation_member = evaluation_memberDao.findAllByProjectidAndTaskidAndUid(projectid,taskid,uid);
             JSONObject json_evaluation_member = new JSONObject(evaluation_member);
             jsonObject.put("evaluation",json_evaluation_member);
         }
         //如果他不是这个任务的但是他是PM
-        else if (uid.equals(project_roleToUserDao.findPM(projectid))){
+        else if (project_task.getStatus() == 2 && uid.equals(project_roleToUserDao.findPM(projectid))){
             Evaluation_Member evaluation_member = evaluation_memberDao.findAllByProjectidAndTaskid(projectid,taskid).get(0);
             JSONObject json_evaluation_member = new JSONObject(evaluation_member);
             jsonObject.put("evaluation",json_evaluation_member);

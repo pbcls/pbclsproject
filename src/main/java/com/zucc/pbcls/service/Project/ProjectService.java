@@ -495,6 +495,7 @@ public class ProjectService {
         if (flag){
             project.setFinishtime(new Date());
             project.setStatus(3);
+            projectDao.save(project);
             return true;
         }else {
             project.setFinishtime(new Date());
@@ -568,6 +569,7 @@ public class ProjectService {
             olde.setScore(EvaluateTeam(evaluation_team));
             olde.setMark(evaluation_team.getMark());
             olde.setEvaluated(true);
+            evaluation_teamDao.save(olde);
             return true;
         }
     }
