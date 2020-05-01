@@ -20,6 +20,8 @@
         window.onload=function () {
             uid = GetRequest();
             cid = GetRequest2();
+            var Menulisttop = $("#topmenu");
+            $('<li style="display: inline"><a href="/student/toPCenter/'+uid+'" style="margin-left: 8px; color: #0B3E5B;font-size: 21px; font-weight: bold;">个人空间</a></li>').appendTo(Menulisttop);
 
             function GetRequest() {
                 var url = location.search; //获取url中"?"符后的字串
@@ -138,36 +140,91 @@
                     alert(result);
                 }
             });
-
-            // $.ajax({
-            //     type: "post",
-            //     url: "/showsumevaluation",
-            //     dataType: 'text',
-            //     contentType: "application/x-www-form-urlencoded",
-            //     traditional: true,
-            //     data:{
-            //         "projectid":Number(cid)
-            //     },
-            //     success: function (data) {
-            //         console.log(data);
-            //     },
-            //     error:function(result) {
-            //         alert(result);
-            //     }
-            // });
-
         }
+
         function eva_PM() {
-            var main = document.getElementById('evalist');
-            main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojectevaPM?"+cid+"'></iframe>";
+            $.ajax({
+                type: "post",
+                url: "/showevaluatemutuallist",
+                dataType: 'text',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                data:{
+                    "projectid":Number(cid)
+                },
+                success: function (data) {
+                    var dataobj = JSON.parse(data);
+                    console.log(dataobj);
+                    // alert(dataobj.case);
+                    // var showMenulist = $("#list");
+                    if(dataobj.length == 0){
+                        alert("已进行过评价！");
+                        return;
+                    }else{
+                        var main = document.getElementById('evalist');
+                        main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojectevaPM?"+cid+"'></iframe>";
+                    }
+                },
+                error:function(data) {
+                    alert(data);
+                }
+            });
         }
         function eva_stu() {
-            var main = document.getElementById('evalist');
-            main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojectevastu?"+cid+"'></iframe>";
+            $.ajax({
+                type: "post",
+                url: "/showevaluatemutuallist",
+                dataType: 'text',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                data:{
+                    "projectid":Number(cid)
+                },
+                success: function (data) {
+                    var dataobj = JSON.parse(data);
+                    console.log(dataobj);
+                    // alert(dataobj.case);
+                    // var showMenulist = $("#list");
+                    if(dataobj.length == 0){
+                        alert("已进行过评价！");
+                        return;
+                    }else{
+                        var main = document.getElementById('evalist');
+                        main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojectevastu?"+cid+"'></iframe>";
+                    }
+                },
+                error:function(data) {
+                    alert(data);
+                }
+            });
         }
         function eva_tea() {
-            var main = document.getElementById('evalist');
-            main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojectevatea?"+cid+"'></iframe>";
+            $.ajax({
+                type: "post",
+                url: "/showevaluatemutuallist",
+                dataType: 'text',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                data:{
+                    "projectid":Number(cid)
+                },
+                success: function (data) {
+                    var dataobj = JSON.parse(data);
+                    console.log(dataobj);
+                    // alert(dataobj.case);
+                    // var showMenulist = $("#list");
+                    if(dataobj.length == 0){
+                        alert("已进行过评价！");
+                        return;
+                    }else{
+                        var main = document.getElementById('evalist');
+                        main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojectevatea?"+cid+"'></iframe>";
+                    }
+                },
+                error:function(data) {
+                    alert(data);
+                }
+            });
         }
         function eva_team() {
             var main = document.getElementById('evalist');
@@ -203,11 +260,10 @@
                     <div class="col-md-4 hidden-sm hidden-xs">
                         <div class="menu-area f-right" style="margin-top: 10px;">
                             <nav>
-                                <ul style="color: #96B87D;">
-                                    <li style="display: inline"><a href="../index.html" style="color: #0B3E5B;font-size: 21px; font-weight: bold;">主页</a></li>
-                                    <li style="display: inline"><a href="" style="margin-left: 8px; color: #0B3E5B;font-size: 21px; font-weight: bold;">项目</a></li>
-                                    <li style="display: inline"><a href="" style="margin-left: 8px; color: #0B3E5B;font-size: 21px; font-weight: bold;">案例</a></li>
-                                    <li style="display: inline"><a href="/toPCenter" style="margin-left: 8px; color: #0B3E5B;font-size: 21px; font-weight: bold;">个人空间</a></li>
+                                <ul style="color: #96B87D;" id="topmenu">
+                                    <li style="display: inline"><a href="/index" style="color: #0B3E5B;font-size: 21px; font-weight: bold;">主页</a></li>
+                                    <li style="display: inline"><a href="/todocumentation" style="margin-left: 8px; color: #0B3E5B;font-size: 21px; font-weight: bold;">案例</a></li>
+                                    <li style="display: inline"><a href="/toproject" style="margin-left: 8px; color: #0B3E5B;font-size: 21px; font-weight: bold;">项目</a></li>
                                     <!--<li><a href="page.html">PAGE</a></li>
                                     <li><a href="contact.html">CONTACT</a></li>-->
                                 </ul>
@@ -239,7 +295,7 @@
                 <div class="modal" id="mymodal">
                     <div class="modal-dialog" style="height: 500px;">
                         <div class="modal-content" style="height: 500px;" id="evalist">
-                            链接错误！请重试！
+                            <h4 style="margin-top:40px;text-align: center;color: #96B87D;">您已完成打分，总评结果将在项目结束后显示</h4>
                         </div>
                     </div>
                 </div>
