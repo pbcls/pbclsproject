@@ -51,8 +51,16 @@ public class UserInfoService {
     }
 
     public boolean updateUserDetial(MyUser user){
-        if (userInfoDao.findByUid(user.getUid())!=null) {
-            userInfoDao.save(user);
+        MyUser olduser = userInfoDao.findByUid(user.getUid());
+        if (olduser!=null){
+            olduser.setName(user.getName());
+            olduser.setSex(user.getSex());
+            olduser.setHobby(user.getHobby());
+            olduser.setSignature(user.getSignature());
+            olduser.setQq(user.getQq());
+            olduser.setWechat(user.getWechat());
+            olduser.setEmail(user.getEmail());
+            userInfoDao.save(olduser);
             return true;
         }
         else
