@@ -505,6 +505,22 @@ public class ProjectService {
         }
     }
 
+    public boolean checkAllTasksOver(int projectid){
+        List<Project_Task> project_tasks = project_taskDao.findByProjectTaskpk_Projectid(projectid);
+        for (Project_Task project_task:project_tasks)
+            if (project_task.getStatus() != 2)
+                return false;
+
+        return true;
+    }
+
+    public boolean checkEvalutedTeam(int projectid){
+        Evaluation_Team evaluation_team = evaluation_teamDao.findAllByProjectid(projectid);
+        if (evaluation_team.isEvaluated())
+            return false;
+
+        return true;
+    }
 
 
     public boolean evaluateMutual(List<Evaluation_Mutual> evaluation_mutuals){
