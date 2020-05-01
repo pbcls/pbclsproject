@@ -16,10 +16,10 @@
     <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
     <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
     <script th:inline="javascript">
-
+        var cid;
         window.onload=function () {
             var uid = GetRequest();
-            var cid = GetRequest2();
+            cid = GetRequest2();
             function GetRequest() {
                 var url = location.search; //获取url中"?"符后的字串
                 var strr;
@@ -129,7 +129,32 @@
                     alert(result);
                 }
             });
-
+        }
+        function put() {
+            var fileObj = document.getElementById("id_file").files[0];
+            if (typeof (fileObj) == "undefined" || fileObj.size <= 0) {
+                alert("请选择文件");
+                return;
+            }
+            var form = new FormData(); // FormData 对象
+            form.append("docfile", fileObj); // 文件对象
+            form.append("projectid", cid);
+            console.log("111");
+            $.ajax({
+                type: "post",
+                url: "/uploadprojectdocfile",
+                dataType: 'text',
+                contentType: false,
+                processData: false,
+                traditional: true,
+                data: form,
+                success: function (data) {
+                    alert("成功");
+                },
+                error:function(result) {
+                    alert(result);
+                }
+            });
         }
     </script>
 </head>
@@ -196,6 +221,10 @@
                 <nav class="navbar navbar-default" role="navigation">
                     <div class="sidebar">
                         <ul id='menu' class='nav navbar-nav' style="text-align: center;"></ul>
+                    </div>
+                    <div>
+                        <input type="file" name="myfile" id="id_file" class="hidden" style="margin-top: 30px;margin-left: 40px;">
+                        <input type="button" class="btn btn-success pull-right" value="上传" id="id_submit" onclick="put()">
                     </div>
                 </nav>
             </div>

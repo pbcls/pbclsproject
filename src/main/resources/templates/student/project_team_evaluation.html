@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>教师小组评价</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.1.0/css/bootstrap.min.css">
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- popper.min.js 用于弹窗、提示、下拉菜单 -->
+    <script src="https://cdn.bootcss.com/popper.js/1.12.5/umd/popper.min.js"></script>
+
+    <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
+    <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <script th:inline="javascript">
+        var uid = [[${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}]];
+        var cid;
+        window.onload=function(){
+            cid = GetRequest();
+            function GetRequest() {
+                var url = location.search; //获取url中"?"符后的字串
+                // var theRequest = new Object();
+                if (url.indexOf("?") != -1) {
+                    var str = url.substr(1); //substr()方法返回从参数值开始到结束的字符串；
+                    // console.log(str);
+                    // var strs = str.split("&");
+                    return str;
+                }
+                return null;
+            }
+        }
+        function btn_submit() {
+            $.ajax({
+                type: "post",
+                url: "/evaluateteam",
+                dataType: 'text',
+                contentType: "application/json;charset=UTF-8",
+                traditional: true,
+                data:JSON.stringify({
+                    "projectid":Number(cid),
+                    "attitude":Number($('#taidu').val()),
+                    "technique":Number($('#zhuanye').val()),
+                    "communication":Number($('#goutong').val()),
+                    "cooperation":Number($('#xiezuo').val()),
+                    "docPassTime":Number($('#shijian').val()),
+                    "docCorrectness":Number($('#zhengque').val()),
+                    "docInnovation":Number($('#chuangxin').val()),
+                    "docStyle":Number($('#fengge').val()),
+                    "mark":$('#sum').val(),
+                }),
+                success: function (data) {
+                    console.log(data);
+                    alert("评价成功！");
+                },
+                error:function(data) {
+                    alert(data);
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<div class="tab-content">
+    <div id="list">
+        <div>
+            <table border="1" frame="void" rules="none" cellpadding="10px" style="font-weight: bold;">
+                <tr>
+                    <th>当前为指导者评价表单！</th>
+                </tr>
+                <tr>
+                    <th>评价者职位：</th>
+                    <th id="rolename" style="color: #96B87D">教师</th>
+                </tr>
+                <tr>
+                    <td>完成时间：</td>
+                    <td><select id="shijian" class="selectpicker">
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
+                    </select></td>
+                    <td>正确度：</td>
+                    <td><select id="zhengque" class="selectpicker">
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
+                    </select></td>
+                </tr>
+                <tr>
+                    <td>创新情况：</td>
+                    <td><select id="chuangxin" class="selectpicker">
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
+                    </select></td>
+                    <td>风格：</td>
+                    <td><select id="fengge" class="selectpicker">
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
+                    </select></td>
+                </tr>
+                <tr>
+                    <td>学习态度：</td>
+                    <td><select id="taidu" class="selectpicker">
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
+                    </select></td>
+                    <td>专业能力：</td>
+                    <td><select id="zhuanye" class="selectpicker">
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
+                    </select></td>
+                </tr>
+                <tr>
+                    <td>沟通能力：</td>
+                    <td><select id="goutong" class="selectpicker">
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
+                    </select></td>
+                    <td>协作能力：</td>
+                    <td><select id="xiezuo" class="selectpicker">
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
+                    </select></td>
+                </tr>
+                    <td>综合评价：</td>
+                    <td><select id="sum" class="selectpicker">
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
+                    </select></td>
+                </tr>
+            </table>
+            <button class="btn btn-outline-primary" id="submit" onclick="btn_submit()" style="margin-left: 50px;">提交</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>

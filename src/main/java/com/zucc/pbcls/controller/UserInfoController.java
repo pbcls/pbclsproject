@@ -24,6 +24,26 @@ public class UserInfoController {
         return "student/PCenter";
     }
 
+    @RequestMapping("/toPCentercase")
+    public String toPCentercase(){
+        return "student/PCenter_case";
+    }
+
+    @RequestMapping("/toPCentereva")
+    public String toPCentereva(){
+        return "student/PCenter_evaluation";
+    }
+
+    @RequestMapping("/toPCentermanag")
+    public String toPCentermanag(){
+        return "student/PCenter_management";
+    }
+
+    @RequestMapping("/toPCentermas")
+    public String toPCentermas(){
+        return "student/PCenter_massage";
+    }
+
     @RequestMapping("/showUserDetial")
     @ResponseBody
     public MyUser showUserDetail(@RequestParam(value = "uid") String uid){

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>PM项目评价</title>
+    <title>PM项目互评</title>
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.1.0/css/bootstrap.min.css">
 
     <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
@@ -18,9 +18,10 @@
     <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
     <script th:inline="javascript">
         var uid = [[${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}]];
+        console.log(uid);
         var page = 1;
         var cid,touid;
-        var evalist = [];
+        var evalist = new Array();
         window.onload=function(){
             cid = GetRequest();
             function GetRequest() {
@@ -31,6 +32,11 @@
                 }
                 return null;
             }
+            document.getElementById("last").style.visibility="hidden";
+            // document.getElementById("last").style.visibility="visible";
+            document.getElementById("next").style.visibility="hidden";
+            // document.getElementById("next").style.visibility="visible";
+            document.getElementById("submit").style.visibility="hidden";
             $.ajax({
                 type: "post",
                 url: "/showevaluatemutuallist",
@@ -41,18 +47,16 @@
                     "projectid":Number(cid)
                 },
                 success: function (data) {
-                    document.getElementById("last").style.visibility="hidden";
-                    // document.getElementById("last").style.visibility="visible";
-                    document.getElementById("next").style.visibility="hidden";
-                    // document.getElementById("next").style.visibility="visible";
-                    document.getElementById("submit").style.visibility="hidden";
                     var dataobj = JSON.parse(data);
                     console.log(dataobj);
                     // alert(dataobj.case);
                     // var showMenulist = $("#list");
-                    if(dataobj[1] != 'undefined'){
+                    if(dataobj.length != 1){
                         document.getElementById("next").style.visibility="visible";
+                    }else{
+                        document.getElementById("submit").style.visibility="visible";
                     }
+                    touid = dataobj[0].touid;
                     $("#name").html(dataobj[0].tousername);
                     $("#rolename").html(dataobj[0].torolename);
                 },
@@ -62,11 +66,23 @@
             });
         }
         function btn_last(){
-            evalist[page-1]
+            var eva = {};
+            eva.uid = uid;
+            eva.touid = touid;
+            eva.projectid = Number(cid);
+            eva.attitude = Number($('#taidu').val());
+            eva.technique = Number($('#zhuanye').val());
+            eva.communication = Number($('#goutong').val());
+            eva.cooperation = Number($('#xiezuo').val());
+            eva.helpme = Number($('#bangzhu').val());
+            eva.mark = $('#zonghe').val();
+            evalist.push(eva);
             page = page - 1;
             document.getElementById("last").style.visibility="hidden";
             document.getElementById("next").style.visibility="hidden";
             document.getElementById("submit").style.visibility="hidden";
+            document.getElementById("PM_list").style.display="none";
+            flag = 0;
             $.ajax({
                 type: "post",
                 url: "/showevaluatemutuallist",
@@ -90,6 +106,7 @@
                         document.getElementById("last").style.visibility="visible";
                         document.getElementById("next").style.visibility="visible";
                     }
+                    touid = dataobj[page-1].touid;
                     $("#name").html(dataobj[page-1].tousername);
                     $("#rolename").html(dataobj[page-1].torolename);
                 },
@@ -99,10 +116,22 @@
             });
         }
         function btn_next(){
+            var eva = {};
+            eva.uid = uid;
+            eva.touid = touid;
+            eva.projectid = Number(cid);
+            eva.attitude = Number($('#taidu').val());
+            eva.technique = Number($('#zhuanye').val());
+            eva.communication = Number($('#goutong').val());
+            eva.cooperation = Number($('#xiezuo').val());
+            eva.helpme = Number($('#bangzhu').val());
+            eva.mark = $('#zonghe').val();
+            evalist.push(eva);
             page = page + 1;
             document.getElementById("last").style.visibility="hidden";
             document.getElementById("next").style.visibility="hidden";
             document.getElementById("submit").style.visibility="hidden";
+            flag = 0;
             $.ajax({
                 type: "post",
                 url: "/showevaluatemutuallist",
@@ -119,6 +148,7 @@
                     // alert(dataobj.case);
                     var showMenulist = $("#list");
                     if(dataobj.length == 1){
+                        document.getElementById("submit").style.visibility="visible";
                     }else if(page == 1){
                         document.getElementById("next").style.visibility="visible";
                     }else if(page == Number(dataobj.length)){
@@ -128,6 +158,7 @@
                         document.getElementById("last").style.visibility="visible";
                         document.getElementById("next").style.visibility="visible";
                     }
+                    touid = dataobj[page-1].touid;
                     $("#name").html(dataobj[page-1].tousername);
                     $("#rolename").html(dataobj[page-1].torolename);
                 },
@@ -137,7 +168,36 @@
             });
         }
         function btn_submit() {
-
+            var eva = {};
+            eva.uid = uid;
+            eva.touid = touid;
+            eva.projectid = Number(cid);
+            eva.attitude = Number($('#taidu').val());
+            eva.technique = Number($('#zhuanye').val());
+            eva.communication = Number($('#goutong').val());
+            eva.cooperation = Number($('#xiezuo').val());
+            eva.helpme = Number($('#bangzhu').val());
+            eva.mark = $('#zonghe').val();
+            evalist.push(eva);
+            console.log(evalist);
+            console.log(JSON.stringify(evalist));
+            $.ajax({
+                type: "post",
+                url: "/evaluatemutual",
+                dataType: 'text',
+                contentType: "application/json;charset=UTF-8",
+                traditional: true,
+                data:JSON.stringify(//json前面的东西要和后端实体类对应
+                    evalist
+                ),
+                success: function (data) {
+                    console.log(data);
+                    alert("评价成功！");
+                },
+                error:function(data) {
+                    alert(data);
+                }
+            });
         }
     </script>
 </head>
@@ -153,84 +213,53 @@
                     <th id="rolename" style="color: #96B87D"></th>
                 </tr>
                 <tr>
-                    <td>通过率：</td>
-                    <td><select id="pass" class="selectpicker">
-                        <option>A</option>
-                        <option>B</option>
-                        <option>C</option>
-                        <option>D</option>
-                    </select></td>
-                    <td>时间情况：</td>
-                    <td><select id="time" class="selectpicker">
-                        <option>A</option>
-                        <option>B</option>
-                        <option>C</option>
-                        <option>D</option>
-                    </select></td>
-                </tr>
-                <tr>
-                    <td>正确程度：</td>
-                    <td><select id="access" class="selectpicker">
-                        <option>A</option>
-                        <option>B</option>
-                        <option>C</option>
-                        <option>D</option>
-                    </select></td>
-                    <td>创新情况：</td>
-                    <td><select id="new" class="selectpicker">
-                        <option>A</option>
-                        <option>B</option>
-                        <option>C</option>
-                        <option>D</option>
-                    </select></td>
-                </tr>
-                <tr>
-                    <td>风格：</td>
-                    <td><select id="fengge" class="selectpicker">
-                        <option>A</option>
-                        <option>B</option>
-                        <option>C</option>
-                        <option>D</option>
-                    </select></td>
-                </tr>
-                <tr>
                     <td>学习态度：</td>
                     <td><select id="taidu" class="selectpicker">
-                        <option>A</option>
-                        <option>B</option>
-                        <option>C</option>
-                        <option>D</option>
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
                     </select></td>
                     <td>专业能力：</td>
                     <td><select id="zhuanye" class="selectpicker">
-                        <option>A</option>
-                        <option>B</option>
-                        <option>C</option>
-                        <option>D</option>
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
                     </select></td>
                 </tr>
                 <tr>
                     <td>沟通能力：</td>
                     <td><select id="goutong" class="selectpicker">
-                        <option>A</option>
-                        <option>B</option>
-                        <option>C</option>
-                        <option>D</option>
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
                     </select></td>
                     <td>协作能力：</td>
                     <td><select id="xiezuo" class="selectpicker">
-                        <option>A</option>
-                        <option>B</option>
-                        <option>C</option>
-                        <option>D</option>
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
                     </select></td>
+                </tr>
+                <tr>
+                    <td>对他人的帮助：</td>
+                    <td><select id="bangzhu" class="selectpicker">
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
+                    </select></td>
+                </tr>
                 <tr>
                     <td>综合评价：</td>
-                    <td><select id="sum" class="selectpicker">
-                        <option>A</option>
-                        <option>B</option>
-                        <option>C</option>
-                        <option>D</option>
+                    <td><select id="zonghe" class="selectpicker">
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
                     </select></td>
                 </tr>
             </table>

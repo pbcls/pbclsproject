@@ -79,6 +79,8 @@
                             if(dataobj.role_to_user[menu].rolename === "项目经理"){
                                 if(dataobj.project.status==1){
                                     $("<button type='button' class='btn btn-primary' onclick='start()' style='margin-top: 20px;'>开始项目</button>").appendTo(showthebtn);
+                                }else if(dataobj.project.status==2){
+                                    $("<button type='button' class='btn btn-primary' onclick='eva()' style='margin-top: 20px;'>结束项目</button>").appendTo(showthebtn);
                                 }
                             }
                         }
@@ -118,13 +120,42 @@
             });
         }
         function eva() {
-            if(role === "项目经理"){
-                var main = document.getElementById('evalist');
-                main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojectevaPM?"+cid+"'></iframe>";
-            }else{
-                var main = document.getElementById('evalist');
-                main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toprojectevastu?"+cid+"'></iframe>";
-            }
+            $.ajax({
+                type: "post",
+                url: "/checknormallyfinishproject",
+                dataType: 'text',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                data:{
+                    "projectid":Number(cid)
+                },
+                success: function (data) {
+                    console.log(data);
+                    if(data === "true"){
+                        $.ajax({
+                            type: "post",
+                            url: "/finishproject",
+                            dataType: 'text',
+                            contentType: "application/x-www-form-urlencoded",
+                            traditional: true,
+                            data:{
+                                "projectid":Number(cid)
+                            },
+                            success: function (data) {
+                                console.log(data);
+                                alert("项目已成功结束！");
+                            },
+                            error:function(result) {
+                                alert(result);
+                            }
+                        });
+                    }
+                    else alert("还有任务或评分未完成！");
+                },
+                error:function(result) {
+                    alert(result);
+                }
+            });
         }
     </script>
 </head>
@@ -188,13 +219,6 @@
                 </div>
             </div>
             <div id="middle" class="col-md-8">
-                <div class="modal" id="mymodal">
-                    <div class="modal-dialog" style="height: 500px;">
-                        <div class="modal-content" style="height: 500px;" id="evalist">
-                            xianshishi
-                        </div>
-                    </div>
-                </div>
                 <div id="menu1" class="container tab-pane active"><br>
                     <table border="1" frame="void" rules="none" cellpadding="10px" style="font-weight: bold;">
                         <tr>
@@ -252,9 +276,6 @@
                     </div>
                 </div>
                 <div id="can_start"></div>
-                <div id="eva">
-                    <button class="btn btn-outline-primary" data-toggle="modal" data-target="#mymodal" onclick="eva()">项目互评</button>
-                </div>
             </div>
         </div>
     </div>
