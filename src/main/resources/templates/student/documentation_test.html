@@ -17,7 +17,7 @@
     <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
     <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
     <script th:inline="javascript">
-
+        var cid;
         window.onload=function(){
             $("#btn_add").click(function () {
                 // alert("111111");
@@ -25,7 +25,7 @@
                 $('#myModal').modal();
             });
 
-            var cid=GetRequest();
+            cid=GetRequest();
             // $(document).ready(function(){
             //     cid=GetRequest();
             //     // console.log(cid);
@@ -41,6 +41,7 @@
                 },
                 success: function (data) {
                     var dataobj = JSON.parse(data);
+                    console.log(dataobj);
                     // alert(dataobj);
                     // alert(dataobj.case);
                     $("#pname").html(dataobj.case.casename);
@@ -50,6 +51,52 @@
                     $("#maxplayer").html(dataobj.case.maxplayer);
                     $("#status").html(dataobj.case.status);
                     $("#time").html(dataobj.case.uploadtime);
+                    if(dataobj.roles.length!=0){
+                        var f = 0,str = "";
+                        for(var menu in dataobj.roles) {
+                            if(f == 0){
+                                str = str + dataobj.roles[menu].rolename;
+                                f = 1;
+                            }else{
+                                str = str + "，" + dataobj.roles[menu].rolename;
+                            }
+                        }
+                        $("#caseplayer").html(str);
+                    }else{
+                        $("#caseplayer").html("该案例暂时没有角色安排。");
+                    }
+
+                    $.ajax({
+                        type: "post",  //post put get 等等
+                        url: "/getcasefilelist",
+                        dataType: 'json',
+                        contentType: "application/x-www-form-urlencoded",
+                        traditional: true,
+                        //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
+                        // 表示对象
+                        data: {  //json前面的东西要和后端实体类对应
+                            "caseid": cid
+                        },
+                        success: function (data) {
+                            console.log(data);
+                            var Menulistdoc = $("#doc");
+                            var f = 1;
+                            for(var menu in data){
+                                console.log(data[menu]);
+                                if (f == 1) $("<li style=' text-align: center;width: 300px;'></li>").append("<a href='/downloadcasefile?filename="+data[menu]+"&caseid="+cid+"'>"+data[menu]+"</a>").appendTo(Menulistdoc);
+                                else{
+                                    $("<li style='margin-top: 10px; text-align: center;width: 300px;'></li>").append("<a href='/downloadcasefile?filename="+data[menu]+"&caseid="+cid+"'>"+data[menu]+"</a>").appendTo(Menulistdoc);
+                                    f = 0;
+                                }
+                                if(data[menu+1] == 'undefined') break;
+                                // onclick='getUrl(" + menu + ")' class='t urn'
+                            }
+                        },
+                        error: function (result) {  //连接至ashx文件失败时，执行函数
+                            alert(result);
+                        }
+                    });
+
                 },
                 error:function(result) {
                     alert(result);
@@ -187,8 +234,19 @@
         </div>
     </div>
     <div id="menu2" class="container tab-pane fade"><br>
-        <h3>个人动态</h3>
-        <p>zhegeyeshi</p>
+        <h4 style="text-align: center;color: #0B3E5B; font-weight: bold;">详细信息</h4>
+        <table border="1" frame="void" rules="none" cellpadding="10px" style="font-weight: bold;">
+            <tr>
+                <th>案例角色类型：</th>
+                <th id="caseplayer"></th>
+            </tr>
+            <tr>
+                <td>案例文档下载：</td>
+                <td>
+                    <ul id="doc"></ul>
+                </td>
+            </tr>
+        </table>
     </div>
 </div>
 </body>

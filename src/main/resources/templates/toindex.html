@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <meta charset="UTF-8">
-    <title>案例系统主页</title>
+    <title>案例系统游客主页</title>
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.1.0/css/bootstrap.min.css">
 
     <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
@@ -17,10 +17,8 @@
     <script type="text/javascript" src="grayscale.js"></script>
 </head>
 <script th:inline="javascript">
-    window.onload=function () {
-        var uid = [[${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}]];
-        var Menulisttop = $("#topmenu");
-        $('<li style="display: inline"><a href="/student/toPCenter/'+uid+'" style="margin-left: 8px; color: #0B3E5B;font-size: 21px; font-weight: bold;">个人空间</a></li>').appendTo(Menulisttop);
+    function tologin() {
+        window.open("tologin", "_self");
     }
 </script>
 <body>
@@ -30,12 +28,8 @@
             <div>
                 <h5 style="margin-left: 15px;margin-top: 7px; color: white; font-family: 'arial black'; font-weight: bold;">案 例 学 习 系 统</h5>
             </div>
-            <div sec:authorize="isAuthenticated()">
-                <h5 style="margin-left: 700px; margin-top: 7px; color: white;">欢迎您 <span sec:authentication="principal.myUserName"></span></h5>
-            </div>
-            <div>
-                <a type="button" class="btn" style="margin-left: 35px; margin-top:3px; height: 34px; background-color: darkgray;color: dimgray" href="/logout" >注销</a>
-            </div>
+            <button class="btn btn-success" style="margin-left: 600px;" onclick="tologin()">登录</button>
+            <button class="btn btn-success" style="margin-left: 30px;" onclick="tologin()">注册</button>
         </div>
     </div>
     <header class="header-area">
@@ -52,9 +46,10 @@
                         <div class="menu-area f-right" style="margin-top: 10px;">
                             <nav>
                                 <ul style="color: #96B87D;" id="topmenu">
-                                    <li style="display: inline"><a href="/index" style="color: #0B3E5B;font-size: 21px; font-weight: bold;">主页</a></li>
-                                    <li style="display: inline"><a href="/todocumentation" style="margin-left: 8px; color: #0B3E5B;font-size: 21px; font-weight: bold;">案例</a></li>
-                                    <li style="display: inline"><a href="/toproject" style="margin-left: 8px; color: #0B3E5B;font-size: 21px; font-weight: bold;">项目</a></li>
+                                    <li style="display: inline"><a href="" style="color: #0B3E5B;font-size: 21px; font-weight: bold;">主页</a></li>
+                                    <li style="display: inline"><a href="/tologin" style="margin-left: 8px; color: #0B3E5B;font-size: 21px; font-weight: bold;">案例</a></li>
+                                    <li style="display: inline"><a href="/tologin" style="margin-left: 8px; color: #0B3E5B;font-size: 21px; font-weight: bold;">项目</a></li>
+                                    <li style="display: inline"><a href="/tologin" style="margin-left: 8px; color: #0B3E5B;font-size: 21px; font-weight: bold;">个人空间</a></li>
                                 </ul>
                             </nav>
                         </div>
@@ -66,7 +61,7 @@
     <div class="container" style="border-top: double; border-width: 5px; border-color: #96B87D; width: 100%;">
         <div class="slider-area" id="top">
             <div class="slider-all" style="margin-top: 20px;">
-<!--                <img src="img/bg1.jpg" style="width: 100%;" id="bg1">-->
+                <!--                <img src="img/bg1.jpg" style="width: 100%;" id="bg1">-->
                 <div style="height: 320px; background: url('img/bg1.jpg'); background-size: 100%">
                     <div class="slider-text animated" style="height: 320px;background: rgba(0,0,0,0.6)">
                         <div>

@@ -14,9 +14,13 @@ public class LoginController {
 
     @RequestMapping("/")
     public String index(){
-        return "redirect:tologin";
+        return "redirect:toindex";
     }
 
+    @RequestMapping("/toindex")
+    public String toindex(){
+        return "toindex";
+    }
     @RequestMapping("/tologin")
     public String tologin(){
         return "login";
