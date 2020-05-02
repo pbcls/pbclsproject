@@ -3,6 +3,7 @@ package com.zucc.pbcls.controller.Project;
 import com.zucc.pbcls.dao.ChatMsgDao;
 import com.zucc.pbcls.dao.UserInfoDao;
 import com.zucc.pbcls.pojo.ChatMsg;
+import com.zucc.pbcls.pojo.MyUser;
 import com.zucc.pbcls.security.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,6 +39,11 @@ public class ChatRoomController {
     @ResponseBody
     public List<ChatMsg> showMsg(@RequestParam(value = "projectid") int projectid){
         List<ChatMsg> chatMsgs = chatMsgDao.findtop10(projectid);
+        for (ChatMsg chatMsg:chatMsgs){
+            MyUser user = userInfoDao.findByUid(chatMsg.getUid());
+            chatMsg.setUsername(user.getName());
+            chatMsg.setPortrait(user.getPortrait());
+        }
         return chatMsgs;
     }
 
