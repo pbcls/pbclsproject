@@ -16,10 +16,10 @@
     <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
     <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
     <script th:inline="javascript">
-
+        var cid,uid;
         window.onload=function () {
-            var uid = GetRequest();
-            var cid = GetRequest2();
+            uid = GetRequest();
+            cid = GetRequest2();
             var Menulisttop = $("#topmenu");
             $('<li style="display: inline"><a href="/student/toPCenter/'+uid+'" style="margin-left: 8px; color: #0B3E5B;font-size: 21px; font-weight: bold;">个人空间</a></li>').appendTo(Menulisttop);
 
@@ -89,9 +89,92 @@
                     alert("error");
                 }
             });
+
+            $.ajax({
+                type: "post",  //post put get 等等
+                url: "/chatroom/showmsg",
+                dataType: 'json',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
+                // 表示对象
+                data: {  //json前面的东西要和后端实体类对应
+                    "projectid": cid
+                },
+                success: function (data) {
+                    console.log(data);
+                    var Menulistchat = $("#chat");
+                    for(var menu = data.length ; menu > 0 ; menu --){
+                        $('<ul style="margin-top: 10px;"><li>'+data[menu-1].username+'  '+data[menu-1].sendtime+'</li><li style="margin-top: 5px;">'+data[menu-1].chatmsg+'</li></ul>').appendTo(Menulistchat);
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {  //连接至ashx文件失败时，执行函数
+                    alert("error");
+                }
+            });
+
         }
+
+        function chat_submit() {
+            var str = $('#chat_input').val();
+            $.ajax({
+                type: "post",  //post put get 等等
+                url: "/chatroom/sendmsg",
+                dataType: 'json',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
+                // 表示对象
+                data: {  //json前面的东西要和后端实体类对应
+                    "projectid": cid,
+                    "msg": str
+                },
+                success: function (data) {
+                    console.log(data);
+                    location.replace(location.href);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {  //连接至ashx文件失败时，执行函数
+                    alert("error");
+                }
+            });
+        }
+
     </script>
 </head>
+
+<style type="text/css">
+    .test {
+        width   : 50px;
+        height  : 200px;
+        overflow: auto;
+        float   : left;
+        margin  : 5px;
+        border  : none;
+    }
+    .scrollbar {
+        width : 30px;
+        height: 300px;
+        margin: 0 auto;
+    }
+    .test-1::-webkit-scrollbar {
+        /*滚动条整体样式*/
+        width : 10px;  /*高宽分别对应横竖滚动条的尺寸*/
+        height: 1px;
+    }
+    .test-1::-webkit-scrollbar-thumb {
+        /*滚动条里面小方块*/
+        border-radius: 10px;
+        box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+        background   : #535353;
+    }
+    .test-1::-webkit-scrollbar-track {
+        /*滚动条里面轨道*/
+        box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        background   : #ededed;
+    }
+</style>
+
 <body>
 <div class="container">
     <div class="row">
@@ -151,6 +234,18 @@
                 </div>
             </div>
             <div id="middle" class="col-md-8">
+
+                <div style="width: 80%; height: 430px; margin-left: 10%; margin-top: 0%; background-color: #96B87D; border-radius:5px;">
+                    <div style="padding-top: 5%; margin-left: 5%; width: 90%; height: 95%;" class="test test-1">
+                        <div id="chat" class="scrollbar"style="padding-top: 0%; margin-left: 0%; width: 100%; height: 100%;"></div>
+                    </div>
+                </div>
+
+                <div style="width: 80%; height: 60px; margin-left: 10%; margin-top: 30px; background-color: #96B87D; border-radius:5px;">
+                    <input type="text" class="form-control" id="chat_input" style="display:inline; width:70%; margin-left: 5%;margin-top:12px;"autocomplete="off">
+                    <button class="btn btn-success" onclick="chat_submit()" style="width: 15%; margin-left: 5%;">发送</button>
+                </div>
+
             </div>
         </div>
     </div>
