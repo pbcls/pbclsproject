@@ -105,7 +105,7 @@
                     console.log(data);
                     var Menulistchat = $("#chat");
                     for(var menu = data.length ; menu > 0 ; menu --){
-                        $('<ul style="margin-top: 10px;"><li>'+data[menu-1].username+'  '+data[menu-1].sendtime+'</li><li style="margin-top: 5px;">'+data[menu-1].chatmsg+'</li></ul>').appendTo(Menulistchat);
+                        $('<ul style="margin-top: 10px;"><li style="color: #0B3E5B; font-weight: bold;">'+data[menu-1].username+'  '+data[menu-1].sendtime+'</li><li style="margin-top: 5px; list-style: none;">'+data[menu-1].chatmsg+'</li></ul>').appendTo(Menulistchat);
                     }
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {  //连接至ashx文件失败时，执行函数
@@ -237,7 +237,7 @@
 
                 <div style="width: 80%; height: 430px; margin-left: 10%; margin-top: 0%; background-color: #96B87D; border-radius:5px;">
                     <div style="padding-top: 5%; margin-left: 5%; width: 90%; height: 95%;" class="test test-1">
-                        <div id="chat" class="scrollbar"style="padding-top: 0%; margin-left: 0%; width: 100%; height: 100%;"></div>
+                        <div id="chat" class="scrollbar" style="padding-top: 0%; margin-left: 0%; width: 100%; height: 100%;"></div>
                     </div>
                 </div>
 
