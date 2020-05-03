@@ -137,10 +137,10 @@ public class ProjectTaskScheduleService {
             //查找未开始且不能开始的任务
             List<Project_Task> projects_unstart_tasks = project_taskDao.findByProjectTaskpk_ProjectidAndStatusAndCanstart(project.getProjectid(),0,false);
             for (Project_Task projects_unstart_task:projects_unstart_tasks){
-//                Date earlydate = new Date(dayFormat.parse(dayFormat.format(new Date(project.getStarttime().getTime()))).getTime()+projects_unstart_task.getEarlystart()*timeUseMinute);
-//                Date nowday = dayFormat.parse(dayFormat.format(new Date()));
-                Date earlydate = new Date(project.getStarttime().getTime()+projects_unstart_task.getEarlystart()*timeUseMinute);
-                Date nowday = new Date();
+                Date earlydate = new Date(dayFormat.parse(dayFormat.format(new Date(project.getStarttime().getTime()))).getTime()+projects_unstart_task.getEarlystart()*timeUseDay);
+                Date nowday = dayFormat.parse(dayFormat.format(new Date()));
+//                Date earlydate = new Date(project.getStarttime().getTime()+projects_unstart_task.getEarlystart()*timeUseMinute);
+//                Date nowday = new Date();
                 if (nowday.before(earlydate))
                     continue;//先判断有没有到最早开始时间,没有直接看下一个任务
                 else{
@@ -181,10 +181,10 @@ public class ProjectTaskScheduleService {
         for(Project project:projects){
             List<Project_Task> projects_canstart_tasks = project_taskDao.findByProjectTaskpk_ProjectidAndStatusAndCanstart(project.getProjectid(),0,true);
             for (Project_Task projects_canstart_task:projects_canstart_tasks) {
-//                Date latedate = new Date(dayFormat.parse(dayFormat.format(new Date(project.getStarttime().getTime()))).getTime() + projects_canstart_task.getLatestart() * timeUseMinute);
-//                Date nowday = dayFormat.parse(dayFormat.format(new Date()));
-                Date latedate = new Date(new Date(project.getStarttime().getTime()).getTime() + projects_canstart_task.getLatestart() * timeUseMinute);
-                Date nowday = new Date();
+                Date latedate = new Date(dayFormat.parse(dayFormat.format(new Date(project.getStarttime().getTime()))).getTime() + projects_canstart_task.getLatestart() * timeUseDay);
+                Date nowday = dayFormat.parse(dayFormat.format(new Date()));
+//                Date latedate = new Date(new Date(project.getStarttime().getTime()).getTime() + projects_canstart_task.getLatestart() * timeUseMinute);
+//                Date nowday = new Date();
                 System.out.println(latedate);
                 System.out.println(nowday);
                 if (nowday.before(latedate))//如果当天不为最晚开始时间
@@ -220,10 +220,10 @@ public class ProjectTaskScheduleService {
         //查找未开始且不能开始的任务
         List<Project_Task> projects_unstart_tasks = project_taskDao.findByProjectTaskpk_ProjectidAndStatusAndCanstart(project.getProjectid(),0,false);
         for (Project_Task projects_unstart_task:projects_unstart_tasks){
-//            Date earlydate = new Date(dayFormat.parse(dayFormat.format(new Date(project.getStarttime().getTime()))).getTime()+projects_unstart_task.getEarlystart()*timeUseMinute);
-//            Date nowday = dayFormat.parse(dayFormat.format(new Date()));
-            Date earlydate = new Date(project.getStarttime().getTime()+projects_unstart_task.getEarlystart()*timeUseMinute);
-            Date nowday = new Date();
+            Date earlydate = new Date(dayFormat.parse(dayFormat.format(new Date(project.getStarttime().getTime()))).getTime()+projects_unstart_task.getEarlystart()*timeUseDay);
+            Date nowday = dayFormat.parse(dayFormat.format(new Date()));
+//            Date earlydate = new Date(project.getStarttime().getTime()+projects_unstart_task.getEarlystart()*timeUseMinute);
+//            Date nowday = new Date();
             if (nowday.before(earlydate))
                 continue;//先判断有没有到最早开始时间,没有直接看下一个任务
             else{
@@ -259,10 +259,10 @@ public class ProjectTaskScheduleService {
 
         List<Project_Task> projects_canstart_tasks = project_taskDao.findByProjectTaskpk_ProjectidAndStatusAndCanstart(project.getProjectid(),0,true);
         for (Project_Task projects_canstart_task:projects_canstart_tasks) {
-//            Date latedate = new Date(dayFormat.parse(dayFormat.format(new Date(project.getStarttime().getTime()))).getTime() + projects_canstart_task.getLatestart() * timeUseMinute);
-//            Date nowday = dayFormat.parse(dayFormat.format(new Date()));
-            Date latedate = new Date(new Date(project.getStarttime().getTime()).getTime() + projects_canstart_task.getLatestart() * timeUseMinute);
-            Date nowday = new Date();
+            Date latedate = new Date(dayFormat.parse(dayFormat.format(new Date(project.getStarttime().getTime()))).getTime() + projects_canstart_task.getLatestart() * timeUseDay);
+            Date nowday = dayFormat.parse(dayFormat.format(new Date()));
+//            Date latedate = new Date(new Date(project.getStarttime().getTime()).getTime() + projects_canstart_task.getLatestart() * timeUseMinute);
+//            Date nowday = new Date();
             if (nowday.before(latedate))//如果当天不为最晚开始时间
                 continue;
             else {
