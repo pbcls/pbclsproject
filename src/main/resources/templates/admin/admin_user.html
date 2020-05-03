@@ -22,12 +22,15 @@
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
     <script th:inline="javascript">
         var cid;
+        var changeuid;
         $(window).on('load', function () {
             $('#usertype').selectpicker({
                 'selectedText': 'cat'
             });
         });
+
         window.onload=function () {
+            $('#myModal').modal();
             var uid = [[${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}]];
 
             var indexmenu = $("#menuindex");
@@ -120,7 +123,7 @@
                         $("<li style='margin-top: 22px;'></li>").append(data.content[menu].uid).appendTo(showMenu1);
                         $("<li style='margin-top: 22px;'></li>").append(data.content[menu].name).appendTo(showMenu2);
                         $("<li style='margin-top: 22px;'></li>").append(data.content[menu].role).appendTo(showMenu3);
-                        $("<li style='margin-top: 3px;'></li>").append(data.content[menu].registerTime).appendTo(showMenu4);
+                        $("<li style='margin-top: 10px;'><button type='button' class='btn btn-primary' data-toggle='modal' data-target='#mymodal' value = '" + data.content[menu].uid + "' onclick='btn_change(this.value)'>更改</button></li>").appendTo(showMenu4);
                         if(data.content[menu].accountNonLocked == true){
                             $("<li style='margin-top: 10px;'><button type='button' class='btn btn-danger' value = '" + data.content[menu].uid + "' onclick='btn_fro(this.value)'>冻结</button></li>").appendTo(showMenu5);
                         }else{
@@ -134,6 +137,16 @@
                     alert(data);
                 }
             });
+        }
+
+        function btn_change(uid) {
+            // console.log(uid);
+            // changeuid = uid;
+            //     // alert("111111");
+            // $("#myModalLabel").text("更改用户类型");
+            // $('#myModal').modal();
+            var main = document.getElementById('evalist');
+            main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toadmin_role?"+uid+"'></iframe>";
         }
 
         function btn_fro(uid) {
@@ -274,6 +287,13 @@
                 </div>
             </div>
             <div id="middle" class="col-md-8">
+                <div class="modal" id="mymodal">
+                    <div class="modal-dialog" style="height: 260px; margin-left: -100px;">
+                        <div class="modal-content" style="height: 260px;" id="evalist">
+                            <h4 style="margin-top:40px;text-align: center;color: #96B87D;">您已完成打分，总评结果将在项目结束后显示</h4>
+                        </div>
+                    </div>
+                </div>
                 <div class="container">
                     <div class="col-md-4">
                         <input type="text" class="form-control" id="search" style="display:inline;width:200px;"autocomplete="off">
@@ -328,7 +348,7 @@
                         <nav class="navbar navbar-default" role="navigation">
                             <div class="sidebar">
                                 <ul id='menu4' class='nav navbar-nav' style="text-align: center;">
-                                    <li>注册时间</li>
+                                    <li>更改状态</li>
                                 </ul>
                             </div>
                         </nav>
@@ -352,6 +372,7 @@
                         </nav>
                     </div>
                 </div>
+
             </div>
         </div>
 

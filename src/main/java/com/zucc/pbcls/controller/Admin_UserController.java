@@ -43,6 +43,11 @@ public class Admin_UserController {
         return "admin/admin_system";
     }
 
+    @RequestMapping("/toadmin_role")
+    public String toadmin_role(){
+        return "admin/admin_role";
+    }
+
     @RequestMapping("/findUsers")
     @ResponseBody
     public Page<MyUser> findUsers(@RequestParam(value = "needid") boolean needuid, @RequestParam(value = "needname") boolean needname,
