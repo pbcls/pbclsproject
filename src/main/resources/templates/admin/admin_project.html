@@ -35,7 +35,7 @@
             $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">项目列表</a></li>').appendTo(indexmenu);
             $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">冻结项目</a></li>').appendTo(indexmenu);
             $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">删除项目</a></li>').appendTo(indexmenu);
-            $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">关键词封禁</a></li>').appendTo(indexmenu);
+            // $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">关键词封禁</a></li>').appendTo(indexmenu);
 
             $.ajax({
                 type: "post",  //post put get 等等
@@ -61,6 +61,7 @@
         function btn_search() {
             var mySelect = document.getElementById("usertype");
             // console.log(mySelect.options[2].selected);
+            $('.delatepart').remove();
             $.ajax({
                 type: "post",  //post put get 等等
                 url: "/findprojects",
@@ -87,23 +88,23 @@
                     // var showMenu5 = $("#menu5");
                     var showMenu6 = $("#menu6");
                     for(var menu in data.content) {
-                        $("<li style='margin-top: 22px;'></li>").append(data.content[menu].caseid).appendTo(showMenu1);
-                        $("<li style='margin-top: 22px;'></li>").append(data.content[menu].projectname).appendTo(showMenu2);
+                        $("<li style='margin-top: 22px;' class='delatepart'></li>").append(data.content[menu].caseid).appendTo(showMenu1);
+                        $("<li style='margin-top: 22px;' class='delatepart'></li>").append(data.content[menu].projectname).appendTo(showMenu2);
                         if(data.content[menu].starttime == null){
-                            $("<li style='margin-top: 7px;'>无开始时间</li>").append(data.content[menu].starttime).appendTo(showMenu3);
+                            $("<li style='margin-top: 7px;' class='delatepart'>无开始时间</li>").append(data.content[menu].starttime).appendTo(showMenu3);
                         }else{
-                            $("<li style='margin-top: 7px;'></li>").append(data.content[menu].starttime).appendTo(showMenu3);
+                            $("<li style='margin-top: 7px;' class='delatepart'></li>").append(data.content[menu].starttime).appendTo(showMenu3);
                         }
                         if(data.content[menu].status == 0){
-                            $("<li style='margin-top: 22px;'>中途终止</li>").appendTo(showMenu4);
+                            $("<li style='margin-top: 22px;' class='delatepart'>中途终止</li>").appendTo(showMenu4);
                         }else if(data.content[menu].status == 1){
-                            $("<li style='margin-top: 22px;'>未开始</li>").appendTo(showMenu4);
+                            $("<li style='margin-top: 22px;' class='delatepart'>未开始</li>").appendTo(showMenu4);
                         }else if(data.content[menu].status == 2){
-                            $("<li style='margin-top: 22px;'>正在进行</li>").appendTo(showMenu4);
+                            $("<li style='margin-top: 22px;' class='delatepart'>正在进行</li>").appendTo(showMenu4);
                         }else{
-                            $("<li style='margin-top: 22px;'>已结束</li>").appendTo(showMenu4);
+                            $("<li style='margin-top: 22px;' class='delatepart'>已结束</li>").appendTo(showMenu4);
                         }
-                        $("<li style='margin-top: 10px;'><button type='button' class='btn btn-danger' value = '" + data.content[menu].projectid + "' onclick='btn_delate(this.value)'>删除</button></li>").appendTo(showMenu6);
+                        $("<li style='margin-top: 10px;' class='delatepart'><button type='button' class='btn btn-danger' value = '" + data.content[menu].projectid + "' onclick='btn_delate(this.value)'>删除</button></li>").appendTo(showMenu6);
                         if(data.content[menu+1] == 'undefined') break;
                     }
                 },

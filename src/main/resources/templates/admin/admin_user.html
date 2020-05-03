@@ -39,8 +39,8 @@
             $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">用户列表</a></li>').appendTo(indexmenu);
             $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">冻结用户</a></li>').appendTo(indexmenu);
             $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">删除用户</a></li>').appendTo(indexmenu);
-            $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">IP封禁</a></li>').appendTo(indexmenu);
-            $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">EMAIL封禁</a></li>').appendTo(indexmenu);
+            // $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">IP封禁</a></li>').appendTo(indexmenu);
+            // $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">EMAIL封禁</a></li>').appendTo(indexmenu);
 
             $.ajax({
                 type: "post",  //post put get 等等
@@ -65,6 +65,7 @@
 
         function btn_search() {
             var mySelect = document.getElementById("usertype");
+            $('.delatepart').remove();
             // console.log(mySelect.options[2].selected);
             var str;
             if(mySelect.options[5].selected == true && mySelect.options[6].selected == true && mySelect.options[7].selected == true){
@@ -120,16 +121,16 @@
                     var showMenu6 = $("#menu6");
                     // var showMenu7 = $("#menu7");
                     for(var menu in data.content) {
-                        $("<li style='margin-top: 22px;'></li>").append(data.content[menu].uid).appendTo(showMenu1);
-                        $("<li style='margin-top: 22px;'></li>").append(data.content[menu].name).appendTo(showMenu2);
-                        $("<li style='margin-top: 22px;'></li>").append(data.content[menu].role).appendTo(showMenu3);
-                        $("<li style='margin-top: 10px;'><button type='button' class='btn btn-primary' data-toggle='modal' data-target='#mymodal' value = '" + data.content[menu].uid + "' onclick='btn_change(this.value)'>更改</button></li>").appendTo(showMenu4);
+                        $("<li style='margin-top: 22px;' class='delatepart'></li>").append(data.content[menu].uid).appendTo(showMenu1);
+                        $("<li style='margin-top: 22px;' class='delatepart'></li>").append(data.content[menu].name).appendTo(showMenu2);
+                        $("<li style='margin-top: 22px;' class='delatepart'></li>").append(data.content[menu].role).appendTo(showMenu3);
+                        $("<li style='margin-top: 10px;' class='delatepart'><button type='button' class='btn btn-primary' data-toggle='modal' data-target='#mymodal' value = '" + data.content[menu].uid + "' onclick='btn_change(this.value)'>更改</button></li>").appendTo(showMenu4);
                         if(data.content[menu].accountNonLocked == true){
-                            $("<li style='margin-top: 10px;'><button type='button' class='btn btn-danger' value = '" + data.content[menu].uid + "' onclick='btn_fro(this.value)'>冻结</button></li>").appendTo(showMenu5);
+                            $("<li style='margin-top: 10px;' class='delatepart'><button type='button' class='btn btn-danger' value = '" + data.content[menu].uid + "' onclick='btn_fro(this.value)'>冻结</button></li>").appendTo(showMenu5);
                         }else{
-                            $("<li style='margin-top: 10px;'><button type='button' class='btn btn-warning' value = '" + data.content[menu].uid + "' onclick='btn_re(this.value)'>恢复</button></li>").appendTo(showMenu5);
+                            $("<li style='margin-top: 10px;' class='delatepart'><button type='button' class='btn btn-warning' value = '" + data.content[menu].uid + "' onclick='btn_re(this.value)'>恢复</button></li>").appendTo(showMenu5);
                         }
-                        $("<li style='margin-top: 10px;'><button type='button' class='btn btn-primary' value = '" + data.content[menu].uid + "' onclick='btn_rename(this.value)'>重置</button></li>").appendTo(showMenu6);
+                        $("<li style='margin-top: 10px;' class='delatepart'><button type='button' class='btn btn-primary' value = '" + data.content[menu].uid + "' onclick='btn_rename(this.value)'>重置</button></li>").appendTo(showMenu6);
                         if(data.content[menu+1] == 'undefined') break;
                     }
                 },

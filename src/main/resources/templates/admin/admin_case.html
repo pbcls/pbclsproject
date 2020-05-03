@@ -35,7 +35,7 @@
             $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">案例列表</a></li>').appendTo(indexmenu);
             $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">冻结案例</a></li>').appendTo(indexmenu);
             $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">删除案例</a></li>').appendTo(indexmenu);
-            $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">关键词封禁</a></li>').appendTo(indexmenu);
+            // $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">关键词封禁</a></li>').appendTo(indexmenu);
 
             $.ajax({
                 type: "post",  //post put get 等等
@@ -60,6 +60,7 @@
 
         function btn_search() {
             var mySelect = document.getElementById("usertype");
+            $('.delatepart').remove();
             // console.log(mySelect.options[2].selected);
             $.ajax({
                 type: "post",  //post put get 等等
@@ -86,15 +87,15 @@
                     var showMenu6 = $("#menu6");
                     for(var menu in data.content) {
                         // $("<li style='margin-top: 10px;'></li>").append(data.content[menu].caseid).appendTo(showMenu1);
-                        $("<li style='margin-top: 22px;'></li>").append(data.content[menu].casename).appendTo(showMenu2);
-                        $("<li style='margin-top: 3px;'></li>").append(data.content[menu].uploadtime).appendTo(showMenu3);
+                        $("<li style='margin-top: 22px;' class='delatepart'></li>").append(data.content[menu].casename).appendTo(showMenu2);
+                        $("<li style='margin-top: 3px;' class='delatepart'></li>").append(data.content[menu].uploadtime).appendTo(showMenu3);
                         if(data.content[menu].status == true){
-                            $("<li style='margin-top: 20px;'><select><option value='1'>已开启</option><option value='2'>未开启</option></select></li>").appendTo(showMenu4);
+                            $("<li style='margin-top: 20px;' class='delatepart'><select><option value='1'>已开启</option><option value='2'>未开启</option></select></li>").appendTo(showMenu4);
                         }else{
-                            $("<li style='margin-top: 20px;'><select><option value='1'>未开启</option><option value='2'>已开启</option></select></li>").appendTo(showMenu4);
+                            $("<li style='margin-top: 20px;' class='delatepart'><select><option value='1'>未开启</option><option value='2'>已开启</option></select></li>").appendTo(showMenu4);
                         }
-                        $("<li style='margin-top: 10px;'><button type='button' class='btn btn-primary' value = '" + data.content[menu].caseid + "' title='" + data.content[menu].status + "' onclick='btn_sure(this.value,this.title)'>确认</button></li>").appendTo(showMenu5);
-                        $("<li style='margin-top: 10px;'><button type='button' class='btn btn-danger' value = '" + data.content[menu].caseid + "' onclick='btn_delate(this.value)'>删除</button></li>").appendTo(showMenu6);
+                        $("<li style='margin-top: 10px;' class='delatepart'><button type='button' class='btn btn-primary' value = '" + data.content[menu].caseid + "' title='" + data.content[menu].status + "' onclick='btn_sure(this.value,this.title)'>确认</button></li>").appendTo(showMenu5);
+                        $("<li style='margin-top: 10px;' class='delatepart'><button type='button' class='btn btn-danger' value = '" + data.content[menu].caseid + "' onclick='btn_delate(this.value)'>删除</button></li>").appendTo(showMenu6);
                         if(data.content[menu+1] == 'undefined') break;
                     }
                 },
