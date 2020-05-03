@@ -19,6 +19,27 @@
 <script th:inline="javascript">
     window.onload=function () {
         var uid = [[${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}]];
+        $.ajax({
+            type: "post",  //post put get 等等
+            url: "/student/showUserDetial",
+            dataType: 'json',
+            contentType: "application/x-www-form-urlencoded",
+            traditional: true,
+            //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
+            // 表示对象
+            data: {  //json前面的东西要和后端实体类对应
+                "uid": uid
+            },
+            success: function (data, textStatus) {
+                console.log(data);
+                if(data.role === "ADMIN"){
+                    window.location.href='/toadmin_user';
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {  //连接至ashx文件失败时，执行函数
+                alert("error");
+            }
+        });
         var Menulisttop = $("#topmenu");
         $('<li style="display: inline"><a href="/student/toPCenter/'+uid+'" style="margin-left: 8px; color: #0B3E5B;font-size: 21px; font-weight: bold;">个人空间</a></li>').appendTo(Menulisttop);
     }
