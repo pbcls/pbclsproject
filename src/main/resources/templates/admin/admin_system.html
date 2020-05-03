@@ -48,8 +48,9 @@
             });
 
             var Menulist = $("#menu");
+            var Menulist2 = $("#menu2");
             $("<li style='margin-top: 10px; text-align: center;width: 300px;'></li>").append("<a href='/exportExcel'>导出EXCEL表</a>").appendTo(Menulist);
-            // $("<li style='margin-top: 10px; text-align: center;width: 300px;'></li>").append("<a href='/exportModelExcel'>导出EXCEL包示例</a>").appendTo(Menulist);
+            $("<li style='margin-top: 10px; text-align: center;width: 300px;'></li>").append("<a href='/exportModelExcel'>导出EXCEL包示例</a>").appendTo(Menulist2);
 
         }
 
@@ -146,6 +147,7 @@
                     <input type="file" name="myfile" id="id_file" class="hidden" style="margin-top: 30px;margin-left: 40px;">
                     <input type="button" class="btn btn-success pull-right" value="上传" id="id_submit" onclick="put()">
                 </div>
+                <ul id='menu2' class='nav navbar-nav'></ul>
                 <h5 style="margin-top: 20px;">EXCEL导出</h5>
                 <div class="sidebar">
                     <ul id='menu' class='nav navbar-nav' style="text-align: center;"></ul>

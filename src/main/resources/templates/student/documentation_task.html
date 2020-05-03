@@ -57,22 +57,18 @@
 
             $.ajax({
                 type: "post",
-                url: "/showprojecttaskinfo",
+                url: "/showcasetaskinfo",
                 dataType:'text',
                 contentType: "application/json;charset=UTF-8",
                 traditional: true,
                 data:JSON.stringify({
-                    "projectid":cid,
+                    "caseid":cid,
                     "taskid":taskid
                 }),
                 success: function (result) {
                     var dataobj = JSON.parse(result);
+                    console.log("taskinfo");
                     console.log(dataobj);
-                    for(var menu in dataobj.users) {
-                        if (dataobj.users[menu].uid === uid) {
-                            role = 1;
-                        }
-                    }
                     if(role != 1) role = 2;
                     $("#tname").html(dataobj.task.taskname);
                     $("#description").html(dataobj.task.description);
@@ -107,7 +103,7 @@
                         $("#last").html("该任务没有前驱任务。");
                     }
 
-                    $("#rolename").html(dataobj.role.rolename);
+                    $("#rolename").html(dataobj.role.case_role.rolename);
 
                 },
                 error:function(result) {
