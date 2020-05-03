@@ -1,10 +1,185 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>我的信箱</title>
+    <!-- 新 Bootstrap4 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.1.0/css/bootstrap.min.css">
+
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- popper.min.js 用于弹窗、提示、下拉菜单 -->
+    <script src="https://cdn.bootcss.com/popper.js/1.12.5/umd/popper.min.js"></script>
+
+    <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
+    <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <script th:inline="javascript">
+        var uid = [[${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}]];
+        window.onload=function () {
+            var Menulisttop = $("#topmenu");
+            $('<li style="display: inline"><a href="/student/toPCenter/'+uid+'" style="margin-left: 8px; color: #0B3E5B;font-size: 21px; font-weight: bold;">个人空间</a></li>').appendTo(Menulisttop);
+            var indexmenu = $("#menuindex");
+
+            $('<li class="nav-item"><a class="nav-link" href="/student/toPCenter/'+uid+'" style="color: #0B3E5B; font-weight: bold;">主要信息</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link" href="/student/toPCentercase" style="color: #0B3E5B; font-weight: bold;">我的案例</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link" href="/student/toPCentermanag" style="color: #0B3E5B; font-weight: bold;">修改信息</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link active" href="/student/toPCentermas" style="background-color: #96B87D; font-weight: bold;">我的信箱</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link" href="/student/toPCentereva" style="color: #0B3E5B; font-weight: bold;">我的评价</a></li>').appendTo(indexmenu);
+            //jQuery写法
+            $.ajax({
+                type: "post",  //post put get 等等
+                url: "/student/showUserDetial",
+                dataType: 'json',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
+                // 表示对象
+                data: {  //json前面的东西要和后端实体类对应
+                    "uid": uid
+                },
+                success: function (data, textStatus) {
+                    console.log(data);
+                    $("#headimg").attr("src",data.portrait);
+                    $("#name").html(data.name);
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {  //连接至ashx文件失败时，执行函数
+                    alert("error");
+                }
+            });
+
+            $.ajax({
+                type: "post",  //post put get 等等
+                url: "/student/showGetMsg",
+                dataType: 'json',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
+                // 表示对象
+                data: {  //json前面的东西要和后端实体类对应
+                    "uid": uid
+                },
+                success: function (data, textStatus) {
+                    console.log(data);
+                    $("#headimg").attr("src",data.portrait);
+                    $("#name").html(data.name);
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {  //连接至ashx文件失败时，执行函数
+                    alert("error");
+                }
+            });
+
+            $.ajax({
+                type: "post",  //post put get 等等
+                url: "/student/showSentMsg",
+                dataType: 'json',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
+                // 表示对象
+                data: {  //json前面的东西要和后端实体类对应
+                    "uid": uid
+                },
+                success: function (data, textStatus) {
+                    console.log(data);
+                    $("#headimg").attr("src",data.portrait);
+                    $("#name").html(data.name);
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {  //连接至ashx文件失败时，执行函数
+                    alert("error");
+                }
+            });
+        }
+    </script>
 </head>
 <body>
+<div class="container">
+    <div class="row">
+        <div style="background-color: #96B87D; height: 40px; width: 100%;display: flex;">
+            <div>
+                <h5 style="margin-left: 15px;margin-top: 7px; color: white; font-family: 'arial black'; font-weight: bold;">案 例 学 习 系 统</h5>
+            </div>
+            <div sec:authorize="isAuthenticated()">
+                <h5 style="margin-left: 700px; margin-top: 7px; color: white;">欢迎您 <span sec:authentication="principal.myUserName"></span></h5>
+            </div>
+            <div>
+                <a type="button" class="btn" style="margin-left: 35px; margin-top:3px; height: 34px; background-color: darkgray;color: dimgray" href="/logout" >注销</a>
+            </div>
+        </div>
+    </div>
+    <header class="header-area">
+        <div class="header-bottom stick-h2">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 col-sm-12 col-xs-12">
+                        <div class="logo" style="margin-left: 30px;">
+                            <img src="/img/logo.jpg" style="width: 60px;">
+                            <!--<a href="index2.html"><img src="images/logo/logo2.jpg" alt=""> </a>-->
+                        </div>
+                    </div>
+                    <div class="col-md-4 hidden-sm hidden-xs">
+                        <div class="menu-area f-right" style="margin-top: 10px;">
+                            <nav>
+                                <ul style="color: #96B87D;" id="topmenu">
+                                    <li style="display: inline"><a href="/index" style="color: #0B3E5B;font-size: 21px; font-weight: bold;">主页</a></li>
+                                    <li style="display: inline"><a href="/todocumentation" style="margin-left: 8px; color: #0B3E5B;font-size: 21px; font-weight: bold;">案例</a></li>
+                                    <li style="display: inline"><a href="/toproject" style="margin-left: 8px; color: #0B3E5B;font-size: 21px; font-weight: bold;">项目</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="container" style="border-top: double; border-width: 5px; border-color: #96B87D; width: 100%;">
+        <div class="row" style="margin-top: 40px;">
+            <div id="left" class="col-md-4" style="height: 530px; border-right: solid; border-color: #0B3E5B;text-align: center;">
+                <div class="logo">
+                    <img src="" style="width: 50%;border-radius: 80px;" id="headimg">
 
+                    <!--<a href="index2.html"><img src="images/logo/logo2.jpg" alt=""> </a>-->
+                </div>
+                <div style="margin-top: 20px;">
+                    用户名：<h7 id="name" style="color: #0B3E5B; font-weight: bold;" text=""></h7>
+                </div>
+                <div style="margin-top: 70px;">
+                    <ul class="nav nav-pills flex-column" role="tablist" id="menuindex">
+                    </ul>
+                </div>
+            </div>
+            <div id="middle" class="col-md-8">
+                <ul class="nav nav-pills" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="pill" href="#menu1" style="font-weight: bold;">发送消息</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="pill" href="#menu2" style="font-weight: bold;">已发送</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="pill" href="#menu3" style="font-weight: bold;">已接收</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="menu1" class="container tab-pane active"><br>
+                        <h3>发送消息</h3>
+                    </div>
+                    <div id="menu2" class="container tab-pane fade"><br>
+                        <h3>已发送</h3>
+                        <p>发件箱空空如也，你还没有给别人发送过信件哦。</p>
+                    </div>
+                    <div id="menu3" class="container tab-pane fade"><br>
+                        <h3>已接收</h3>
+                        <p>收件箱空空如也，还没有人给你发送过信件哦。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

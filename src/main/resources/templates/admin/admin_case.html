@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <meta charset="UTF-8">
-    <title>项目详细信息</title>
+    <title>案例管理</title>
     <!-- 新 Bootstrap4 核心 CSS 文件 -->
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.1.0/css/bootstrap.min.css">
 
@@ -21,7 +21,6 @@
     <!-- 3.0 -->
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
     <script th:inline="javascript">
-        var cid;
         $(window).on('load', function () {
             $('#usertype').selectpicker({
                 'selectedText': 'cat'
@@ -32,12 +31,11 @@
 
             var indexmenu = $("#menuindex");
 
-            $('<li class="nav-item"><a class="nav-link active" href="" style="background-color: #96B87D; font-weight: bold;">查找用户</a></li>').appendTo(indexmenu);
-            $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">用户列表</a></li>').appendTo(indexmenu);
-            $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">冻结用户</a></li>').appendTo(indexmenu);
-            $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">删除用户</a></li>').appendTo(indexmenu);
-            $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">IP封禁</a></li>').appendTo(indexmenu);
-            $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">EMAIL封禁</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link active" href="" style="background-color: #96B87D; font-weight: bold;">查找案例</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">案例列表</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">冻结案例</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">删除案例</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">关键词封禁</a></li>').appendTo(indexmenu);
 
             $.ajax({
                 type: "post",  //post put get 等等
@@ -63,70 +61,40 @@
         function btn_search() {
             var mySelect = document.getElementById("usertype");
             // console.log(mySelect.options[2].selected);
-            var str;
-            if(mySelect.options[5].selected == true && mySelect.options[6].selected == true && mySelect.options[7].selected == true){
-                str = "ADMIN,TEACHER,STUDENT";
-            }else if(mySelect.options[6].selected == true && mySelect.options[7].selected == true){
-                str = "ADMIN,TEACHER";
-            }else if(mySelect.options[5].selected == true && mySelect.options[6].selected == true){
-                str = "TEACHER,STUDENT";
-            }else if(mySelect.options[5].selected == true && mySelect.options[7].selected == true){
-                str = "ADMIN,STUDENT";
-            }else if(mySelect.options[5].selected == true){
-                str = "STUDENT";
-            }else if(mySelect.options[6].selected == true){
-                str = "TEACHER";
-            }else{
-                str = "ADMIN";
-            }
-            // console.log(mySelect.options[0].selected);
-            // console.log(mySelect.options[1].selected);
-            // console.log(mySelect.options[2].selected);
-            // console.log($('#search').val());
-            // console.log(mySelect.options[3].selected);
-            // console.log(mySelect.options[4].selected);
-            // console.log(str);
-            // console.log("1");
-            // console.log("30");
             $.ajax({
                 type: "post",  //post put get 等等
-                url: "/findUsers",
+                url: "/findcases",
                 dataType: 'json',
                 contentType: "application/x-www-form-urlencoded",
                 traditional: true,
                 //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
                 // 表示对象
                 data: {  //json前面的东西要和后端实体类对应
-                    "needid":mySelect.options[0].selected,
-                    "needname":mySelect.options[1].selected,
-                    "needmail":mySelect.options[2].selected,
+                    "statuson":mySelect.options[0].selected,
+                    "statusoff":mySelect.options[1].selected,
                     "findstr":$('#search').val(),
-                    "notAccountNonLocked":mySelect.options[3].selected,
-                    "isAccountNonLocked":mySelect.options[4].selected,
-                    "role":str,
                     "pagenum":1,
                     "pagesize":30,
                 },
                 success: function (data) {
                     console.log(data);
-                    var showMenu1 = $("#menu1");
+                    // var showMenu1 = $("#menu1");
                     var showMenu2 = $("#menu2");
                     var showMenu3 = $("#menu3");
                     var showMenu4 = $("#menu4");
                     var showMenu5 = $("#menu5");
                     var showMenu6 = $("#menu6");
-                    // var showMenu7 = $("#menu7");
                     for(var menu in data.content) {
-                        $("<li style='margin-top: 22px;'></li>").append(data.content[menu].uid).appendTo(showMenu1);
-                        $("<li style='margin-top: 22px;'></li>").append(data.content[menu].name).appendTo(showMenu2);
-                        $("<li style='margin-top: 22px;'></li>").append(data.content[menu].role).appendTo(showMenu3);
-                        $("<li style='margin-top: 3px;'></li>").append(data.content[menu].registerTime).appendTo(showMenu4);
-                        if(data.content[menu].accountNonLocked == true){
-                            $("<li style='margin-top: 10px;'><button type='button' class='btn btn-danger' value = '" + data.content[menu].uid + "' onclick='btn_fro(this.value)'>冻结</button></li>").appendTo(showMenu5);
+                        // $("<li style='margin-top: 10px;'></li>").append(data.content[menu].caseid).appendTo(showMenu1);
+                        $("<li style='margin-top: 22px;'></li>").append(data.content[menu].casename).appendTo(showMenu2);
+                        $("<li style='margin-top: 3px;'></li>").append(data.content[menu].uploadtime).appendTo(showMenu3);
+                        if(data.content[menu].status == true){
+                            $("<li style='margin-top: 20px;'><select><option value='1'>已开启</option><option value='2'>未开启</option></select></li>").appendTo(showMenu4);
                         }else{
-                            $("<li style='margin-top: 10px;'><button type='button' class='btn btn-warning' value = '" + data.content[menu].uid + "' onclick='btn_re(this.value)'>恢复</button></li>").appendTo(showMenu5);
+                            $("<li style='margin-top: 20px;'><select><option value='1'>未开启</option><option value='2'>已开启</option></select></li>").appendTo(showMenu4);
                         }
-                        $("<li style='margin-top: 10px;'><button type='button' class='btn btn-primary' value = '" + data.content[menu].uid + "' onclick='btn_rename(this.value)'>重置</button></li>").appendTo(showMenu6);
+                        $("<li style='margin-top: 10px;'><button type='button' class='btn btn-primary' value = '" + data.content[menu].caseid + "' title='" + data.content[menu].status + "' onclick='btn_sure(this.value,this.title)'>确认</button></li>").appendTo(showMenu5);
+                        $("<li style='margin-top: 10px;'><button type='button' class='btn btn-danger' value = '" + data.content[menu].caseid + "' onclick='btn_delate(this.value)'>删除</button></li>").appendTo(showMenu6);
                         if(data.content[menu+1] == 'undefined') break;
                     }
                 },
@@ -136,22 +104,26 @@
             });
         }
 
-        function btn_fro(uid) {
-            console.log(uid);
+        function btn_sure(cid,flag) {
+            console.log(flag);
+            if(flag === "true") flag = false;
+            else flag = true;
+            console.log(flag);
             $.ajax({
                 type: "post",  //post put get 等等
-                url: "/lockUser",
+                url: "/updatecasestatus",
                 dataType: 'json',
                 contentType: "application/x-www-form-urlencoded",
                 traditional: true,
                 //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
                 // 表示对象
                 data: {  //json前面的东西要和后端实体类对应
-                    "uid": uid,
+                    "caseid": cid,
+                    "status": flag,
                 },
                 success: function (data) {
-                    if(data == true) alert("冻结用户成功！");
-                    else alert("操作失败！");
+                    alert("修改成功！");
+                    console.log(data);
                     location.replace(location.href);
                 },
                 error: function (data) {  //连接至ashx文件失败时，执行函数
@@ -161,48 +133,25 @@
 
         }
 
-        function btn_re(uid) {
-            console.log(uid);
+        function btn_delate(cid) {
+            console.log(cid);
+
             $.ajax({
                 type: "post",  //post put get 等等
-                url: "/unlockUser",
+                url: "/deletecase",
                 dataType: 'json',
                 contentType: "application/x-www-form-urlencoded",
                 traditional: true,
                 //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
                 // 表示对象
                 data: {  //json前面的东西要和后端实体类对应
-                    "uid": uid,
-                },
-                success: function (data) {
-                    if(data == true) alert("解除用户冻结成功！");
-                    else alert("操作失败！");
-                    location.replace(location.href);
-                },
-                error: function (data) {  //连接至ashx文件失败时，执行函数
-                    alert(data);
-                }
-            });
-
-        }
-
-        function btn_rename(uid) {
-            console.log(uid);
-            $.ajax({
-                type: "post",  //post put get 等等
-                url: "/resetPwd",
-                dataType: 'json',
-                contentType: "application/x-www-form-urlencoded",
-                traditional: true,
-                //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
-                // 表示对象
-                data: {  //json前面的东西要和后端实体类对应
-                    "uid": uid,
+                    "caseid": cid,
                 },
                 success: function (data) {
                     console.log(data);
-                    if(data == true) alert("重置成功！");
-                    else alert("操作失败！");
+                    if(data == 0) alert("该案例已经被删除！");
+                    else if(data == 1) alert("该案例下还有正在进行的项目！");
+                    else alert("删除成功！");
                     location.replace(location.href);
                 },
                 error: function (data) {  //连接至ashx文件失败时，执行函数
@@ -281,14 +230,8 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <select id="usertype" name="usertype" class="selectpicker show-tick form-control" multiple data-live-search="false" style="height: 100px;" title="请选择你想要查询的关键字">
-                                <option value="0">查询用户id</option>
-                                <option value="1">查询用户姓名</option>
-                                <option value="2">查询用户EMAIL</option>
-                                <option value="3">查询已冻结用户</option>
-                                <option value="4">查询未冻结用户</option>
-                                <option value="5">查询学生用户</option>
-                                <option value="6">查询教师用户</option>
-                                <option value="7">查询管理员用户</option>
+                                <option value="0">查询已开启的案例</option>
+                                <option value="1">查询未开启的案例</option>
                             </select>
                         </div>
                     </div>
@@ -297,20 +240,11 @@
                     </div>
                 </div>
                 <div style="margin-top: 30px; text-align: center;" class="container">
-                    <div class="col-md-2" style="text-align: center;">
-                        <nav class="navbar navbar-default" role="navigation">
-                            <div class="sidebar">
-                                <ul id='menu1' class='nav navbar-nav' style="text-align: center;">
-                                    <li>用户id</li>
-                                </ul>
-                            </div>
-                        </nav>
-                    </div>
-                    <div class="col-md-2" style="text-align: center;">
+                    <div class="col-md-4" style="text-align: center;">
                         <nav class="navbar navbar-default" role="navigation">
                             <div class="sidebar">
                                 <ul id='menu2' class='nav navbar-nav' style="text-align: center;">
-                                    <li>用户姓名</li>
+                                    <li>案例名称</li>
                                 </ul>
                             </div>
                         </nav>
@@ -319,7 +253,7 @@
                         <nav class="navbar navbar-default" role="navigation">
                             <div class="sidebar">
                                 <ul id='menu3' class='nav navbar-nav' style="text-align: center;">
-                                    <li>用户类型</li>
+                                    <li>创建时间</li>
                                 </ul>
                             </div>
                         </nav>
@@ -328,7 +262,7 @@
                         <nav class="navbar navbar-default" role="navigation">
                             <div class="sidebar">
                                 <ul id='menu4' class='nav navbar-nav' style="text-align: center;">
-                                    <li>注册时间</li>
+                                    <li>案例状态</li>
                                 </ul>
                             </div>
                         </nav>
@@ -337,7 +271,7 @@
                         <nav class="navbar navbar-default" role="navigation">
                             <div class="sidebar">
                                 <ul id='menu5' class='nav navbar-nav' style="text-align: center;">
-                                    <li>状态</li>
+                                    <li>操作</li>
                                 </ul>
                             </div>
                         </nav>
@@ -346,7 +280,7 @@
                         <nav class="navbar navbar-default" role="navigation">
                             <div class="sidebar">
                                 <ul id='menu6' class='nav navbar-nav' style="text-align: center;">
-                                    <li>密码重置</li>
+                                    <li>删除</li>
                                 </ul>
                             </div>
                         </nav>

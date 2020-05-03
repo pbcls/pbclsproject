@@ -28,6 +28,21 @@ public class Admin_UserController {
         return "admin/admin_user";
     }
 
+    @RequestMapping("/toadmin_project")
+    public String toadmin_project(){
+        return "admin/admin_project";
+    }
+
+    @RequestMapping("/toadmin_case")
+    public String toadmin_case(){
+        return "admin/admin_case";
+    }
+
+    @RequestMapping("/toadmin_system")
+    public String toadmin_system(){
+        return "admin/admin_system";
+    }
+
     @RequestMapping("/findUsers")
     @ResponseBody
     public Page<MyUser> findUsers(@RequestParam(value = "needid") boolean needuid, @RequestParam(value = "needname") boolean needname,
