@@ -76,8 +76,8 @@ public class PbclsApplicationTests {
 	@Test
 	public void testfinduser() {
 		Pageable pageable = PageRequest.of(1, 1, Sort.Direction.ASC, "registerTime");
-		String findstr="l";
-		Page<MyUser> page = admin_userService.findUsers(true,true,true,findstr,
+		String findstr="y";
+		Page<MyUser> page = admin_userService.findUsers(true,false,false,findstr,
 				true,true,"ADMIN,TEACHER,STUDENT",pageable);
 		System.out.println(page.getTotalElements());
 		System.out.println(page.getTotalPages());
