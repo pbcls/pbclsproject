@@ -31,6 +31,11 @@ public class CaseController {
         return "student/documentation_test";
     }
 
+    @RequestMapping("/todocumentationtask")
+    public String todoctask(){
+        return "student/documentation_task";
+    }
+
     @RequestMapping("/showcaselist")
     @ResponseBody
     public List<CaseInfo> showCaseList() {

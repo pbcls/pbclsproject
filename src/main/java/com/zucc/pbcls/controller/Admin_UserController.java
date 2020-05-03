@@ -43,6 +43,11 @@ public class Admin_UserController {
         return "admin/admin_system";
     }
 
+    @RequestMapping("/toadmin_systemdown")
+    public String toadmin_systemdown(){
+        return "admin/admin_system_down";
+    }
+
     @RequestMapping("/toadmin_role")
     public String toadmin_role(){
         return "admin/admin_role";

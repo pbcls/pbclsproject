@@ -30,6 +30,31 @@
             //     cid=GetRequest();
             //     // console.log(cid);
             // });
+
+            $.ajax({
+                type: "post",  //post put get 等等
+                url: "/showtasklist",
+                dataType: 'json',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
+                // 表示对象
+                data: {  //json前面的东西要和后端实体类对应
+                    "caseid": cid
+                },
+                success: function (data) {
+                    console.log(data);
+                    var Menulistcase = $("#casetask");
+                    for(var menu in data){
+                        // $("<li style='text-align: center; margin-top: 10px; list-style: none; font-weight: bold;'>"+ data[menu].taskname +"</li>").appendTo(Menulistcase);
+                        $("<li style='text-align: center; margin-top: 10px; list-style: none; font-weight: bold;'></li>").append("<a href='#' onclick='getUrl("+ cid +" , " + data[menu].caseTaskpk.taskid + ")''> <span class='menu-text' style='text-align: center;'>" + data[menu].taskname + "</span></a>").appendTo(Menulistcase);
+                    }
+                },
+                error: function (result) {  //连接至ashx文件失败时，执行函数
+                    alert(result);
+                }
+            });
+
             $.ajax({
                 type: "post",
                 url: "/showcaseinfo",
@@ -161,6 +186,12 @@
                 }
             });
         }
+
+        function getUrl(cid,taskid){
+            var main = document.getElementById('maintask');
+            main.innerHTML = "<iframe border='none' style='border:0; padding:10px' scrolling='no' width='100%' height='100%' src='todocumentationtask?"+cid+"&"+taskid+"'></iframe>";
+        }
+
     </script>
 </head>
 <body>
@@ -247,6 +278,16 @@
                 </td>
             </tr>
         </table>
+        <div class="container">
+            <div class="row">
+                <div>
+                    <ul id="casetask" style="width: 80px;"></ul>
+                </div>
+                <div id="maintask" style="margin-left: 30px; width: 550px;">
+
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 </body>

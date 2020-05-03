@@ -16,6 +16,10 @@
     <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
     <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 
+    <script type="text/javascript" src="http://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/js/bootstrap-select.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/css/bootstrap-select.css">
+    <!-- 3.0 -->
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
     <script th:inline="javascript">
         window.onload=function () {
             var uid = [[${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}]];
@@ -24,8 +28,8 @@
 
             // $('<li class="nav-item"><a class="nav-link active" href="" style="background-color: #96B87D; font-weight: bold;">版本更新</a></li>').appendTo(indexmenu);
             // $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">语言包</a></li>').appendTo(indexmenu);
-            $('<li class="nav-item"><a class="nav-link active" href="/toadmin_system" style="background-color: #96B87D; font-weight: bold;">EXCEL导入导出</a></li>').appendTo(indexmenu);
-            // $('<li class="nav-item"><a class="nav-link" href="/toadmin_systemdown" style="color: #0B3E5B; font-weight: bold;">EXCEL导出</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link" href="/toadmin_system" style="color: #0B3E5B; font-weight: bold;">EXCEL导入</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link active" href="/toadmin_systemdown" style="background-color: #96B87D; font-weight: bold;">EXCEL导出</a></li>').appendTo(indexmenu);
 
             $.ajax({
                 type: "post",  //post put get 等等
@@ -48,36 +52,11 @@
             });
 
             var Menulist = $("#menu");
-            $("<li style='margin-top: 10px; text-align: center;width: 300px;'></li>").append("<a href='/exportExcel'>导出EXCEL表</a>").appendTo(Menulist);
-            // $("<li style='margin-top: 10px; text-align: center;width: 300px;'></li>").append("<a href='/exportModelExcel'>导出EXCEL包示例</a>").appendTo(Menulist);
+            $("<li style='margin-top: 10px; text-align: center;width: 300px;'></li>").append("<a href='/downloadcasefile?filename="+data[menu]+"&caseid="+caseid+"'>"+data[menu]+"</a>").appendTo(Menulist);
 
         }
 
-        function put() {
-            var fileObj = document.getElementById("id_file").files[0];
-            if (typeof (fileObj) == "undefined" || fileObj.size <= 0) {
-                alert("请选择文件");
-                return;
-            }
-            var form = new FormData(); // FormData 对象
-            form.append("excel", fileObj); // 文件对象
-            console.log("111");
-            $.ajax({
-                type: "post",
-                url: "/updateExcel",
-                dataType: 'text',
-                contentType: false,
-                processData: false,
-                traditional: true,
-                data: form,
-                success: function (data) {
-                    alert("成功");
-                },
-                error:function(result) {
-                    alert(result);
-                }
-            });
-        }
+
 
     </script>
 </head>
@@ -141,12 +120,7 @@
                 </div>
             </div>
             <div id="middle" class="col-md-8">
-                <h5>EXCEL导入</h5>
-                <div>
-                    <input type="file" name="myfile" id="id_file" class="hidden" style="margin-top: 30px;margin-left: 40px;">
-                    <input type="button" class="btn btn-success pull-right" value="上传" id="id_submit" onclick="put()">
-                </div>
-                <h5 style="margin-top: 20px;">EXCEL导出</h5>
+                <h5>EXCEL导出</h5>
                 <div class="sidebar">
                     <ul id='menu' class='nav navbar-nav' style="text-align: center;"></ul>
                 </div>

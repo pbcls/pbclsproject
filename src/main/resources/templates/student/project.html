@@ -45,7 +45,8 @@
                     // console.log(result[0].casename);
                     var showMenupro = $("#proing");  //获取ul（父节点）的位置
                     for(var menu in result){
-                        $("<li style='margin-top: 10px;'><span class='menu-text'>在项目<a href='toprojectdetind?"+ result[menu].project.projectid +"'>" + result[menu].project.projectname + "</a>担任" + result[menu].role.rolename + "职位</span></li>").appendTo(showMenupro);
+                        $("<li style='margin-top: 10px;'><span class='menu-text'>在项目<a href='#' onclick='getUrl(" + result[menu].project.projectid + ")' class='turn'>" + result[menu].project.projectname + "</a>担任" + result[menu].role.rolename + "职位</span></li>").appendTo(showMenupro);
+                        // $("<li></li>").append("<a href='#' onclick='getUrl(" + cid + ")' class='turn'> <span class='menu-text'>" + name + "</span></a>").appendTo(parent);
                         if(result[menu+1] == 'undefined') break;
                     }
                 }
@@ -304,19 +305,38 @@
     </header>
     <div class="container" style="border-top: double; border-width: 5px; border-color: #96B87D; width: 100%;">
         <div class="row" style="margin-top: 40px;">
-            <div id="left" class="col-md-4" style="height: 530px; border-right: solid; border-color: #0B3E5B;text-align: center;">
-                <nav class="navbar navbar-default" role="navigation">
-                    <div class="sidebar" id="sidebar">
-                        <h4 style="margin-top: 10px; text-align: center;color: #0B3E5B; font-weight: bold;">项目列表</h4>
-                        <ul id='menu' class='nav navbar-nav' style="margin-top: 20px;"></ul>
+            <div id="left" class="col-md-4" style="height: 530px; text-align: center;">
+                <ul class="nav nav-pills" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="pill" href="#menuall" style="font-weight: bold;">全部项目</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="pill" href="#menuonly" style="font-weight: bold;">我的项目</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="menuall" class="container tab-pane active"><br>
+                        <div class="main-content">
+                            <div class="page-content" style="height: 530px;">
+                                <h4 style="margin-top: 10px; text-align: center;color: #0B3E5B; font-weight: bold;">项目列表</h4>
+                                <ul id='menu' class='nav navbar-nav' style="margin-top: 20px;"></ul>
+                            </div>
+                        </div>
                     </div>
-                </nav>
+                    <div id="menuonly" class="container tab-pane fade"><br>
+                        <div class="main-content">
+                            <div class="page-content" style="height: 530px;">
+                                <h4 style="margin-top: 10px; text-align: center;color: #0B3E5B; font-weight: bold;">正在进行的项目</h4>
+                                <ul id='proing' class='nav navbar-nav' style="margin-top: 20px;"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
             <div id="middle" class="col-md-4" style="height: 530px; border-right: solid; border-color: #0B3E5B;">
                 <div class="main-content">
                     <div class="page-content " id="main" style="height: 530px;">
-                        <h4 style="margin-top: 10px; text-align: center;color: #0B3E5B; font-weight: bold;">正在进行的项目</h4>
-                        <ul id='proing' class='nav navbar-nav' style="margin-top: 20px;"></ul>
                     </div>
                 </div>
             </div>
