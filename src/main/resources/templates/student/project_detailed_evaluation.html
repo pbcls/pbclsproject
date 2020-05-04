@@ -155,6 +155,10 @@
                                     },
                                     success: function (data) {
                                         console.log(data);
+                                        $("#mutualStudentScore").html(data.mutualStudentScore)
+                                        $("#mutualTeacherScore").html(data.mutualTeacherScore);
+                                        $("#selfScore").html(data.selfScore);
+                                        $("#teamScore").html(data.teamScore);
                                     },
                                     error:function(result) {
                                         alert(result);
@@ -350,6 +354,29 @@
                     </div>
                 </div>
                 <div id="eva">
+                    <div class="tab-content">
+                        <div id="menu1" class="container tab-pane active">
+                            <h4 style="text-align: center;color: #0B3E5B; font-weight: bold;">我的评价</h4>
+                            <table border="1" frame="void" rules="none" cellpadding="10px" style="font-weight: bold;">
+                                <tr>
+                                    <th>学习者互评成绩：</th>
+                                    <th id="mutualStudentScore"></th>
+                                </tr>
+                                <tr>
+                                    <td>教师评价成绩：</td>
+                                    <td id="mutualTeacherScore"></td>
+                                </tr>
+                                <tr>
+                                    <td>任务自评总成绩：</td>
+                                    <td id="selfScore"></td>
+                                </tr>
+                                <tr>
+                                    <td>项目小组成绩：</td>
+                                    <td id="teamScore"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

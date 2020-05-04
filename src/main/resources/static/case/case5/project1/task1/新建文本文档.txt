@@ -1,0 +1,40 @@
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="myModalLabel">更改用户类型</h4>
+                                <!--                            <button type="button" class="btn btn-primary">创建项目</button>-->
+                            </div>
+                            <div class="modal-body">
+                                <form style="text-align: center;">
+                                    <div class="form-group" style="padding-top: 45px;">
+                                        <label style="display:inline;">用户类型：</label>
+                                        <select id="roles">
+                                            <option value="ADMIN">管理员</option>
+                                            <option value="STUDENT">学生</option>
+                                            <option value="TEACHER">教师</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-outline-primary" data-dismiss="modal" onclick="btnchange()"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>确定修改</button>
+                                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+file:D:\Ij\pbclsproject\src\main\resources\static\
+
+
+This system is developed for teaching and learning in course of Software College. It is a learning system for<br>transferring, tracking, direction and management of case learning content and process rate. This system<br>imitate a virtual world, you can take any roles you want to act. These roles may be anyone in a practical<br>project. Enjoy your learning like playing a game!
+
+
+
+location.replace(location.href);
