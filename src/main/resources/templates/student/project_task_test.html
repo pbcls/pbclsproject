@@ -163,6 +163,9 @@
                     }else{
                         $("#status").html("已结束");
                         console.log("已结束");
+                        console.log(dataobj.evaluation.pmEvaluated);
+                        console.log(role);
+
                         if(dataobj.hasOwnProperty("output")){
                             console.log("output");
                             console.log(dataobj.output[0]);
@@ -264,6 +267,7 @@
             });
         }
         function selfeva() {
+            console.log("role:"+role);
             if(role == 2){
                 var main = document.getElementById('evalist');
                 main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='totaskselfPM?"+cid+"&"+taskid+"'></iframe>";
