@@ -264,7 +264,6 @@ public class ProjectController {
         return projectService.evaluateMutual(evaluation_mutuals);
     }
 
-
     /**
      * 所有教师评价小组 除了评价的字段 projectid必须被提前set好
      */

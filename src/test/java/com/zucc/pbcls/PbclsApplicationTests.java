@@ -393,6 +393,10 @@ public class PbclsApplicationTests {
 		}
 	}
 
+	@Test
+	public void showSumEvaluation(){
+		System.out.println(projectService.showSumEvaluation(2, "31601262"));
+	}
 
 
 

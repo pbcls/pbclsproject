@@ -650,7 +650,7 @@ public class ProjectService {
         }
         if (sumSelfCount!=0) {
             sumSelfScore = sumSelfScore / sumSelfCount;
-            jsonObject.put("selfScore",new JSONObject(sumSelfScore));
+            jsonObject.put("selfScore",sumSelfScore);
         }
         else
             jsonObject.put("selfScore","暂无评价");
@@ -668,7 +668,7 @@ public class ProjectService {
             }
             if (sumPmcount != 0) {
                 sumPmScore = sumPmScore / sumPmcount;
-                jsonObject.put("pmScore",new JSONObject(sumPmScore));
+                jsonObject.put("pmScore",sumPmScore);
             }
             else
                 jsonObject.put("pmScore","暂无评价");
@@ -687,7 +687,7 @@ public class ProjectService {
         }
         if (sumMutualStudentCount != 0) {
             sumMutualStudentScore = sumMutualStudentScore / sumMutualStudentCount;
-            jsonObject.put("mutualStudentScore",new JSONObject(sumMutualStudentScore));
+            jsonObject.put("mutualStudentScore",sumMutualStudentScore);
         }
         else
             jsonObject.put("mutualStudentScore","暂无评价");
@@ -702,7 +702,7 @@ public class ProjectService {
         }
         if (sumMutualTeacherCount != 0) {
             sumMutualTeacherScore = sumMutualTeacherScore / sumMutualTeacherCount;
-            jsonObject.put("mutualTeacherScore",new JSONObject(sumMutualTeacherScore));
+            jsonObject.put("mutualTeacherScore",sumMutualTeacherScore);
         }
         else
             jsonObject.put("mutualTeacherScore","暂无评价");
@@ -710,7 +710,7 @@ public class ProjectService {
         //教师对小组的评价
         Evaluation_Team evaluation_team = evaluation_teamDao.findAllByProjectid(projectid);
         if (evaluation_team.isEvaluated())
-            jsonObject.put("teamScore",new JSONObject(evaluation_team.getScore()));
+            jsonObject.put("teamScore",evaluation_team.getScore());
         else
             jsonObject.put("teamScore","暂无评价");
 

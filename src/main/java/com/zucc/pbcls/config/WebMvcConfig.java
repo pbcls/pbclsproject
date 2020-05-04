@@ -17,7 +17,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     //映射图片保存地址
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**").addResourceLocations("file:D:\\Ij\\pbclsproject\\src\\main\\resources\\static\\");
+//        file:/Users/honmono/Study/pbclsproject/src/main/resources/static/   留着！
+        registry.addResourceHandler("/**").addResourceLocations("file:/Users/honmono/Study/pbclsproject/src/main/resources/static/");
     }
 
 }

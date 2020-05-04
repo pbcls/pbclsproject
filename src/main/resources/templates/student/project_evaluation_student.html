@@ -52,6 +52,7 @@
                     console.log(dataobj);
                     // alert(dataobj.case);
                     // var showMenulist = $("#list");
+                    console.log("1:flag："+flag);
                     if(dataobj.length != 1){
                         document.getElementById("next").style.visibility="visible";
                     }else{
@@ -59,7 +60,7 @@
                     }
                     if(dataobj[0].torolename === "项目经理"){
                         flag = 1;
-                        console.log(flag);
+                        console.log("2:flag："+flag);
                         document.getElementById("PM_list").style.display="";
                     }
                     touid = dataobj[0].touid;
