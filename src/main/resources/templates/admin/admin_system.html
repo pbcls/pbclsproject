@@ -142,16 +142,22 @@
                 </div>
             </div>
             <div id="middle" class="col-md-8">
-                <h5>EXCEL导入</h5>
-                <ul id='menu2' class='nav navbar-nav'></ul>
-                <div>
-                    <input type="file" name="myfile" id="id_file" class="hidden" style="margin-top: 30px;margin-left: 40px;">
-                    <input type="button" class="btn btn-success pull-right" value="上传" id="id_submit" onclick="put()">
-                </div>
-<!--                <ul id='menu2' class='nav navbar-nav'></ul>-->
-                <h5 style="margin-top: 20px;">EXCEL导出</h5>
-                <div class="sidebar">
-                    <ul id='menu' class='nav navbar-nav' style="text-align: center;"></ul>
+                <p>1.导入前请先下载模版，然后将相应数据填写进模版中。</p>
+                <p>2.注册时间，登陆次数无需填写。</p>
+                <p>3.性别，权限，冻结栏请按照给出的字段填写，除了给出字段以外的字段（加红）不能填写。</p>
+                <p>4.导入的用户信息密码默认为帐号，请及时通知用户修改。</p>
+                <div style="border-style: solid;border-color: #96B87D">
+                    <h5 style="margin-left: 10px;">EXCEL导入</h5>
+                    <ul id='menu2' class='nav navbar-nav'></ul>
+                    <div>
+                        <input type="file" name="myfile" id="id_file" class="hidden" style="margin-top: 30px;margin-left: 40px;">
+                        <input type="button" class="btn btn-success pull-right" value="上传" id="id_submit" onclick="put()">
+                    </div>
+                    <!--                <ul id='menu2' class='nav navbar-nav'></ul>-->
+                    <h5 style="margin-top: 20px; margin-left: 10px;">EXCEL导出</h5>
+                    <div class="sidebar">
+                        <ul id='menu' class='nav navbar-nav' style="text-align: center;"></ul>
+                    </div>
                 </div>
             </div>
         </div>

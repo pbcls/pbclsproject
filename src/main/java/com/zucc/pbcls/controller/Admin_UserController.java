@@ -38,14 +38,39 @@ public class Admin_UserController {
         return "admin/admin_user_locked";
     }
 
+    @RequestMapping("/toadmin_userdelate")
+    public String toadmin_userdelate(){
+        return "admin/admin_user_delate";
+    }
+
     @RequestMapping("/toadmin_project")
     public String toadmin_project(){
         return "admin/admin_project";
     }
 
+    @RequestMapping("/toadmin_projectlist")
+    public String toadmin_projectlist(){
+        return "admin/admin_project_list";
+    }
+
+    @RequestMapping("/toadmin_projectlocked")
+    public String toadmin_projectlocked(){
+        return "admin/admin_project_locked";
+    }
+
     @RequestMapping("/toadmin_case")
     public String toadmin_case(){
         return "admin/admin_case";
+    }
+
+    @RequestMapping("/toadmin_caselist")
+    public String toadmin_caselist(){
+        return "admin/admin_case_list";
+    }
+
+    @RequestMapping("/toadmin_caselocked")
+    public String toadmin_caselocked(){
+        return "admin/admin_case_locked";
     }
 
     @RequestMapping("/toadmin_system")

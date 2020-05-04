@@ -153,17 +153,18 @@
                         }
                     }else if(dataobj.task.status == 1){
                         $("#status").html("进行中");
-                        if(dataobj.hasOwnProperty("output")){
+                        if(dataobj.hasOwnProperty("output") && role != 0){
                             // console.log("output");
                             // console.log(dataobj.output[0]);
                             document.getElementById("download").style.display="";
                             if(dataobj.output[0] != undefined){
                                 var Menulistdown = $("#download");
+                                var Menulistadd = $("#newadd");
                                 var Menumeg = $("#meg");
                                 $("<th style='margin-top: 30px;'></th>").append("<a href='/downloadprojecttaskfile?filename="+dataobj.output[0]+"&projectid="+cid+"&taskid="+taskid+"'>"+dataobj.output[0]+"</a>").appendTo(Menulistdown);
                                 if(role == 2){
-                                    $("<button class='btn btn-outline-primary' onclick='checktrue()'>通过</button>").appendTo(Menulistdown);
-                                    $("<button class='btn btn-block' onclick='checkfalse()'>未通过</button>").appendTo(Menulistdown);
+                                    $("<button class='btn btn-outline-primary' onclick='checktrue()'>通过</button>").appendTo(Menulistadd);
+                                    $("<button class='btn btn-block' onclick='checkfalse()'>未通过</button>").appendTo(Menulistadd);
                                 }
                             }else{
                                 var Menulistdown = $("#download");
@@ -173,34 +174,36 @@
                     }else{
                         $("#status").html("已结束");
                         console.log("已结束");
-                        console.log(dataobj.evaluation.pmEvaluated);
+                        // console.log(dataobj.evaluation.pmEvaluated);
                         console.log(role);
 
-                        if(dataobj.hasOwnProperty("output")){
-                            console.log("output");
-                            console.log(dataobj.output[0]);
-                            document.getElementById("download").style.display="";
-                            var Menulistdown = $("#download");
-                            if(dataobj.output[0] == undefined)
-                                $("<tr style='margin-top: 30px;'>暂无输出文档提交</tr>").appendTo(Menulistdown);
-                            else
-                                $("<tr style='margin-top: 30px;'></tr>").append("<a href='/downloadprojecttaskfile?filename="+dataobj.output[0]+"&projectid="+cid+"&taskid="+taskid+"'>"+dataobj.output[0]+"</a>").appendTo(Menulistdown);
-                        }
-                        if(dataobj.evaluation.pmEvaluated == true){
-                            document.getElementById("PMeva").style.display="";
-                            $("#PMevath").html(dataobj.evaluation.pmScore);
-                        }else if(dataobj.evaluation.pmEvaluated == false && role == 2 && flagtask == 0){
-                            document.getElementById("PMbtn").style.display="";
-                        }
-                        if(dataobj.evaluation.selfEvaluated == true){
-                            document.getElementById("selfeva").style.display="";
-                            $("#selfevath").html(dataobj.evaluation.selfScore);
-                        }
-                        var namelist = [];
-                        for(var menu in dataobj.users) {
-                            if(dataobj.users[menu].uid === uid){
-                                if(dataobj.evaluation.selfEvaluated == false){
-                                    document.getElementById("selfbtn").style.display="";
+                        if(role != 0){
+                            if(dataobj.hasOwnProperty("output")){
+                                console.log("output");
+                                console.log(dataobj.output[0]);
+                                document.getElementById("download").style.display="";
+                                var Menulistdown = $("#download");
+                                if(dataobj.output[0] == undefined)
+                                    $("<tr style='margin-top: 30px;'>暂无输出文档提交</tr>").appendTo(Menulistdown);
+                                else
+                                    $("<tr style='margin-top: 30px;'></tr>").append("<a href='/downloadprojecttaskfile?filename="+dataobj.output[0]+"&projectid="+cid+"&taskid="+taskid+"'>"+dataobj.output[0]+"</a>").appendTo(Menulistdown);
+                            }
+                            if(dataobj.evaluation.pmEvaluated == true && flagtask == 0){
+                                document.getElementById("PMeva").style.display="";
+                                $("#PMevath").html(dataobj.evaluation.pmScore);
+                            }else if(dataobj.evaluation.pmEvaluated == false && role == 2 && flagtask == 0){
+                                document.getElementById("PMbtn").style.display="";
+                            }
+                            if(dataobj.evaluation.selfEvaluated == true){
+                                document.getElementById("selfeva").style.display="";
+                                $("#selfevath").html(dataobj.evaluation.selfScore);
+                            }
+                            var namelist = [];
+                            for(var menu in dataobj.users) {
+                                if(dataobj.users[menu].uid === uid){
+                                    if(dataobj.evaluation.selfEvaluated == false){
+                                        document.getElementById("selfbtn").style.display="";
+                                    }
                                 }
                             }
                         }
@@ -371,8 +374,8 @@
 <div class="tab-content">
     <div id="menu1" class="container tab-pane active" style="height: 600px;"><br>
         <div class="modal" id="mymodal">
-            <div class="modal-dialog" style="height: 400px;">
-                <div class="modal-content" style="height: 400px;" id="evalist">
+            <div class="modal-dialog" style="height: 430px;">
+                <div class="modal-content" style="height: 430px;" id="evalist">
                     xianshishi
                 </div>
             </div>
@@ -420,6 +423,11 @@
                     <th>文件下载：</th>
 <!--                    <th id="downloadth"></th>-->
                 </tr>
+                <tr>
+                    <th></th>
+                    <th id="newadd"></th>
+                    <!--                    <th id="downloadth"></th>-->
+                </tr>
 <!--                <tr>-->
 <!--                    <td>开始时间：</td>-->
 <!--                    <td id="time"></td>-->
@@ -433,8 +441,8 @@
 <!--            <button type="button" class="btn btn-primary" id="btn_add">进入项目</button>-->
         </div>
         <button class="btn btn-outline-primary" id="start_task" onclick="startbtn()">开始任务</button>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#mymodal" id="PMbtn" onclick="PMeva()">任务评论</button>
-        <button class="btn btn-outline-primary" data-toggle="modal" data-target="#mymodal" id="selfbtn" onclick="selfeva()">自我评论</button>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#mymodal" id="PMbtn" onclick="PMeva()">任务评价</button>
+        <button class="btn btn-outline-primary" data-toggle="modal" data-target="#mymodal" id="selfbtn" onclick="selfeva()">自我评价</button>
     </div>
 </div>
 </body>

@@ -38,7 +38,7 @@
             $('<li class="nav-item"><a class="nav-link" href="/toadmin_user" style="color: #0B3E5B; font-weight: bold;">查找用户</a></li>').appendTo(indexmenu);
             $('<li class="nav-item"><a class="nav-link" href="/toadmin_userlist" style="color: #0B3E5B; font-weight: bold;">用户列表</a></li>').appendTo(indexmenu);
             $('<li class="nav-item"><a class="nav-link active" href="/toadmin_userlocked" style="background-color: #96B87D; font-weight: bold;">冻结用户</a></li>').appendTo(indexmenu);
-            $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">删除用户</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link" href="/toadmin_userdelate" style="color: #0B3E5B; font-weight: bold;">删除用户</a></li>').appendTo(indexmenu);
             // $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">IP封禁</a></li>').appendTo(indexmenu);
             // $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">EMAIL封禁</a></li>').appendTo(indexmenu);
 
@@ -75,8 +75,8 @@
                     "needname":true,
                     "needmail":true,
                     "findstr":"",
-                    "notAccountNonLocked":true,
-                    "isAccountNonLocked":false,
+                    "notAccountNonLocked":false,
+                    "isAccountNonLocked":true,
                     "role":"ADMIN,TEACHER,STUDENT",
                     "pagenum":1,
                     "pagesize":30,

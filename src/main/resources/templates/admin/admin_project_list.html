@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <meta charset="UTF-8">
-    <title>案例管理</title>
+    <title>项目管理</title>
     <!-- 新 Bootstrap4 核心 CSS 文件 -->
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.1.0/css/bootstrap.min.css">
 
@@ -31,10 +31,10 @@
 
             var indexmenu = $("#menuindex");
 
-            $('<li class="nav-item"><a class="nav-link active" href="/toadmin_case" style="background-color: #96B87D; font-weight: bold;">查找案例</a></li>').appendTo(indexmenu);
-            $('<li class="nav-item"><a class="nav-link" href="/toadmin_caselist" style="color: #0B3E5B; font-weight: bold;">案例列表</a></li>').appendTo(indexmenu);
-            $('<li class="nav-item"><a class="nav-link" href="/toadmin_caselocked" style="color: #0B3E5B; font-weight: bold;">冻结案例</a></li>').appendTo(indexmenu);
-            // $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">删除案例</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link" href="/toadmin_project" style="color: #0B3E5B; font-weight: bold;">查找项目</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link active" href="/toadmin_projectlist" style="background-color: #96B87D; font-weight: bold;">项目列表</a></li>').appendTo(indexmenu);
+            // $('<li class="nav-item"><a class="nav-link" href="/toadmin_projectlocked" style="color: #0B3E5B; font-weight: bold;">冻结项目</a></li>').appendTo(indexmenu);
+            // $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">删除项目</a></li>').appendTo(indexmenu);
             // $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">关键词封禁</a></li>').appendTo(indexmenu);
 
             $.ajax({
@@ -56,46 +56,107 @@
                     alert("error");
                 }
             });
-        }
 
-        function btn_search() {
-            var mySelect = document.getElementById("usertype");
-            $('.delatepart').remove();
-            // console.log(mySelect.options[2].selected);
             $.ajax({
                 type: "post",  //post put get 等等
-                url: "/findcases",
+                url: "/findprojects",
                 dataType: 'json',
                 contentType: "application/x-www-form-urlencoded",
                 traditional: true,
                 //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
                 // 表示对象
                 data: {  //json前面的东西要和后端实体类对应
-                    "statuson":mySelect.options[0].selected,
-                    "statusoff":mySelect.options[1].selected,
+                    "status0":true,
+                    "status1":true,
+                    "status2":true,
+                    "status3":true,
+                    "findstr":"",
+                    "pagenum":1,
+                    "pagesize":30,
+                },
+                success: function (data) {
+                    console.log(data);
+                    var showMenu1 = $("#menu1");
+                    var showMenu2 = $("#menu2");
+                    var showMenu3 = $("#menu3");
+                    var showMenu4 = $("#menu4");
+                    // var showMenu5 = $("#menu5");
+                    var showMenu6 = $("#menu6");
+                    for(var menu in data.content) {
+                        $("<li style='margin-top: 22px;' class='delatepart'></li>").append(data.content[menu].caseid).appendTo(showMenu1);
+                        $("<li style='margin-top: 22px;' class='delatepart'></li>").append(data.content[menu].projectname).appendTo(showMenu2);
+                        if(data.content[menu].starttime == null){
+                            $("<li style='margin-top: 7px;' class='delatepart'>无开始时间</li>").append(data.content[menu].starttime).appendTo(showMenu3);
+                        }else{
+                            $("<li style='margin-top: 7px;' class='delatepart'></li>").append(data.content[menu].starttime).appendTo(showMenu3);
+                        }
+                        if(data.content[menu].status == 0){
+                            $("<li style='margin-top: 22px;' class='delatepart'>中途终止</li>").appendTo(showMenu4);
+                        }else if(data.content[menu].status == 1){
+                            $("<li style='margin-top: 22px;' class='delatepart'>未开始</li>").appendTo(showMenu4);
+                        }else if(data.content[menu].status == 2){
+                            $("<li style='margin-top: 22px;' class='delatepart'>正在进行</li>").appendTo(showMenu4);
+                        }else{
+                            $("<li style='margin-top: 22px;' class='delatepart'>已结束</li>").appendTo(showMenu4);
+                        }
+                        $("<li style='margin-top: 10px;' class='delatepart'><button type='button' class='btn btn-danger' value = '" + data.content[menu].projectid + "' onclick='btn_delate(this.value)'>删除</button></li>").appendTo(showMenu6);
+                        if(data.content[menu+1] == 'undefined') break;
+                    }
+                },
+                error: function (data) {  //连接至ashx文件失败时，执行函数
+                    alert(data);
+                }
+            });
+
+        }
+
+        function btn_search() {
+            var mySelect = document.getElementById("usertype");
+            // console.log(mySelect.options[2].selected);
+            $('.delatepart').remove();
+            $.ajax({
+                type: "post",  //post put get 等等
+                url: "/findprojects",
+                dataType: 'json',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
+                // 表示对象
+                data: {  //json前面的东西要和后端实体类对应
+                    "status0":mySelect.options[0].selected,
+                    "status1":mySelect.options[1].selected,
+                    "status2":mySelect.options[2].selected,
+                    "status3":mySelect.options[3].selected,
                     "findstr":$('#search').val(),
                     "pagenum":1,
                     "pagesize":30,
                 },
                 success: function (data) {
                     console.log(data);
-                    // var showMenu1 = $("#menu1");
+                    var showMenu1 = $("#menu1");
                     var showMenu2 = $("#menu2");
                     var showMenu3 = $("#menu3");
                     var showMenu4 = $("#menu4");
-                    var showMenu5 = $("#menu5");
+                    // var showMenu5 = $("#menu5");
                     var showMenu6 = $("#menu6");
                     for(var menu in data.content) {
-                        // $("<li style='margin-top: 10px;'></li>").append(data.content[menu].caseid).appendTo(showMenu1);
-                        $("<li style='margin-top: 22px;' class='delatepart'></li>").append(data.content[menu].casename).appendTo(showMenu2);
-                        $("<li style='margin-top: 3px;' class='delatepart'></li>").append(data.content[menu].uploadtime).appendTo(showMenu3);
-                        if(data.content[menu].status == true){
-                            $("<li style='margin-top: 20px;' class='delatepart'><select><option value='1'>已开启</option><option value='2'>未开启</option></select></li>").appendTo(showMenu4);
+                        $("<li style='margin-top: 22px;' class='delatepart'></li>").append(data.content[menu].caseid).appendTo(showMenu1);
+                        $("<li style='margin-top: 22px;' class='delatepart'></li>").append(data.content[menu].projectname).appendTo(showMenu2);
+                        if(data.content[menu].starttime == null){
+                            $("<li style='margin-top: 7px;' class='delatepart'>无开始时间</li>").append(data.content[menu].starttime).appendTo(showMenu3);
                         }else{
-                            $("<li style='margin-top: 20px;' class='delatepart'><select><option value='1'>未开启</option><option value='2'>已开启</option></select></li>").appendTo(showMenu4);
+                            $("<li style='margin-top: 7px;' class='delatepart'></li>").append(data.content[menu].starttime).appendTo(showMenu3);
                         }
-                        $("<li style='margin-top: 10px;' class='delatepart'><button type='button' class='btn btn-primary' value = '" + data.content[menu].caseid + "' title='" + data.content[menu].status + "' onclick='btn_sure(this.value,this.title)'>确认</button></li>").appendTo(showMenu5);
-                        $("<li style='margin-top: 10px;' class='delatepart'><button type='button' class='btn btn-danger' value = '" + data.content[menu].caseid + "' onclick='btn_delate(this.value)'>删除</button></li>").appendTo(showMenu6);
+                        if(data.content[menu].status == 0){
+                            $("<li style='margin-top: 22px;' class='delatepart'>中途终止</li>").appendTo(showMenu4);
+                        }else if(data.content[menu].status == 1){
+                            $("<li style='margin-top: 22px;' class='delatepart'>未开始</li>").appendTo(showMenu4);
+                        }else if(data.content[menu].status == 2){
+                            $("<li style='margin-top: 22px;' class='delatepart'>正在进行</li>").appendTo(showMenu4);
+                        }else{
+                            $("<li style='margin-top: 22px;' class='delatepart'>已结束</li>").appendTo(showMenu4);
+                        }
+                        $("<li style='margin-top: 10px;' class='delatepart'><button type='button' class='btn btn-danger' value = '" + data.content[menu].projectid + "' onclick='btn_delate(this.value)'>删除</button></li>").appendTo(showMenu6);
                         if(data.content[menu+1] == 'undefined') break;
                     }
                 },
@@ -105,54 +166,24 @@
             });
         }
 
-        function btn_sure(cid,flag) {
-            console.log(flag);
-            if(flag === "true") flag = false;
-            else flag = true;
-            console.log(flag);
-            $.ajax({
-                type: "post",  //post put get 等等
-                url: "/updatecasestatus",
-                dataType: 'json',
-                contentType: "application/x-www-form-urlencoded",
-                traditional: true,
-                //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
-                // 表示对象
-                data: {  //json前面的东西要和后端实体类对应
-                    "caseid": cid,
-                    "status": flag,
-                },
-                success: function (data) {
-                    alert("修改成功！");
-                    console.log(data);
-                    location.replace(location.href);
-                },
-                error: function (data) {  //连接至ashx文件失败时，执行函数
-                    alert(data);
-                }
-            });
-
-        }
-
         function btn_delate(cid) {
             console.log(cid);
 
             $.ajax({
                 type: "post",  //post put get 等等
-                url: "/deletecase",
+                url: "/deleteproject",
                 dataType: 'json',
                 contentType: "application/x-www-form-urlencoded",
                 traditional: true,
                 //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
                 // 表示对象
                 data: {  //json前面的东西要和后端实体类对应
-                    "caseid": cid,
+                    "projectid": cid,
                 },
                 success: function (data) {
                     console.log(data);
-                    if(data == 0) alert("该案例已经被删除！");
-                    else if(data == 1) alert("该案例下还有正在进行的项目！");
-                    else alert("删除成功！");
+                    if(data == true) alert("删除成功！");
+                    else alert("删除失败！");
                     location.replace(location.href);
                 },
                 error: function (data) {  //连接至ashx文件失败时，执行函数
@@ -224,33 +255,26 @@
                 </div>
             </div>
             <div id="middle" class="col-md-8">
-                <div class="container">
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" id="search" style="display:inline;width:200px;"autocomplete="off">
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <select id="usertype" name="usertype" class="selectpicker show-tick form-control" multiple data-live-search="false" style="height: 100px;" title="请选择你想要查询的关键字">
-                                <option value="0" selected="true">查询已开启的案例</option>
-                                <option value="1" selected="true">查询未开启的案例</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <button type='button' class='btn btn-primary' onclick="btn_search()">查询</button>
-                    </div>
-                </div>
                 <div style="margin-top: 30px; text-align: center;" class="container">
-                    <div class="col-md-4" style="text-align: center;">
+                    <div class="col-md-2" style="text-align: center;">
                         <nav class="navbar navbar-default" role="navigation">
                             <div class="sidebar">
-                                <ul id='menu2' class='nav navbar-nav' style="text-align: center;">
-                                    <li>案例名称</li>
+                                <ul id='menu1' class='nav navbar-nav' style="text-align: center;">
+                                    <li>案例id</li>
                                 </ul>
                             </div>
                         </nav>
                     </div>
-                    <div class="col-md-2" style="text-align: center;">
+                    <div class="col-md-3" style="text-align: center;">
+                        <nav class="navbar navbar-default" role="navigation">
+                            <div class="sidebar">
+                                <ul id='menu2' class='nav navbar-nav' style="text-align: center;">
+                                    <li>项目名称</li>
+                                </ul>
+                            </div>
+                        </nav>
+                    </div>
+                    <div class="col-md-3" style="text-align: center;">
                         <nav class="navbar navbar-default" role="navigation">
                             <div class="sidebar">
                                 <ul id='menu3' class='nav navbar-nav' style="text-align: center;">
@@ -263,16 +287,7 @@
                         <nav class="navbar navbar-default" role="navigation">
                             <div class="sidebar">
                                 <ul id='menu4' class='nav navbar-nav' style="text-align: center;">
-                                    <li>案例状态</li>
-                                </ul>
-                            </div>
-                        </nav>
-                    </div>
-                    <div class="col-md-2" style="text-align: center;">
-                        <nav class="navbar navbar-default" role="navigation">
-                            <div class="sidebar">
-                                <ul id='menu5' class='nav navbar-nav' style="text-align: center;">
-                                    <li>操作</li>
+                                    <li>项目状态</li>
                                 </ul>
                             </div>
                         </nav>

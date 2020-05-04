@@ -18,6 +18,7 @@
     <script th:inline="javascript">
         var uid,cid;
         window.onload=function () {
+            document.getElementById("eva").style.visibility="hidden";
             uid = GetRequest();
             cid = GetRequest2();
             var Menulisttop = $("#topmenu");
@@ -80,7 +81,7 @@
                     $('<li class="nav-item"><a class="nav-link" href="/toprojectdetind?' + cid + '" style="color: #0B3E5B; font-weight: bold;">基本信息</a></li>').appendTo(indexmenu);
                     $('<li class="nav-item"><a class="nav-link" href="/toprojectdettask?' + uid + '&' + cid + '" style="color: #0B3E5B; font-weight: bold;">我的任务</a></li>').appendTo(indexmenu);
                     $('<li class="nav-item"><a class="nav-link" href="/toprojectdetman?' + uid + '&' + cid + '" style="color: #0B3E5B; font-weight: bold;">组内信息</a></li>').appendTo(indexmenu);
-                    $('<li class="nav-item"><a class="nav-link" href="/toprojectdetdoc?' + uid + '&' + cid + '" style="color: #0B3E5B; font-weight: bold;">我的文档</a></li>').appendTo(indexmenu);
+                    $('<li class="nav-item"><a class="nav-link" href="/toprojectdetdoc?' + uid + '&' + cid + '" style="color: #0B3E5B; font-weight: bold;">项目文档</a></li>').appendTo(indexmenu);
                     $('<li class="nav-item"><a class="nav-link active" href="/toprojectdeteva?' + uid + '&' + cid + '" style="background-color: #96B87D; font-weight: bold;">我的评价</a></li>').appendTo(indexmenu);
                     $('<li class="nav-item"><a class="nav-link" href="/toprojectdetcom?' + uid + '&' + cid + '" style="color: #0B3E5B; font-weight: bold;">聊天室</a></li>').appendTo(indexmenu);
 
@@ -144,6 +145,7 @@
                                     }
                                 });
                             }else if (dataobj.project.status == 3){
+                                document.getElementById("eva").style.visibility="visible";
                                 $.ajax({
                                     type: "post",
                                     url: "/showsumevaluation",

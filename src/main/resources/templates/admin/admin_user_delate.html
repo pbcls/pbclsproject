@@ -3,7 +3,7 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <meta charset="UTF-8">
-    <title>案例管理</title>
+    <title>项目详细信息</title>
     <!-- 新 Bootstrap4 核心 CSS 文件 -->
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.1.0/css/bootstrap.min.css">
 
@@ -21,21 +21,26 @@
     <!-- 3.0 -->
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
     <script th:inline="javascript">
+        var cid;
+        var changeuid;
         $(window).on('load', function () {
             $('#usertype').selectpicker({
                 'selectedText': 'cat'
             });
         });
+
         window.onload=function () {
+            $('#myModal').modal();
             var uid = [[${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}]];
 
             var indexmenu = $("#menuindex");
 
-            $('<li class="nav-item"><a class="nav-link active" href="/toadmin_case" style="background-color: #96B87D; font-weight: bold;">查找案例</a></li>').appendTo(indexmenu);
-            $('<li class="nav-item"><a class="nav-link" href="/toadmin_caselist" style="color: #0B3E5B; font-weight: bold;">案例列表</a></li>').appendTo(indexmenu);
-            $('<li class="nav-item"><a class="nav-link" href="/toadmin_caselocked" style="color: #0B3E5B; font-weight: bold;">冻结案例</a></li>').appendTo(indexmenu);
-            // $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">删除案例</a></li>').appendTo(indexmenu);
-            // $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">关键词封禁</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link" href="/toadmin_user" style="color: #0B3E5B; font-weight: bold;">查找用户</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link" href="/toadmin_userlist" style="color: #0B3E5B; font-weight: bold;">用户列表</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link" href="/toadmin_userlocked" style="color: #0B3E5B; font-weight: bold;">冻结用户</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link active" href="/toadmin_userdelate" style="background-color: #96B87D; font-weight: bold;;">删除用户</a></li>').appendTo(indexmenu);
+            // $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">IP封禁</a></li>').appendTo(indexmenu);
+            // $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">EMAIL封禁</a></li>').appendTo(indexmenu);
 
             $.ajax({
                 type: "post",  //post put get 等等
@@ -56,46 +61,46 @@
                     alert("error");
                 }
             });
-        }
 
-        function btn_search() {
-            var mySelect = document.getElementById("usertype");
-            $('.delatepart').remove();
-            // console.log(mySelect.options[2].selected);
             $.ajax({
                 type: "post",  //post put get 等等
-                url: "/findcases",
+                url: "/findUsers",
                 dataType: 'json',
                 contentType: "application/x-www-form-urlencoded",
                 traditional: true,
                 //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
                 // 表示对象
                 data: {  //json前面的东西要和后端实体类对应
-                    "statuson":mySelect.options[0].selected,
-                    "statusoff":mySelect.options[1].selected,
-                    "findstr":$('#search').val(),
+                    "needid":true,
+                    "needname":true,
+                    "needmail":true,
+                    "findstr":"",
+                    "notAccountNonLocked":false,
+                    "isAccountNonLocked":true,
+                    "role":"ADMIN,TEACHER,STUDENT",
                     "pagenum":1,
                     "pagesize":30,
                 },
                 success: function (data) {
                     console.log(data);
-                    // var showMenu1 = $("#menu1");
+                    var showMenu1 = $("#menu1");
                     var showMenu2 = $("#menu2");
                     var showMenu3 = $("#menu3");
                     var showMenu4 = $("#menu4");
                     var showMenu5 = $("#menu5");
                     var showMenu6 = $("#menu6");
+                    // var showMenu7 = $("#menu7");
                     for(var menu in data.content) {
-                        // $("<li style='margin-top: 10px;'></li>").append(data.content[menu].caseid).appendTo(showMenu1);
-                        $("<li style='margin-top: 22px;' class='delatepart'></li>").append(data.content[menu].casename).appendTo(showMenu2);
-                        $("<li style='margin-top: 3px;' class='delatepart'></li>").append(data.content[menu].uploadtime).appendTo(showMenu3);
-                        if(data.content[menu].status == true){
-                            $("<li style='margin-top: 20px;' class='delatepart'><select><option value='1'>已开启</option><option value='2'>未开启</option></select></li>").appendTo(showMenu4);
+                        $("<li style='margin-top: 22px;' class='delatepart'></li>").append(data.content[menu].uid).appendTo(showMenu1);
+                        $("<li style='margin-top: 22px;' class='delatepart'></li>").append(data.content[menu].name).appendTo(showMenu2);
+                        $("<li style='margin-top: 22px;' class='delatepart'></li>").append(data.content[menu].role).appendTo(showMenu3);
+                        $("<li style='margin-top: 10px;' class='delatepart'><button type='button' class='btn btn-primary' data-toggle='modal' data-target='#mymodal' value = '" + data.content[menu].uid + "' onclick='btn_change(this.value)'>更改</button></li>").appendTo(showMenu4);
+                        if(data.content[menu].accountNonLocked == true){
+                            $("<li style='margin-top: 10px;' class='delatepart'><button type='button' class='btn btn-danger' value = '" + data.content[menu].uid + "' onclick='btn_fro(this.value)'>冻结</button></li>").appendTo(showMenu5);
                         }else{
-                            $("<li style='margin-top: 20px;' class='delatepart'><select><option value='1'>未开启</option><option value='2'>已开启</option></select></li>").appendTo(showMenu4);
+                            $("<li style='margin-top: 10px;' class='delatepart'><button type='button' class='btn btn-warning' value = '" + data.content[menu].uid + "' onclick='btn_re(this.value)'>恢复</button></li>").appendTo(showMenu5);
                         }
-                        $("<li style='margin-top: 10px;' class='delatepart'><button type='button' class='btn btn-primary' value = '" + data.content[menu].caseid + "' title='" + data.content[menu].status + "' onclick='btn_sure(this.value,this.title)'>确认</button></li>").appendTo(showMenu5);
-                        $("<li style='margin-top: 10px;' class='delatepart'><button type='button' class='btn btn-danger' value = '" + data.content[menu].caseid + "' onclick='btn_delate(this.value)'>删除</button></li>").appendTo(showMenu6);
+                        $("<li style='margin-top: 10px;' class='delatepart'><button type='button' class='btn btn-danger' value = '" + data.content[menu].uid + "' onclick='btn_rename(this.value)'>删除</button></li>").appendTo(showMenu6);
                         if(data.content[menu+1] == 'undefined') break;
                     }
                 },
@@ -103,28 +108,35 @@
                     alert(data);
                 }
             });
+
         }
 
-        function btn_sure(cid,flag) {
-            console.log(flag);
-            if(flag === "true") flag = false;
-            else flag = true;
-            console.log(flag);
+        function btn_change(uid) {
+            // console.log(uid);
+            // changeuid = uid;
+            //     // alert("111111");
+            // $("#myModalLabel").text("更改用户类型");
+            // $('#myModal').modal();
+            var main = document.getElementById('evalist');
+            main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='toadmin_role?"+uid+"'></iframe>";
+        }
+
+        function btn_fro(uid) {
+            console.log(uid);
             $.ajax({
                 type: "post",  //post put get 等等
-                url: "/updatecasestatus",
+                url: "/lockUser",
                 dataType: 'json',
                 contentType: "application/x-www-form-urlencoded",
                 traditional: true,
                 //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
                 // 表示对象
                 data: {  //json前面的东西要和后端实体类对应
-                    "caseid": cid,
-                    "status": flag,
+                    "uid": uid,
                 },
                 success: function (data) {
-                    alert("修改成功！");
-                    console.log(data);
+                    if(data == true) alert("冻结用户成功！");
+                    else alert("操作失败！");
                     location.replace(location.href);
                 },
                 error: function (data) {  //连接至ashx文件失败时，执行函数
@@ -134,25 +146,48 @@
 
         }
 
-        function btn_delate(cid) {
-            console.log(cid);
-
+        function btn_re(uid) {
+            console.log(uid);
             $.ajax({
                 type: "post",  //post put get 等等
-                url: "/deletecase",
+                url: "/unlockUser",
                 dataType: 'json',
                 contentType: "application/x-www-form-urlencoded",
                 traditional: true,
                 //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
                 // 表示对象
                 data: {  //json前面的东西要和后端实体类对应
-                    "caseid": cid,
+                    "uid": uid,
+                },
+                success: function (data) {
+                    if(data == true) alert("解除用户冻结成功！");
+                    else alert("操作失败！");
+                    location.replace(location.href);
+                },
+                error: function (data) {  //连接至ashx文件失败时，执行函数
+                    alert(data);
+                }
+            });
+
+        }
+
+        function btn_rename(uid) {
+            console.log(uid);
+            $.ajax({
+                type: "post",  //post put get 等等
+                url: "/deleteUser",
+                dataType: 'json',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
+                // 表示对象
+                data: {  //json前面的东西要和后端实体类对应
+                    "uid": uid,
                 },
                 success: function (data) {
                     console.log(data);
-                    if(data == 0) alert("该案例已经被删除！");
-                    else if(data == 1) alert("该案例下还有正在进行的项目！");
-                    else alert("删除成功！");
+                    if(data == true) alert("删除成功！");
+                    else alert("操作失败！");
                     location.replace(location.href);
                 },
                 error: function (data) {  //连接至ashx文件失败时，执行函数
@@ -224,28 +259,28 @@
                 </div>
             </div>
             <div id="middle" class="col-md-8">
-                <div class="container">
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" id="search" style="display:inline;width:200px;"autocomplete="off">
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <select id="usertype" name="usertype" class="selectpicker show-tick form-control" multiple data-live-search="false" style="height: 100px;" title="请选择你想要查询的关键字">
-                                <option value="0" selected="true">查询已开启的案例</option>
-                                <option value="1" selected="true">查询未开启的案例</option>
-                            </select>
+                <div class="modal" id="mymodal">
+                    <div class="modal-dialog" style="height: 260px; margin-left: -100px;">
+                        <div class="modal-content" style="height: 260px;" id="evalist">
+                            <h4 style="margin-top:40px;text-align: center;color: #96B87D;"></h4>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <button type='button' class='btn btn-primary' onclick="btn_search()">查询</button>
                     </div>
                 </div>
                 <div style="margin-top: 30px; text-align: center;" class="container">
-                    <div class="col-md-4" style="text-align: center;">
+                    <div class="col-md-2" style="text-align: center;">
+                        <nav class="navbar navbar-default" role="navigation">
+                            <div class="sidebar">
+                                <ul id='menu1' class='nav navbar-nav' style="text-align: center;">
+                                    <li>用户id</li>
+                                </ul>
+                            </div>
+                        </nav>
+                    </div>
+                    <div class="col-md-2" style="text-align: center;">
                         <nav class="navbar navbar-default" role="navigation">
                             <div class="sidebar">
                                 <ul id='menu2' class='nav navbar-nav' style="text-align: center;">
-                                    <li>案例名称</li>
+                                    <li>用户姓名</li>
                                 </ul>
                             </div>
                         </nav>
@@ -254,7 +289,7 @@
                         <nav class="navbar navbar-default" role="navigation">
                             <div class="sidebar">
                                 <ul id='menu3' class='nav navbar-nav' style="text-align: center;">
-                                    <li>创建时间</li>
+                                    <li>用户类型</li>
                                 </ul>
                             </div>
                         </nav>
@@ -263,7 +298,7 @@
                         <nav class="navbar navbar-default" role="navigation">
                             <div class="sidebar">
                                 <ul id='menu4' class='nav navbar-nav' style="text-align: center;">
-                                    <li>案例状态</li>
+                                    <li>更改状态</li>
                                 </ul>
                             </div>
                         </nav>
@@ -272,7 +307,7 @@
                         <nav class="navbar navbar-default" role="navigation">
                             <div class="sidebar">
                                 <ul id='menu5' class='nav navbar-nav' style="text-align: center;">
-                                    <li>操作</li>
+                                    <li>状态</li>
                                 </ul>
                             </div>
                         </nav>
@@ -287,6 +322,7 @@
                         </nav>
                     </div>
                 </div>
+
             </div>
         </div>
 
