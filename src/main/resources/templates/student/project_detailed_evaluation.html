@@ -18,7 +18,7 @@
     <script th:inline="javascript">
         var uid,cid;
         window.onload=function () {
-            document.getElementById("evas").style.visibility="hidden";
+            document.getElementById("evas").style.display="none";
             uid = GetRequest();
             cid = GetRequest2();
             var Menulisttop = $("#topmenu");
@@ -147,7 +147,7 @@
                                     }
                                 });
                             }else if (dataobj.project.status == 3){
-                                document.getElementById("evas").style.visibility="visible";
+                                document.getElementById("evas").style.display="";
                                 $.ajax({
                                     type: "post",
                                     url: "/showsumevaluation",
