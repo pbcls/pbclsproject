@@ -104,7 +104,9 @@
                     for(var menu in dataobj.role_to_user) {
                         var userid = dataobj.role_to_user[menu].uid;
                         if(userid == uid){
+                            // console.log(dataobj.role_to_user[menu].rolename);
                             role = dataobj.role_to_user[menu].rolename;
+                            // console.log(role);
                             var showMenu = $("#eva");
                             if(dataobj.project.status == 2){
 
@@ -123,9 +125,10 @@
                                         var showMenufalse = $("#false");
                                         if(data2 === "true"){
                                             $('<th>该项目任务已经全部完成，请尽快开始项目互评或小组评价。</th>').appendTo(showMenufalse);
-                                            if(dataobj.role_to_user[menu].rolename === "项目经理"){
+                                            console.log(dataobj.role_to_user[menu].rolename);
+                                            if(role === "项目经理"){
                                                 $("<button type='button' class='btn btn-primary' data-toggle='modal' data-target='#mymodal' onclick='eva_PM()' style='margin-top: 20px; margin-left: 20px;'>项目成员互评</button>").appendTo(showMenu);
-                                            }else if(dataobj.role_to_user[menu].rolename === "教师"){
+                                            }else if(role === "教师"){
                                                 $("<button type='button' class='btn btn-primary' data-toggle='modal' data-target='#mymodal' onclick='eva_tea()' style='margin-top: 20px; margin-left: 20px;'>项目成员评价</button>").appendTo(showMenu);
                                                 $("<button type='button' class='btn btn-primary' data-toggle='modal' data-target='#mymodal' onclick='eva_team()' style='margin-top: 20px; margin-left: 20px;'>项目小组评价</button>").appendTo(showMenu);
                                             }else{
