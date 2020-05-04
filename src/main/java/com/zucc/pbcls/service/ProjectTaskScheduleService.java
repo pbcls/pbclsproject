@@ -67,7 +67,7 @@ public class ProjectTaskScheduleService {
             for (Project_Task project_running_task:project_running_tasks){
                 int duration=project_running_task.getDuration();
                 Date nowdate = new Date();
-                Date finishdate = new Date(project_running_task.getStarttime().getTime()+duration*timeUseMinute);
+                Date finishdate = new Date(project_running_task.getStarttime().getTime()+duration*timeUseDay);
                 //现在按照持续时间来判 超过持续时间即超时
                 if(nowdate.after(finishdate)){
                     //有任务超时了,将其强行终止,并设置一个flag,以便判断是否要去检查开启后继任务
