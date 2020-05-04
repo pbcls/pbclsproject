@@ -36,8 +36,8 @@
             var indexmenu = $("#menuindex");
 
             $('<li class="nav-item"><a class="nav-link active" href="" style="background-color: #96B87D; font-weight: bold;">查找用户</a></li>').appendTo(indexmenu);
-            $('<li class="nav-item"><a class="nav-link" href="/toadmin_userlist" style="color: #0B3E5B; font-weight: bold;">用户列表</a></li>').appendTo(indexmenu);
-            $('<li class="nav-item"><a class="nav-link" href="/toadmin_userlocked" style="color: #0B3E5B; font-weight: bold;">冻结用户</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">用户列表</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">冻结用户</a></li>').appendTo(indexmenu);
             $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">删除用户</a></li>').appendTo(indexmenu);
             // $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">IP封禁</a></li>').appendTo(indexmenu);
             // $('<li class="nav-item"><a class="nav-link" href="" style="color: #0B3E5B; font-weight: bold;">EMAIL封禁</a></li>').appendTo(indexmenu);
@@ -61,37 +61,7 @@
                     alert("error");
                 }
             });
-        }
 
-        function btn_search() {
-            var mySelect = document.getElementById("usertype");
-            $('.delatepart').remove();
-            // console.log(mySelect.options[2].selected);
-            var str;
-            if(mySelect.options[5].selected == true && mySelect.options[6].selected == true && mySelect.options[7].selected == true){
-                str = "ADMIN,TEACHER,STUDENT";
-            }else if(mySelect.options[6].selected == true && mySelect.options[7].selected == true){
-                str = "ADMIN,TEACHER";
-            }else if(mySelect.options[5].selected == true && mySelect.options[6].selected == true){
-                str = "TEACHER,STUDENT";
-            }else if(mySelect.options[5].selected == true && mySelect.options[7].selected == true){
-                str = "ADMIN,STUDENT";
-            }else if(mySelect.options[5].selected == true){
-                str = "STUDENT";
-            }else if(mySelect.options[6].selected == true){
-                str = "TEACHER";
-            }else{
-                str = "ADMIN";
-            }
-            // console.log(mySelect.options[0].selected);
-            // console.log(mySelect.options[1].selected);
-            // console.log(mySelect.options[2].selected);
-            // console.log($('#search').val());
-            // console.log(mySelect.options[3].selected);
-            // console.log(mySelect.options[4].selected);
-            // console.log(str);
-            // console.log("1");
-            // console.log("30");
             $.ajax({
                 type: "post",  //post put get 等等
                 url: "/findUsers",
@@ -101,13 +71,13 @@
                 //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
                 // 表示对象
                 data: {  //json前面的东西要和后端实体类对应
-                    "needid":mySelect.options[0].selected,
-                    "needname":mySelect.options[1].selected,
-                    "needmail":mySelect.options[2].selected,
-                    "findstr":$('#search').val(),
-                    "notAccountNonLocked":mySelect.options[3].selected,
-                    "isAccountNonLocked":mySelect.options[4].selected,
-                    "role":str,
+                    "needid":true,
+                    "needname":true,
+                    "needmail":true,
+                    "findstr":"",
+                    "notAccountNonLocked":true,
+                    "isAccountNonLocked":false,
+                    "role":"ADMIN,TEACHER,STUDENT",
                     "pagenum":1,
                     "pagesize":30,
                 },
@@ -138,6 +108,7 @@
                     alert(data);
                 }
             });
+
         }
 
         function btn_change(uid) {
@@ -293,28 +264,6 @@
                         <div class="modal-content" style="height: 260px;" id="evalist">
                             <h4 style="margin-top:40px;text-align: center;color: #96B87D;"></h4>
                         </div>
-                    </div>
-                </div>
-                <div class="container">
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" id="search" style="display:inline;width:200px;"autocomplete="off">
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <select id="usertype" name="usertype" class="selectpicker show-tick form-control" multiple data-live-search="false" style="height: 100px;" title="请选择你想要查询的关键字">
-                                <option value="0" selected="true">查询用户id</option>
-                                <option value="1" selected="true">查询用户姓名</option>
-                                <option value="2" selected="true">查询用户EMAIL</option>
-                                <option value="3" selected="true">查询已冻结用户</option>
-                                <option value="4" selected="true">查询未冻结用户</option>
-                                <option value="5" selected="true">查询学生用户</option>
-                                <option value="6" selected="true">查询教师用户</option>
-                                <option value="7" selected="true">查询管理员用户</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <button type='button' class='btn btn-primary' onclick="btn_search()">查询</button>
                     </div>
                 </div>
                 <div style="margin-top: 30px; text-align: center;" class="container">

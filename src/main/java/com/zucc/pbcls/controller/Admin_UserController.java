@@ -28,6 +28,16 @@ public class Admin_UserController {
         return "admin/admin_user";
     }
 
+    @RequestMapping("/toadmin_userlist")
+    public String toadmin_userlist(){
+        return "admin/admin_user_list";
+    }
+
+    @RequestMapping("/toadmin_userlocked")
+    public String toadmin_user_locked(){
+        return "admin/admin_user_locked";
+    }
+
     @RequestMapping("/toadmin_project")
     public String toadmin_project(){
         return "admin/admin_project";

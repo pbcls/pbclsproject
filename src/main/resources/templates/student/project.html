@@ -72,7 +72,7 @@
                             var name = result[menu].username;
                             var rolename = result[menu].rolename;
                             var proname = result[menu].projectname;
-                            $("<li><span class='menu-text'>" + name + "申请以" + rolename + "职位进入" + proname + "项目</span><button type='button' class='btn btn-primary' id='btn_apply' value='" + result[menu].logid + "' title='" + result[menu].projectid + "' name='" + result[menu].roleid + "' lang='" + result[menu].uid + "' onclick='btn_apply(this.value,this.title,this.name,this.lang)' style='width: 60px; height: 30px;line-height: 17px;'>操作</button></li>").appendTo(showMenu2);
+                            $("<li><span class='menu-text'>" + result[menu].logtime + "  " + name + "申请以" + rolename + "职位进入" + proname + "项目</span><button type='button' class='btn btn-primary' id='btn_apply' value='" + result[menu].logid + "' title='" + result[menu].projectid + "' name='" + result[menu].roleid + "' lang='" + result[menu].uid + "' onclick='btn_apply(this.value,this.title,this.name,this.lang)' style='width: 60px; height: 30px;line-height: 17px;'>操作</button></li>").appendTo(showMenu2);
                             // $("<button type='button' class='btn btn-primary' id='btn_apply' style='margin-top: 3px; width: 60px;'>操作</button>").appendTo(showMenu2);
                         }else if(type == 2){
                             console.log("2");
@@ -80,46 +80,46 @@
                             var rolename = result[menu].rolename;
                             var proname = result[menu].projectname;
                             if(flag==1){
-                                $("<li></li>").append("<span class='menu-text'>" + proname + "项目" + rolename + "职位的申请已通过。</span>").appendTo(showMenu2);
+                                $("<li></li>").append("<span class='menu-text'>" + result[menu].logtime + "  " + proname + "项目" + rolename + "职位的申请已通过。</span>").appendTo(showMenu2);
                             }else if(flag==2){
-                                $("<li></li>").append("<span class='menu-text'>" + proname + "项目" + rolename + "职位的申请未通过。</span>").appendTo(showMenu2);
+                                $("<li></li>").append("<span class='menu-text'>" + result[menu].logtime + "  " + proname + "项目" + rolename + "职位的申请未通过。</span>").appendTo(showMenu2);
                             }
                         }else if(type == 3){
                             console.log("3");
                             var tname = result[menu].taskname;
                             var proname = result[menu].projectname;
-                            $("<li></li>").append("<span class='menu-text'>" + proname + "项目" + tname + "任务已经开始。</span>").appendTo(showMenu2);
+                            $("<li></li>").append("<span class='menu-text'>" + result[menu].logtime + "  " + proname + "项目" + tname + "任务已经开始。</span>").appendTo(showMenu2);
                         }else if(type == 4){
                             console.log("4");
                             var tname = result[menu].taskname;
                             var proname = result[menu].projectname;
-                            $("<li></li>").append("<span class='menu-text'>" + proname + "项目" + tname + "任务已经结束。</span>").appendTo(showMenu2);
+                            $("<li></li>").append("<span class='menu-text'>" + result[menu].logtime + "  " + proname + "项目" + tname + "任务已经结束。</span>").appendTo(showMenu2);
                         }else if(type == 5){
                             console.log("5");
                             var tname = result[menu].taskname;
                             var proname = result[menu].projectname;
-                            $("<li></li>").append("<span class='menu-text'>" + proname + "项目" + tname + "任务自评已经开始。</span>").appendTo(showMenu2);
+                            $("<li></li>").append("<span class='menu-text'>" + result[menu].logtime + "  " + proname + "项目" + tname + "任务自评已经开始。</span>").appendTo(showMenu2);
                         }else if(type == 6){
                             console.log("6");
                             var proname = result[menu].projectname;
-                            $("<li></li>").append("<span class='menu-text'>" + proname + "项目自评已经开始。</span>").appendTo(showMenu2);
+                            $("<li></li>").append("<span class='menu-text'>" + result[menu].logtime + "  " + proname + "项目互评已经开始。</span>").appendTo(showMenu2);
                         }else if(type == 7){
                             console.log("7");
                             var log = result[menu].logmsg;
-                            $("<li></li>").append("<span class='menu-text'>" + log + "</span>").appendTo(showMenu2);
+                            $("<li></li>").append("<span class='menu-text'>" + result[menu].logtime + "  " + log + "</span>").appendTo(showMenu2);
                         }else if(type == 8){
                             console.log("8");
                             var tname = result[menu].taskname;
                             var proname = result[menu].projectname;
-                            $("<li></li>").append("<span class='menu-text'>" + proname + "项目" + tname + "任务已有文档提交。</span>").appendTo(showMenu2);
+                            $("<li></li>").append("<span class='menu-text'>" + result[menu].logtime + "  " + proname + "项目" + tname + "任务已有文档提交。</span>").appendTo(showMenu2);
                         }else{
                             var flag = result[menu].passstatus;
                             var tname = result[menu].taskname;
                             var proname = result[menu].projectname;
                             if(flag == 1){
-                                $("<li></li>").append("<span class='menu-text'>" + proname + "项目" + tname + "任务提交已被项目经理通过。</span>").appendTo(showMenu2);
+                                $("<li></li>").append("<span class='menu-text'>" + result[menu].logtime + "  " + proname + "项目" + tname + "任务提交已被项目经理通过。</span>").appendTo(showMenu2);
                             }else{
-                                $("<li></li>").append("<span class='menu-text'>" + proname + "项目" + tname + "任务提交未被项目经理通过。</span>").appendTo(showMenu2);
+                                $("<li></li>").append("<span class='menu-text'>" + result[menu].logtime + "  " + proname + "项目" + tname + "任务提交未被项目经理通过。</span>").appendTo(showMenu2);
                             }
                         }
                         if(result[menu+1] == 'undefined') break;
@@ -222,6 +222,11 @@
                     console.log(result);
                     if(result === "true") alert("已同意");
                     else alert("项目成员已满");
+                    // var showMenu2 = $("#menu2");
+                    // var name = result[menu].username;
+                    // var rolename = result[menu].rolename;
+                    // var proname = result[menu].projectname;
+                    // $("<li><span class='menu-text'>已同意" + name + "以" + rolename + "职位进入" + proname + "项目</span></li>").appendTo(showMenu2);
                 },
                 error:function(result) {
                     alert(result);
