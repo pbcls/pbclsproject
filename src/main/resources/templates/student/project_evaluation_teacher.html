@@ -19,7 +19,7 @@
     <script th:inline="javascript">
         var uid = [[${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}]];
         console.log(uid);
-        var page = 1;
+        var page = 1, flag = 0;
         var cid,touid;
         var evalist = new Array();
         window.onload=function(){
@@ -37,6 +37,7 @@
             document.getElementById("next").style.visibility="hidden";
             // document.getElementById("next").style.visibility="visible";
             document.getElementById("submit").style.visibility="hidden";
+            document.getElementById("PM_list").style.display="none";
             $.ajax({
                 type: "post",
                 url: "/showevaluatemutuallist",
@@ -55,6 +56,11 @@
                         document.getElementById("next").style.visibility="visible";
                     }else{
                         document.getElementById("submit").style.visibility="visible";
+                    }
+                    if(dataobj[0].torolename === "项目经理"){
+                        flag = 1;
+                        console.log(flag);
+                        document.getElementById("PM_list").style.display="";
                     }
                     touid = dataobj[0].touid;
                     $("#name").html(dataobj[0].tousername);
@@ -76,6 +82,10 @@
             eva.cooperation = Number($('#xiezuo').val());
             eva.helpme = Number($('#bangzhu').val());
             eva.mark = $('#zonghe').val();
+            if(flag == 1) {
+                eva.organization = Number($('#zuzhi').val());
+                eva.decision = Number($('#juece').val());
+            }
             evalist.push(eva);
             page = page - 1;
             document.getElementById("last").style.visibility="hidden";
@@ -106,6 +116,10 @@
                         document.getElementById("last").style.visibility="visible";
                         document.getElementById("next").style.visibility="visible";
                     }
+                    if(dataobj[page-1].torolename === "项目经理"){
+                        flag = 1;
+                        document.getElementById("PM_list").style.display="";
+                    }
                     touid = dataobj[page-1].touid;
                     $("#name").html(dataobj[page-1].tousername);
                     $("#rolename").html(dataobj[page-1].torolename);
@@ -126,6 +140,10 @@
             eva.cooperation = Number($('#xiezuo').val());
             eva.helpme = Number($('#bangzhu').val());
             eva.mark = $('#zonghe').val();
+            if(flag == 1) {
+                eva.organization = Number($('#zuzhi').val());
+                eva.decision = Number($('#juece').val());
+            }
             evalist.push(eva);
             page = page + 1;
             document.getElementById("last").style.visibility="hidden";
@@ -158,6 +176,10 @@
                         document.getElementById("last").style.visibility="visible";
                         document.getElementById("next").style.visibility="visible";
                     }
+                    if(dataobj[page-1].torolename === "项目经理"){
+                        document.getElementById("PM_list").style.display="";
+                        flag = 1;
+                    }
                     touid = dataobj[page-1].touid;
                     $("#name").html(dataobj[page-1].tousername);
                     $("#rolename").html(dataobj[page-1].torolename);
@@ -178,6 +200,10 @@
             eva.cooperation = Number($('#xiezuo').val());
             eva.helpme = Number($('#bangzhu').val());
             eva.mark = $('#zonghe').val();
+            if(flag == 1) {
+                eva.organization = Number($('#zuzhi').val());
+                eva.decision = Number($('#juece').val());
+            }
             evalist.push(eva);
             console.log(evalist);
             console.log(JSON.stringify(evalist));
@@ -238,6 +264,22 @@
                     </select></td>
                     <td>协作能力：</td>
                     <td><select id="xiezuo" class="selectpicker">
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
+                    </select></td>
+                </tr>
+                <tr id="PM_list">
+                    <td>组织能力：</td>
+                    <td><select id="zuzhi" class="selectpicker">
+                        <option value="90">A</option>
+                        <option value="80">B</option>
+                        <option value="70">C</option>
+                        <option value="50">D</option>
+                    </select></td>
+                    <td>决策能力：</td>
+                    <td><select id="juece" class="selectpicker">
                         <option value="90">A</option>
                         <option value="80">B</option>
                         <option value="70">C</option>
