@@ -32,3 +32,13 @@ build/
 /src/main/java/com/zucc/pbcls/config/WebMvcConfig.java
 .DS_Store
 src/main/java/com/zucc/pbcls/config/WebMvcConfig.java
+!/src/main/java/com/zucc/pbcls/config/WebMvcConfig.java
+src/main/resources/static/case/case1/project2/
+src/main/resources/static/case/case5/project1/task1/
+src/main/resources/static/case/case5/project1/task2/
+src/main/resources/static/case/case5/project2/task1/
+src/main/resources/static/case/case5/project2/task2/
+src/main/resources/static/case/case5/project3/
+src/main/resources/static/case/case5/project4/
+src/main/resources/static/case/case5/project5/
+src/main/resources/static/case/case5/project6/
