@@ -18,7 +18,7 @@
     <script th:inline="javascript">
         var uid,cid;
         window.onload=function () {
-            document.getElementById("eva").style.visibility="hidden";
+            document.getElementById("evas").style.visibility="hidden";
             uid = GetRequest();
             cid = GetRequest2();
             var Menulisttop = $("#topmenu");
@@ -126,7 +126,10 @@
                                         var showMenufalse = $("#false");
                                         if(data2 === "true"){
                                             $('<th>该项目任务已经全部完成，请尽快开始项目互评或小组评价。</th>').appendTo(showMenufalse);
-                                            console.log(dataobj.role_to_user[menu].rolename);
+
+                                            // console.log(dataobj.role_to_user[menu].rolename);
+                                            // console.log(role);
+
                                             if(role === "项目经理"){
                                                 $("<button type='button' class='btn btn-primary' data-toggle='modal' data-target='#mymodal' onclick='eva_PM()' style='margin-top: 20px; margin-left: 20px;'>项目成员互评</button>").appendTo(showMenu);
                                             }else if(role === "教师"){
@@ -144,7 +147,7 @@
                                     }
                                 });
                             }else if (dataobj.project.status == 3){
-                                document.getElementById("eva").style.visibility="visible";
+                                document.getElementById("evas").style.visibility="visible";
                                 $.ajax({
                                     type: "post",
                                     url: "/showsumevaluation",
@@ -355,7 +358,7 @@
                     </div>
                 </div>
                 <div id="eva">
-                    <div class="tab-content">
+                    <div class="tab-content" id="evas">
                         <div id="menu1" class="container tab-pane active">
                             <h4 style="text-align: center;color: #0B3E5B; font-weight: bold;">我的评价</h4>
                             <table border="1" frame="void" rules="none" cellpadding="10px" style="font-weight: bold;">
