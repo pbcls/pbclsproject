@@ -123,10 +123,10 @@ public class Project_TaskService {
         }
         //如果任务已提交或完成找对应文件
         List<String> taskOutput = new ArrayList<>();
-        if(project_task.getStatus() == 2 || project_task.isNeedcheck()) {
+//        if(project_task.getStatus() == 2 || project_task.isNeedcheck()) {
             Project_TaskOutput project_taskOutput = project_taskOutputDao.findAllByProjectidAndTaskid(projectid, taskid);
             taskOutput = new ProjectFileUtil().getTaskFileList(project_taskOutput);
-        }
+//        }
 
 
         //封装成json

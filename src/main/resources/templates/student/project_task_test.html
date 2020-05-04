@@ -135,6 +135,9 @@
                     }else{
                         $("#status").html("已结束");
                         console.log("已结束");
+                        console.log(dataobj.evaluation.pmEvaluated);
+                        console.log(role);
+
                         if(dataobj.hasOwnProperty("output")){
                             console.log("output");
                             console.log(dataobj.output[0]);
@@ -149,6 +152,7 @@
                             document.getElementById("PMeva").style.display="";
                             $("#PMevath").html(dataobj.evaluation.pmScore);
                         }else if(dataobj.evaluation.pmEvaluated == false && role === "项目经理"){
+                            console.log("btn");
                             document.getElementById("PMbtn").style.display="";
                         }
                         if(dataobj.evaluation.selfEvaluated == true){
@@ -236,6 +240,7 @@
             });
         }
         function selfeva() {
+            console.log("role:"+role);
             if(role == 2){
                 var main = document.getElementById('evalist');
                 main.innerHTML = "<iframe border='none' style='border:0; padding:15px' scrolling='no' width='100%' height='100%' src='totaskselfPM?"+cid+"&"+taskid+"'></iframe>";
