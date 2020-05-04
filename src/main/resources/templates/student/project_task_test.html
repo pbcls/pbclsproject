@@ -140,7 +140,10 @@
                             console.log(dataobj.output[0]);
                             document.getElementById("download").style.display="";
                             var Menulistdown = $("#download");
-                            $("<tr style='margin-top: 30px;'></tr>").append("<a href='/downloadprojecttaskfile?filename="+dataobj.output[0]+"&projectid="+cid+"&taskid="+taskid+"'>"+dataobj.output[0]+"</a>").appendTo(Menulistdown);
+                            if(dataobj.output[0] == undefined)
+                                $("<tr style='margin-top: 30px;'>暂无输出文档提交</tr>").appendTo(Menulistdown);
+                            else
+                                $("<tr style='margin-top: 30px;'></tr>").append("<a href='/downloadprojecttaskfile?filename="+dataobj.output[0]+"&projectid="+cid+"&taskid="+taskid+"'>"+dataobj.output[0]+"</a>").appendTo(Menulistdown);
                         }
                         if(dataobj.evaluation.pmEvaluated == true){
                             document.getElementById("PMeva").style.display="";

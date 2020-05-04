@@ -39,6 +39,11 @@ public class UserInfoController {
         return "student/PCenter_management";
     }
 
+    @RequestMapping("/toPCenterpwd")
+    public String toPCenterpwd(){
+        return "student/PCenter_changepwd";
+    }
+
     @RequestMapping("/toPCentermas")
     public String toPCentermas(){
         return "student/PCenter_massage";
