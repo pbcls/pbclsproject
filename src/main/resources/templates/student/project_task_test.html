@@ -61,6 +61,34 @@
                 return null;
             }
 
+
+            $.ajax({
+                type: "post",
+                url: "/showprojectinfo",
+                dataType: 'text',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                data:{
+                    "projectid":Number(cid)
+                },
+                success: function (data) {
+                    var dataobj = JSON.parse(data);
+                    console.log(dataobj);
+                    for(var menu in dataobj.role_to_user) {
+                        var userid = dataobj.role_to_user[menu].uid;
+                        if (userid == uid) {
+                            if (dataobj.role_to_user[menu].rolename === "项目经理") {
+                                role = 2;
+                            }
+                        }
+                    }
+                },
+                error:function(result) {
+                    alert(result);
+                }
+            });
+
+
             $.ajax({
                 type: "post",
                 url: "/showprojecttaskinfo",
@@ -75,11 +103,11 @@
                     var dataobj = JSON.parse(result);
                     console.log(dataobj);
                     for(var menu in dataobj.users) {
-                        if (dataobj.users[menu].uid === uid) {
+                        if (dataobj.users[menu].uid === uid && role != 2) {
                             role = 1;
                         }
                     }
-                    if(role != 1) role = 2;
+
                     $("#tname").html(dataobj.task.taskname);
                     $("#description").html(dataobj.task.description);
 
@@ -151,8 +179,7 @@
                         if(dataobj.evaluation.pmEvaluated == true){
                             document.getElementById("PMeva").style.display="";
                             $("#PMevath").html(dataobj.evaluation.pmScore);
-                        }else if(dataobj.evaluation.pmEvaluated == false && role === "项目经理"){
-                            console.log("btn");
+                        }else if(dataobj.evaluation.pmEvaluated == false && role == 2){
                             document.getElementById("PMbtn").style.display="";
                         }
                         if(dataobj.evaluation.selfEvaluated == true){
