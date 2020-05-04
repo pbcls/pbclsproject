@@ -18,7 +18,7 @@
     <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
     <script th:inline="javascript">
         var uid;
-        var cid;
+        var cid, userrole;
         window.onload=function(){
             uid = [[${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}]];
             cid=GetRequest();
@@ -26,6 +26,26 @@
             //     cid=GetRequest();
             //     // console.log(cid);
             // });
+            $.ajax({
+                type: "post",  //post put get 等等
+                url: "/student/showUserDetial",
+                dataType: 'json',
+                contentType: "application/x-www-form-urlencoded",
+                traditional: true,
+                //后端Requestbody只能接收一个Json字符串,ajax传的是一个对象,所以要调用stringify方法转换成字符串,对象可以再上面封装好,或者下面直接在该方法内（{}）用大括号括起来
+                // 表示对象
+                data: {  //json前面的东西要和后端实体类对应
+                    "uid": uid
+                },
+                success: function (data, textStatus) {
+                    console.log(data);
+                    userrole = data.role;
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {  //连接至ashx文件失败时，执行函数
+                    alert("error");
+                }
+            });
+
             $.ajax({
                 type: "post",
                 url: "/showprojectinfo",
@@ -58,10 +78,18 @@
                     var Menulist2 = $("#name");
                     var flag = 1;
                     for(var menu in dataobj.roles){
+                        if(dataobj.roles[menu].rolename === "项目经理") continue;
+                        if(userrole === "STUDENT"){
+                            if(dataobj.roles[menu].rolename === "教师") continue;
+                        }else if(userrole === "TEACHER"){
+                            if(dataobj.roles[menu].rolename != "教师") continue;
+                        }
                         $("<option value='"+ dataobj.roles[menu].roleid +"'>"+ dataobj.roles[menu].rolename +"</option>").appendTo(Menulist2);
                         if(dataobj.roles[menu+1] == 'undefined') break;
                     }
                     for(var menu in dataobj.role_to_user){
+                        console.log(dataobj.role_to_user[menu].uid);
+                        console.log(uid);
                         if(dataobj.role_to_user[menu].uid === uid){
                             $("<button type='button' class='btn btn-primary' id='btn_add' style='margin-top: 3px;'>进入项目</button>").appendTo(Menulist1);
                             flag = 0;
@@ -70,7 +98,8 @@
                         if(dataobj.role_to_user[menu+1] == 'undefined') break;
                     }
                     if(flag == 1){
-                        $("<button type='button' class='btn btn-primary' id='btn_apply' style='margin-top: 3px;'>申请进入项目</button>").appendTo(Menulist1);
+                        if(dataobj.project.status == 1)
+                            $("<button type='button' class='btn btn-primary' id='btn_apply' style='margin-top: 3px;'>申请进入项目</button>").appendTo(Menulist1);
                     }
                     $("#btn_add").click(function () {
                         var url = "toprojectdetind?"+cid;

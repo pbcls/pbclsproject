@@ -88,8 +88,11 @@
                         }
                         $("<li style='margin-top: 10px;'></li>").append(dataobj.role_to_user[menu].user.name).appendTo(showMenu2);
                         $("<li style='margin-top: 10px;'></li>").append(dataobj.role_to_user[menu].rolename).appendTo(showMenu3);
-                        $("<li style='margin-top: 10px;'></li>").append(dataobj.role_to_user[menu].user.role).appendTo(showMenu4);
-                        $("<li style='margin-top: 10px;'></li>").append("开启").appendTo(showMenu5);
+                        if(dataobj.role_to_user[menu].user.role === "STUDENT")
+                            $("<li style='margin-top: 10px;'>学习者</li>").appendTo(showMenu4);
+                        else if(dataobj.role_to_user[menu].user.role === "TEACHER")
+                            $("<li style='margin-top: 10px;'>教师</li>").appendTo(showMenu4);
+                        $("<li style='margin-top: 10px;'></li>").append("未冻结").appendTo(showMenu5);
                         if(dataobj.role_to_user[menu+1] == 'undefined') break;
                     }
                     $("#pname").html(dataobj.project.projectname);
@@ -113,7 +116,10 @@
                 },
                 success: function (data) {
                     console.log(data);
-                    if(data === "true") alert("项目开始");
+                    if(data === "true"){
+                        alert("项目开始");
+                        location.replace(location.href);
+                    }
                     else alert("至少有一个角色没有被使用");
                 },
                 error:function(result) {
@@ -260,7 +266,7 @@
                             <nav class="navbar navbar-default" role="navigation">
                                 <div class="sidebar">
                                     <ul id='menu4' class='nav navbar-nav' style="text-align: center;">
-                                        <li>职责</li>
+                                        <li>用户权限</li>
                                     </ul>
                                 </div>
                             </nav>

@@ -24,8 +24,8 @@
 
             $('<li class="nav-item"><a class="nav-link" href="/student/toPCenter/'+uid+'" style="color: #0B3E5B; font-weight: bold;">主要信息</a></li>').appendTo(indexmenu);
             $('<li class="nav-item"><a class="nav-link" href="/student/toPCentercase" style="color: #0B3E5B; font-weight: bold;">我的案例</a></li>').appendTo(indexmenu);
-            $('<li class="nav-item"><a class="nav-link active" href="/student/toPCentermanag" style="background-color: #96B87D; font-weight: bold;">修改信息</a></li>').appendTo(indexmenu);
-            $('<li class="nav-item"><a class="nav-link" href="/student/toPCenterpwd" style="color: #0B3E5B; font-weight: bold;">修改密码</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link" href="/student/toPCentermanag" style="color: #0B3E5B; font-weight: bold;">修改信息</a></li>').appendTo(indexmenu);
+            $('<li class="nav-item"><a class="nav-link active" href="/student/toPCenterpwd" style="background-color: #96B87D; font-weight: bold;">修改密码</a></li>').appendTo(indexmenu);
             $('<li class="nav-item"><a class="nav-link" href="/student/toPCentermas" style="color: #0B3E5B; font-weight: bold;">我的信箱</a></li>').appendTo(indexmenu);
             $('<li class="nav-item"><a class="nav-link" href="/student/toPCentereva" style="color: #0B3E5B; font-weight: bold;">我的评价</a></li>').appendTo(indexmenu);
             //jQuery写法
@@ -44,21 +44,6 @@
                     console.log(data);
                     $("#headimg").attr("src",data.portrait);
                     $("#name").html(data.name);
-                    if(data.sex == 1){
-                        $("#sex").val(1);
-                    }else if(data.sex == 2){
-                        $("#sex").val(2);
-                    }else{
-                        $("#sex").val(0);
-                    }
-                    $("#username").val(data.name);
-                    // $("#password").val(data.name);
-                    $("#hobby").val(data.hobby);
-                    $("#signature").val(data.signature);
-                    $("#qq").val(data.qq);
-                    $("#wechat").val(data.wechat);
-                    $("#email").val(data.email);
-                    // alert(JSON.stringify(data.uid));
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {  //连接至ashx文件失败时，执行函数
                     alert("error");
@@ -66,56 +51,32 @@
             });
         }
         function submit() {
+            var passwordnew = $('#pwdnew').val();
+            var passwordnew2 = $("#pwdnew2").val();
+            if(passwordnew != passwordnew2){
+                alert("两次输入密码不一致！");
+                return false;
+            }
+            if(passwordnew == ""){
+                alert("您的密码输入为空。");
+                return false;
+            }
             $.ajax({
                 type: "post",  //post put get 等等
-                url: "/student/updateUserDetial",
-                dataType: 'text',
-                contentType: "application/json;charset=UTF-8",
+                url: "/student/changePwd",
+                dataType: 'json',
+                contentType: "application/x-www-form-urlencoded",
                 traditional: true,
-                data:JSON.stringify({
-                    "uid": uid,
-                    "name":$('#username').val(),
-                    // "pwd":$('#password').val(),
-                    "sex": $('#sex').val(),
-                    "hobby":$('#hobby').val(),
-                    "signature":$('#signature').val(),
-                    "qq":$('#qq').val(),
-                    "wechat":$('#wechat').val(),
-                    "email":$('#email').val(),
-                }),
+                data:{
+                    "pwd":$('#pwdold').val(),
+                    "newpwd":$('#pwdnew').val(),
+                },
                 success: function (data) {
                     console.log(data);
-                    alert("修改提交成功！");
+                    if(data == true) alert("修改提交成功！");
+                    else alert("输入密码和原密码不匹配!");
                 },
                 error: function (result) {  //连接至ashx文件失败时，执行函数
-                    alert(result);
-                }
-            });
-        }
-
-        function headimg() {
-            var fileObj = document.getElementById("id_file").files[0];
-            if (typeof (fileObj) == "undefined" || fileObj.size <= 0) {
-                alert("请选择文件");
-                return;
-            }
-            var form = new FormData(); // FormData 对象
-            form.append("userImg", fileObj); // 文件对象
-            // form.append("uid", uid);
-            console.log("111");
-            $.ajax({
-                type: "post",
-                url: "/student/uploadPortrait",
-                dataType: 'text',
-                contentType: false,
-                processData: false,
-                traditional: true,
-                data: form,
-                success: function (data) {
-                    console.log(data);
-                    alert("上传修改成功！");
-                },
-                error:function(result) {
                     alert(result);
                 }
             });
@@ -183,61 +144,24 @@
             <div id="middle" class="col-md-8">
                 <div id="menu1" class="container tab-pane active"><br>
                     <div>
-                        <h4 style="text-align: center;color: #0B3E5B; font-weight: bold;">基本信息</h4>
+                        <h4 style="text-align: center;color: #0B3E5B; font-weight: bold;">修改密码</h4>
                         <table border="1" frame="void" rules="none" cellpadding="10px" style="font-weight: bold;">
                             <tr>
-                                <input type="file" name="myfile" id="id_file" class="hidden" style="margin-top: 30px;margin-left: 40px;">
-                                <input type="button" class="btn btn-success pull-right" value="头像上传" id="id_submit" onclick="headimg()">
+                                <th>输入当前密码：</th>
+                                <th><input type="text" class="form-control" id="pwdold" style="display:inline;width:200px;"autocomplete="off"/></th>
                             </tr>
                             <tr>
-                                <th>姓名：</th>
-                                <th><input type="text" class="form-control" id="username" style="display:inline;width:200px;"autocomplete="off"/></th>
-                            </tr>
-<!--                            <tr>-->
-<!--                                <th>密码：</th>-->
-<!--                                <th><input type="password" class="form-control" id="password" style="display:inline;width:200px;"autocomplete="off"/></th>-->
-<!--                            </tr>-->
-                            <tr>
-                                <th>性别：</th>
-                                <th>
-                                    <select id="sex">
-                                        <option value="0">不详</option>
-                                        <option value="1">男</option>
-                                        <option value="2">女</option>
-                                    </select>
-                                </th>
+                                <th>输入更改密码：</th>
+                                <th><input type="password" class="form-control" id="pwdnew" style="display:inline;width:200px;"autocomplete="off"/></th>
                             </tr>
                             <tr>
-                                <td>兴趣爱好：</td>
-                                <td><input type="text" class="form-control" id="hobby" style="display:inline;width:200px;"autocomplete="off"/></td>
-                            </tr>
-                            <tr>
-                                <td>个人签名：</td>
-                                <td><input type="text" class="form-control" id="signature" style="display:inline;width:200px;"autocomplete="off"/></td>
+                                <th>重复更改密码：</th>
+                                <th><input type="password" class="form-control" id="pwdnew2" style="display:inline;width:200px;"autocomplete="off"/></th>
                             </tr>
                         </table>
                     </div>
                     <div>
-                        <h4 style="text-align: center;color: #0B3E5B; font-weight: bold;">联系方式</h4>
-                        <table border="1" frame="void" rules="none" cellpadding="10px" style="font-weight: bold;">
-                            <tr>
-                                <th>QQ：</th>
-                                <th><input type="text" class="form-control" id="qq" style="display:inline;width:200px;"autocomplete="off"/></th>
-                            </tr>
-                            <tr>
-                                <td>WeChat：</td>
-                                <td><input type="text" class="form-control" id="wechat" style="display:inline;width:200px;"autocomplete="off"/></td>
-                            </tr>
-                            <tr>
-                                <td>E-mail：</td>
-                                <td><input type="text" class="form-control" id="email" style="display:inline;width:200px;"autocomplete="off"/></td>
-                            </tr>
-                            <tr>
-                                <td>Home-page：</td>
-                                <td><input type="text" class="form-control" id="homepage" style="display:inline;width:200px;"autocomplete="off"/></td>
-                            </tr>
-                        </table>
-                        <button type='button' class='btn btn-primary' onclick="submit()" style="margin-left: 400px;">确认修改</button>
+                        <button type='button' class='btn btn-primary' onclick="submit()" style="margin-left: 400px;">确认更改</button>
                     </div>
                 </div>
             </div>
