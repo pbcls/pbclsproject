@@ -126,8 +126,10 @@
                                         var showMenufalse = $("#false");
                                         if(data2 === "true"){
                                             $('<th>该项目任务已经全部完成，请尽快开始项目互评或小组评价。</th>').appendTo(showMenufalse);
+
                                             // console.log(dataobj.role_to_user[menu].rolename);
                                             // console.log(role);
+
                                             if(role === "项目经理"){
                                                 $("<button type='button' class='btn btn-primary' data-toggle='modal' data-target='#mymodal' onclick='eva_PM()' style='margin-top: 20px; margin-left: 20px;'>项目成员互评</button>").appendTo(showMenu);
                                             }else if(role === "教师"){

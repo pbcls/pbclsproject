@@ -29,7 +29,7 @@ public class Log {
     private int logid;
 
     @CreatedDate//Jpa自动设置创建时间
-    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss",timezone = "GMT+8")
     private Date logtime;
 
     private int caseid;
