@@ -159,10 +159,54 @@
                                     },
                                     success: function (data) {
                                         console.log(data);
-                                        $("#mutualStudentScore").html(data.mutualStudentScore)
-                                        $("#mutualTeacherScore").html(data.mutualTeacherScore);
-                                        $("#selfScore").html(data.selfScore);
-                                        $("#teamScore").html(data.teamScore);
+                                        if(data.mutualStudentScore == 0){
+                                            $("#mutualStudentScore").html("暂无此评价");
+                                        }else if(data.mutualStudentScore >= 85){
+                                            $("#mutualStudentScore").html("A");
+                                        }else if(data.mutualStudentScore >= 70){
+                                            $("#mutualStudentScore").html("B");
+                                        }else if(data.mutualStudentScore >= 55){
+                                            $("#mutualStudentScore").html("C");
+                                        }else{
+                                            $("#mutualStudentScore").html("D");
+                                        }
+                                        // $("#mutualStudentScore").html(data.mutualStudentScore);
+                                        if(data.mutualTeacherScore == 0){
+                                            $("#mutualTeacherScore").html("暂无此评价");
+                                        }else if(data.mutualTeacherScore >= 85){
+                                            $("#mutualTeacherScore").html("A");
+                                        }else if(data.mutualTeacherScore >= 70){
+                                            $("#mutualTeacherScore").html("B");
+                                        }else if(data.mutualTeacherScore >= 55){
+                                            $("#mutualTeacherScore").html("C");
+                                        }else{
+                                            $("#mutualTeacherScore").html("D");
+                                        }
+                                        // $("#mutualTeacherScore").html(data.mutualTeacherScore);
+                                        if(data.selfScore == 0){
+                                            $("#selfScore").html("暂无此评价");
+                                        }else if(data.selfScore >= 85){
+                                            $("#selfScore").html("A");
+                                        }else if(data.selfScore >= 70){
+                                            $("#selfScore").html("B");
+                                        }else if(data.selfScore >= 55){
+                                            $("#selfScore").html("C");
+                                        }else{
+                                            $("#selfScore").html("D");
+                                        }
+                                        // $("#selfScore").html(data.selfScore);
+                                        if(data.teamScore == 0){
+                                            $("#teamScore").html("暂无此评价");
+                                        }else if(data.teamScore >= 85){
+                                            $("#teamScore").html("A");
+                                        }else if(data.teamScore >= 70){
+                                            $("#teamScore").html("B");
+                                        }else if(data.teamScore >= 55){
+                                            $("#teamScore").html("C");
+                                        }else{
+                                            $("#teamScore").html("D");
+                                        }
+                                        // $("#teamScore").html(data.teamScore);
                                     },
                                     error:function(result) {
                                         alert(result);
