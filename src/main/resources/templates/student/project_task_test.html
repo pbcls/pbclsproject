@@ -14,6 +14,8 @@
     <!-- popper.min.js 用于弹窗、提示、下拉菜单 -->
     <script src="https://cdn.bootcss.com/popper.js/1.12.5/umd/popper.min.js"></script>
 
+<!--    <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>-->
+
     <!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
     <script src="https://cdn.bootcss.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
     <script th:inline="javascript">
@@ -161,6 +163,7 @@
                     if(dataobj.task.status == 0){
                         $("#status").html("未开始");
                         $("#tstartdate").html("暂无开始时间");
+                        $("#tstopdate").html("暂无结束时间");
                         if(role != 0){
                             console.log("weikaishi");
                             if(dataobj.task.canstart == true){
@@ -170,6 +173,7 @@
                     }else if(dataobj.task.status == 1){
                         $("#status").html("进行中");
                         $("#tstartdate").html(dataobj.task.starttime);
+                        $("#tstopdate").html("暂无结束时间");
                         if(dataobj.hasOwnProperty("output") && role != 0){
                             // console.log("output");
                             // console.log(dataobj.output[0]);
@@ -191,6 +195,7 @@
                     }else{
                         $("#status").html("已结束");
                         $("#tstartdate").html(dataobj.task.starttime);
+                        $("#tstopdate").html(dataobj.task.finishtime);
                         console.log("已结束");
                         // console.log(dataobj.evaluation.pmEvaluated);
                         console.log(role);
@@ -434,6 +439,10 @@
                 <tr>
                     <td>任务开始时间：</td>
                     <td id="tstartdate"></td>
+                </tr>
+                <tr>
+                    <td>任务结束时间：</td>
+                    <td id="tstopdate"></td>
                 </tr>
                 <tr>
                     <td>最早开始时间：</td>
