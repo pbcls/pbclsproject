@@ -20,6 +20,7 @@
         var uid = [[${session.SPRING_SECURITY_CONTEXT.authentication.principal.username}]];
         var cid, taskid, role = 0, flagtask = 0;
         window.onload=function(){
+            $.ajaxSettings.async = false;
             cid = GetRequest();
             taskid = GetRequest2();
             document.getElementById("PMeva").style.display="none";
@@ -112,6 +113,7 @@
 
                     $("#tname").html(dataobj.task.taskname);
                     $("#description").html(dataobj.task.description);
+                    $("#date").html(dataobj.task.duration + "天");
 
                     if(dataobj.successor.length!=0){
                         var f = 0,str = "";
@@ -163,8 +165,8 @@
                                 var Menumeg = $("#meg");
                                 $("<th style='margin-top: 30px;'></th>").append("<a href='/downloadprojecttaskfile?filename="+dataobj.output[0]+"&projectid="+cid+"&taskid="+taskid+"'>"+dataobj.output[0]+"</a>").appendTo(Menulistdown);
                                 if(role == 2){
-                                    $("<button class='btn btn-outline-primary' onclick='checktrue()'>通过</button>").appendTo(Menulistadd);
-                                    $("<button class='btn btn-block' onclick='checkfalse()'>未通过</button>").appendTo(Menulistadd);
+                                    $("<button class='btn btn-outline-primary' onclick='checktrue()' style='width: 100px;'>通过</button>").appendTo(Menulistadd);
+                                    $("<button class='btn btn-block' onclick='checkfalse()' style='width: 100px; margin-top: 10px;'>未通过</button>").appendTo(Menulistadd);
                                 }
                             }else{
                                 var Menulistdown = $("#download");
@@ -390,6 +392,10 @@
                 <tr>
                     <td>任务描述：</td>
                     <td id="description"></td>
+                </tr>
+                <tr>
+                    <td>任务时间：</td>
+                    <td id="date"></td>
                 </tr>
                 <tr>
                     <td>任务状态：</td>
