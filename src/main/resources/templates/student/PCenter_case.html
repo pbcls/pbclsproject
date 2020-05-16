@@ -68,7 +68,7 @@
                     var showMenupro = $("#proing");  //获取ul（父节点）的位置
                     for(var menu in data){
                         console.log("1");
-                        $("<li style='margin-top: 10px;'><span class='menu-text'>在项目<a href='#' onclick='getUrl(" + data[menu].project.projectid + ")' class='turn'>" + data[menu].project.projectname + "</a>担任" + data[menu].role.rolename + "职位</span></li>").appendTo(showMenupro);
+                        $("<li style='margin-top: 10px;'><span class='menu-text'>在项目<a href='/toprojectdetind?"+ data[menu].project.projectid +"' class='turn'>" + data[menu].project.projectname + "</a>担任" + data[menu].role.rolename + "职位</span></li>").appendTo(showMenupro);
                         // $("<li></li>").append("<a href='#' onclick='getUrl(" + cid + ")' class='turn'> <span class='menu-text'>" + name + "</span></a>").appendTo(parent);
                         if(data[menu+1] == 'undefined') break;
                     }
@@ -151,7 +151,7 @@
                         <h4 style="margin-top: 10px; text-align: center;color: #0B3E5B; font-weight: bold;">我的项目</h4>
                         <ul id='proing' style="margin-top: 20px;"></ul>
                     </div>
-                </div>s
+                </div>
             </div>
         </div>
     </div>
